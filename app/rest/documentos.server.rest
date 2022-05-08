@@ -1,0 +1,26 @@
+
+###
+POST http://localhost:8002/documentos/create
+content-type: application/json
+
+{
+    "email"    : "cecilianazaretlopez@gmail.com",
+    "name"     : "Cecilia López",
+    "number"   : 11,
+    "nic"      : "001-0985006-5",
+    "address"  : "La Vereda #10, Res. Paraiso Palmas de Herrera, Apto. 3-G-1, Urb. Olimpo"
+}
+
+
+###
+GET http://localhost:8002/documentos/list
+content-type: application/json
+
+###
+POST http://localhost:8002/documentos/buscaporvehiculocliente
+content-type: application/json
+
+{
+    "cliente": "624c34444016f415242e5d7f",
+    "vehiculo": "624def7a6596f768625f41b7"
+}

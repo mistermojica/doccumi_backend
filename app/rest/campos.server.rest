@@ -1,0 +1,14 @@
+
+###
+POST http://localhost:8002/campos/create
+content-type: application/json
+
+{"camCodigo" : "nacionalidad", "camNombre" : "Nacionalidad", "camEmpresa" : null, "camOrden" : 180, "camEstado" : "activo"}
+
+###
+GET http://localhost:8002/campos/list
+content-type: application/json
+
+###
+GET http://localhost:8002/campos/bymodel/documentos
+content-type: application/json

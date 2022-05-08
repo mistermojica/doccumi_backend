@@ -1,0 +1,24 @@
+{
+   "Tenants": {
+      "production": {
+         "documi": {
+            "dbConfig":"mongodb+srv://cardoc:Romg2413@cardoccluster0.slugv.mongodb.net/documidb?retryWrites=true&w=majority",
+            "dbName":"documidb"
+         },
+         "codika": {
+            "dbConfig":"mongodb://localhost:27017/codika",
+            "dbName":"codikadb"
+         }
+      },
+      "development": {
+         "documi": {
+            "dbConfig":"mongodb://localhost:27017/documidb",
+            "dbName":"documidb"
+         },
+         "codika": {
+            "dbConfig":"mongodb://localhost:27017/codika",
+            "dbName":"codikadb"
+         }
+      }
+   }
+}
