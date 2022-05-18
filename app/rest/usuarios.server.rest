@@ -1,0 +1,31 @@
+
+###
+POST http://localhost:8002/usuarios/create
+content-type: application/json
+
+{
+    "usuario"                : "omarmojica",
+    "contrasena"             : "Romg2413",
+    "nombre"                 : "Omar Mojica",
+    "telefono"               : "809-848-5737",
+    "whatsapp"               : "809-848-5737",
+    "email"                  : "omarmojica@gmail.com",
+    "tipo"                   : "superadmin",
+    "estado"                 : "activo",
+    "puede_admin_ofertas"    : true,
+    "puede_admin_empleados"  : true,
+    "puede_admin_sucursales" : true
+}
+
+###
+GET http://localhost:8002/usuarios/listpop
+content-type: application/json
+
+###
+POST http://localhost:8002/usuarios/login
+content-type: application/json
+
+{
+  "email": "omarmojica@gmail.com",
+  "password": "Romg2413"
+}
