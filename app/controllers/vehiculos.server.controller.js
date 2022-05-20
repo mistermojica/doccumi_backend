@@ -2,11 +2,28 @@ var mofac = require("../../config/ModelFactory");
 var db = mofac("documi");
 var entityName = "Vehículo(s)";
 let mapEstadoVehiculos = new Map();
+let mapVariants = new Map();
 
-mapEstadoVehiculos.set("venta", "Vehículos en Venta");
-mapEstadoVehiculos.set("pendiente", "Vehículos Pendientes");
-mapEstadoVehiculos.set("vendido", "Vehículos Vendidos");
-mapEstadoVehiculos.set("taller", "Vehículos en Taller");
+mapEstadoVehiculos.set("venta", {
+  tipo: "success",
+  corta: "En Venta",
+  larga: "Vehículos en Venta",
+});
+mapEstadoVehiculos.set("pendiente", {
+  tipo: "info",
+  corta: "Pendientes",
+  larga: "Vehículos Pendientes",
+});
+mapEstadoVehiculos.set("vendido", {
+  tipo: "warning",
+  corta: "Vendidos",
+  larga: "Vehículos Vendidos",
+});
+mapEstadoVehiculos.set("taller", {
+  tipo: "danger",
+  corta: "En Taller",
+  larga: "Vehículos en Taller",
+});
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -243,7 +260,6 @@ exports.dashboard = function (req, res, next) {
         });
       } else {
         let mapGroup = new Map();
-
         data.forEach((vehiculo) => {
           let vehEstado = vehiculo.vehEstado;
           if (mapGroup.has(vehEstado)) {
@@ -253,10 +269,13 @@ exports.dashboard = function (req, res, next) {
             mapGroup.set(vehEstado, grupo);
             console.log("grupo A:", grupo);
           } else {
+            let estveh = mapEstadoVehiculos.get(vehEstado);
             let grupo = {
+              tipo: estveh.tipo,
               cantidad: 1,
-              descripcion: mapEstadoVehiculos.get(vehEstado),
-              monto: vehiculo.vehPrecio
+              descripcion_larga: estveh.larga,
+              descripcion_corta: estveh.corta,
+              monto: vehiculo.vehPrecio,
             };
             console.log("grupo B:", grupo);
             mapGroup.set(vehEstado, grupo);
@@ -266,18 +285,18 @@ exports.dashboard = function (req, res, next) {
         let graficos = {
           ventas: {
             labels: [],
-            values: []
+            values: [],
           },
           inventario: {
             labels: [],
-            values: []
-          }
-        }
+            values: [],
+          },
+        };
 
         let dsLabels = [];
         let dsValues = [];
         mapGroup.forEach((value, key) => {
-          dsLabels.push(value.descripcion.replace('Vehículos ', ''));
+          dsLabels.push(value.descripcion_corta);
           dsValues.push(value.cantidad);
         });
 
@@ -290,8 +309,8 @@ exports.dashboard = function (req, res, next) {
 
         let result = {
           carts: Array.from(mapGroup.values()),
-          charts: graficos
-        }
+          charts: graficos,
+        };
 
         console.log("result:", result);
 
