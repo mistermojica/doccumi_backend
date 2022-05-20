@@ -250,21 +250,48 @@ exports.dashboard = function (req, res, next) {
             let grupo = mapGroup.get(vehEstado);
             grupo.cantidad = grupo.cantidad + 1;
             grupo.monto = grupo.monto + vehiculo.vehPrecio;
+            mapGroup.set(vehEstado, grupo);
+            console.log("grupo A:", grupo);
           } else {
             let grupo = {
-              cantidad: 0,
+              cantidad: 1,
               descripcion: mapEstadoVehiculos.get(vehEstado),
-              monto: 0,
+              monto: vehiculo.vehPrecio
             };
+            console.log("grupo B:", grupo);
             mapGroup.set(vehEstado, grupo);
           }
         });
 
+        let graficos = {
+          ventas: {
+            labels: [],
+            values: []
+          },
+          inventario: {
+            labels: [],
+            values: []
+          }
+        }
+
+        let dsLabels = [];
+        let dsValues = [];
         mapGroup.forEach((value, key) => {
-          console.log(value, key);
+          dsLabels.push(value.descripcion.replace('Vehículos ', ''));
+          dsValues.push(value.cantidad);
         });
 
-        let result = Array.from(mapGroup.values());
+        console.log(dsLabels, dsValues);
+
+        graficos.ventas.labels = dsLabels;
+        graficos.inventario.labels = dsLabels;
+        graficos.ventas.values = dsValues;
+        graficos.inventario.values = dsValues;
+
+        let result = {
+          carts: Array.from(mapGroup.values()),
+          charts: graficos
+        }
 
         console.log("result:", result);
 
