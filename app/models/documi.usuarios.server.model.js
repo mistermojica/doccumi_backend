@@ -9,6 +9,7 @@ var UsuarioSchema = new Schema({
     whatsapp                : {type: String},
     email                   : {type: String},
     tipo                    : {type: String, index: true},
+    nombre_empresa          : {type: String},
     estado                  : {type: String, default: "activo", index: true},
     puede_admin_ofertas     : {type: Boolean, default: false, index: true},
     puede_admin_empleados   : {type: Boolean, default: false, index: true},

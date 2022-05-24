@@ -29,3 +29,16 @@ content-type: application/json
   "email": "omarmojica@gmail.com",
   "password": "Romg2413"
 }
+
+###
+POST http://localhost:8002/usuarios/create
+content-type: application/json
+
+{
+    "nombre": "Cecilia Nazaret López 2",
+    "telefono": "809-379-0955",
+    "whatsapp": "829-447-3522",
+    "nombre_empresa": "Creaciones de Ceci",
+    "email": "cecilianazaretlopez@gmail.com",
+    "password": "Cnla1324"
+}

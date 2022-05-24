@@ -174,7 +174,7 @@ exports.create = function (req, res, next) {
   req.body.usuario = req.body.usuario || req.body.email;
   req.body.contrasena = req.body.contrasena || req.body.password;
 
-  console.log(req.body);
+  mlCL('req.body:', req.body);
 
   var entity = new db.Usuarios(req.body);
   entity.save(function (err) {
@@ -411,9 +411,9 @@ exports.profile = function (req, res, next) {
 };
 
 function mlCL(paramMsg, paramData) {
-  // console.log('\r\n==================');
-  // console.log(paramMsg);
-  // console.log('\r\n');
-  // console.log(paramData);
-  // console.log('======================');
+  console.log('\r\n==================');
+  console.log(paramMsg);
+  console.log('\r\n');
+  console.log(paramData);
+  console.log('======================');
 }
