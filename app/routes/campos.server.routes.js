@@ -1,11 +1,11 @@
-var campos = require('../controllers/campos.server.controller');
+var campos = require("../controllers/campos.server.controller");
 
-module.exports = function(app) {
-    app.route('/campos/list').get(campos.list);
-    app.route('/campos/create').post(campos.create);
-    app.route('/campos/find/:id').get(campos.findById);
-    app.route('/campos/listaporempresa/:empresa').get(campos.findByEmpresa);
-    app.route('/campos/listpop').get(campos.listpop);
-    app.route('/campos/update').post(campos.update);
-    app.route('/campos/delete/:_id').get(campos.delete);
+module.exports = function (app) {
+  app.route("/campos/list").get(campos.list);
+  app.route("/campos/create").post(campos.create);
+  app.route("/campos/find/:id").get(campos.findById);
+  app.route("/campos/listapordueno/:dueno").get(campos.findByDueno);
+  app.route("/campos/listpop").get(campos.listpop);
+  app.route("/campos/update").post(campos.update);
+  app.route("/campos/delete/:_id").get(campos.delete);
 };
