@@ -1,6 +1,7 @@
 var mofac = require("../../config/ModelFactory");
 var db = mofac("documi");
 var entityName = "Plantilla(s)";
+<<<<<<< HEAD
 var _ = require("underscore");
 
 exports.list = function (req, res, next) {
@@ -30,6 +31,28 @@ exports.list = function (req, res, next) {
           data: data,
         });
       }
+=======
+var _ = require('underscore');
+const {e2o} = require('../utils/strManager');
+
+exports.list = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    db.Plantillas.
+    find({}).
+    select('-plaContenido').
+    where("plaEstado").ne("borrado").
+    exec(function(err, data) {
+        if (err) {
+            console.log(__filename + ' >> .list: ' + JSON.stringify(err));
+            res.json({status: "FAILED", message: `Error en la lista de ${entityName}.`, data: {}});
+        }
+        else {
+            console.log("data:", data);
+            res.json({status: "SUCCESS", message: `Lista de ${entityName} generada exitosamente.`, data: data});
+        }
+>>>>>>> 657da766b73ac999a890846814f604dfb1972863
     });
 };
 
@@ -107,6 +130,41 @@ exports.update = function (req, res, next) {
         });
       }
     });
+};
+
+exports.duplicate = function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  console.log("update() || req.body:", req.body);
+
+  db.Plantillas.
+  findOne({_id: req.params._id}).
+  where("plaEstado").ne("borrado").
+  exec(function(err, entitydb) {
+      if (err) {
+          console.log(__filename + ' >> .update: ' + JSON.stringify(err));
+          res.json({status: "FAILED", message: `Error al obtener ${entityName}.`, data: {}});
+      }
+      else {
+          let bodyEntity = e2o(entitydb);
+          delete bodyEntity._id;
+          bodyEntity.plaNombre = bodyEntity.plaNombre + " - (DUPLICADO)";
+          let newEntity = new db.Plantillas(bodyEntity);
+          newEntity.isNew = true;
+          newEntity.plaFechaCreacion = new Date();
+          newEntity.plaFechaModificacion = new Date();
+          newEntity.save(function(err) {
+              if (err) {
+                  console.log(__filename + ' >> .duplicate: ' + JSON.stringify(err));
+                  res.json({status: "FAILED", message: `Error en la duplicación de ${entityName}.`, data: {}});
+              }
+              else {
+                  res.json({status: "SUCCESS", message: `${entityName} se duplicó exitosamente.`, data: entitydb});
+              }
+          });
+      }
+  });
 };
 
 exports.delete = function (req, res, next) {

@@ -9,4 +9,5 @@ module.exports = function (app) {
   app.route("/plantillas/delete/:_id").get(plantillas.delete);
   app.route("/plantillas/findbytipo/:tipo").get(plantillas.findByTipo);
   app.route("/plantillas/listapordueno/:dueno").get(plantillas.findByDueno);
+  app.route("/plantillas/duplicate/:_id").get(plantillas.duplicate);
 };
