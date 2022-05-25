@@ -2,6 +2,7 @@ var mofac = require('../../config/ModelFactory');
 var db = mofac("documi");
 var entityName = "Plantilla(s)";
 var _ = require('underscore');
+const {e2o} = require('../utils/strManager');
 
 exports.list = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -70,6 +71,41 @@ exports.update = function(req, res, next) {
                 }
                 else {
                     res.json({status: "SUCCESS", message: `${entityName} se actualizó exitosamente.`, data: entitydb});
+                }
+            });
+        }
+    });
+};
+
+exports.duplicate = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    console.log("update() || req.body:", req.body);
+
+    db.Plantillas.
+    findOne({_id: req.params._id}).
+    where("plaEstado").ne("borrado").
+    exec(function(err, entitydb) {
+        if (err) {
+            console.log(__filename + ' >> .update: ' + JSON.stringify(err));
+            res.json({status: "FAILED", message: `Error al obtener ${entityName}.`, data: {}});
+        }
+        else {
+            let bodyEntity = e2o(entitydb);
+            delete bodyEntity._id;
+            bodyEntity.plaNombre = bodyEntity.plaNombre + " - (DUPLICADO)";
+            let newEntity = new db.Plantillas(bodyEntity);
+            newEntity.isNew = true;
+            newEntity.plaFechaCreacion = new Date();
+            newEntity.plaFechaModificacion = new Date();
+            newEntity.save(function(err) {
+                if (err) {
+                    console.log(__filename + ' >> .duplicate: ' + JSON.stringify(err));
+                    res.json({status: "FAILED", message: `Error en la duplicación de ${entityName}.`, data: {}});
+                }
+                else {
+                    res.json({status: "SUCCESS", message: `${entityName} se duplicó exitosamente.`, data: entitydb});
                 }
             });
         }
