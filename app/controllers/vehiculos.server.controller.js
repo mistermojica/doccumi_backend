@@ -238,9 +238,7 @@ exports.dashboard = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("id:", req.params.id);
-
-  db.Vehiculos.find({})
+  db.Vehiculos.find({ vehDueno: req.params.dueno })
     .select("-__v")
     .where("estado")
     .ne("borrado")
@@ -267,7 +265,7 @@ exports.dashboard = function (req, res, next) {
             grupo.cantidad = grupo.cantidad + 1;
             grupo.monto = grupo.monto + vehiculo.vehPrecio;
             mapGroup.set(vehEstado, grupo);
-            console.log("grupo A:", grupo);
+            // console.log("grupo A:", grupo);
           } else {
             let estveh = mapEstadoVehiculos.get(vehEstado);
             let grupo = {
@@ -277,7 +275,7 @@ exports.dashboard = function (req, res, next) {
               descripcion_corta: estveh.corta,
               monto: vehiculo.vehPrecio,
             };
-            console.log("grupo B:", grupo);
+            // console.log("grupo B:", grupo);
             mapGroup.set(vehEstado, grupo);
           }
         });
@@ -294,18 +292,20 @@ exports.dashboard = function (req, res, next) {
         };
 
         let dsLabels = [];
-        let dsValues = [];
+        let dsValuesV = [];
+        let dsValuesI = [];
         mapGroup.forEach((value, key) => {
           dsLabels.push(value.descripcion_corta);
-          dsValues.push(value.cantidad);
+          dsValuesV.push(value.monto);
+          dsValuesI.push(value.cantidad);
         });
 
-        console.log(dsLabels, dsValues);
+        // console.log("KLK:", dsLabels, dsValuesV, dsValuesI);
 
         graficos.ventas.labels = dsLabels;
         graficos.inventario.labels = dsLabels;
-        graficos.ventas.values = dsValues;
-        graficos.inventario.values = dsValues;
+        graficos.ventas.values = dsValuesV;
+        graficos.inventario.values = dsValuesI;
 
         let result = {
           carts: Array.from(mapGroup.values()),
@@ -313,11 +313,47 @@ exports.dashboard = function (req, res, next) {
         };
 
         console.log("result:", result);
+        console.log("graficos:", graficos);
 
         res.json({
           status: "SUCCESS",
           message: `Lista de ${entityName} generada exitosamente.`,
           data: result,
+        });
+      }
+    });
+};
+
+exports.findByDueno = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  db.Vehiculos.find({ vehDueno: req.params.dueno })
+    .select("-__v")
+    .where("plaEstado")
+    .ne("borrado")
+    .sort({ orden: 1 })
+    .lean()
+    .populate({
+      path: "_estado_",
+      select: "codigo nombre",
+    })
+    .exec(function (err, data) {
+      if (err) {
+        console.log(__filename + " >> .findById: " + JSON.stringify(err));
+        res.json({
+          status: "FAILED",
+          message: `Error al obtener la lista de ${entityName}.`,
+          data: err,
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: `Lista de ${entityName} generada exitosamente.`,
+          data: data,
         });
       }
     });
