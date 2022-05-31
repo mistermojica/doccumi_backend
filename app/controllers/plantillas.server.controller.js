@@ -292,7 +292,8 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Plantillas.find({ plaDueno: req.params.dueno })
+  db.Plantillas.find({})
+  // db.Plantillas.find({ plaDueno: req.params.dueno })
     .select("-__v")
     .where("plaEstado")
     .ne("borrado")

@@ -176,7 +176,8 @@ exports.findByDueno = function (req, res, next) {
 
   let dueno = req.params.dueno === "null" ? null : req.params.dueno;
 
-  db.Campos.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
+  db.Campos.find({})
+  // db.Campos.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
     .select("-__v")
     .where("camEstado")
     .ne("borrado")
