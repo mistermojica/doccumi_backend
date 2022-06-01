@@ -21,7 +21,7 @@ var VehiculosSchema = new Schema({
     vehPrecio               : {type: Number, default: "", index: true, required: true},
     vehCosto                : {type: Number, default: "", index: true, required: true},
     vehFotoMatricula        : {type: String, default: "", required: true},
-    vehEstado               : {type: String, default: "activo", index: true},
+    vehEstado               : {type: String, default: "venta", index: true},
     vehFechaCreacion        : {type: Date, default: Date.now, index: true},
     vehFechaModificacion    : {type: Date, default: Date.now, index: true}
 },

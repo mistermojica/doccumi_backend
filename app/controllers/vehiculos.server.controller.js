@@ -238,19 +238,26 @@ exports.dashboard = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Vehiculos.find({ vehDueno: req.params.dueno })
+  console.log("req.params", req.params);
+
+  // db.Vehiculos.find({})
+  db.Vehiculos
+    .find({})
     .select("-__v")
+    // .where('vehDueno').eq(req.params.dueno)
     .where("estado")
     .ne("borrado")
-    .sort({ orden: 1 })
+    .sort({ vehNoRegistroPlaca: 1 })
     .lean()
     .populate({
       path: "_estado_",
       select: "codigo nombre",
     })
     .exec(function (err, data) {
+      console.log("err:", err);
+      console.log("data:", data);
       if (err) {
-        console.log(__filename + " >> .findById: " + JSON.stringify(err));
+        console.log(__filename + " >> .dashboard: " + JSON.stringify(err));
         res.json({
           status: "FAILED",
           message: `Error al obtener la lista de ${entityName}.`,
@@ -267,6 +274,7 @@ exports.dashboard = function (req, res, next) {
             mapGroup.set(vehEstado, grupo);
             // console.log("grupo A:", grupo);
           } else {
+            console.log("vehEstado", vehEstado);
             let estveh = mapEstadoVehiculos.get(vehEstado);
             let grupo = {
               tipo: estveh.tipo,
@@ -317,7 +325,7 @@ exports.dashboard = function (req, res, next) {
 
         res.json({
           status: "SUCCESS",
-          message: `Lista de ${entityName} generada exitosamente.`,
+          message: `Lista de ${entityName} generada exitosamente. E1`,
           data: result,
         });
       }

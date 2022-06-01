@@ -1,0 +1,23 @@
+
+###
+POST http://localhost:8002/vehiculos/create
+content-type: application/json
+
+{
+    "tipNombre"   : "Pagarés",
+    "tipModelo"   : "documentos",
+    "tipOrden"    : 80,
+    "tipEstado"   : "activo"
+}
+
+###
+GET http://localhost:8002/vehiculos/list
+content-type: application/json
+
+###
+GET http://localhost:8002/vehiculos/dashboard/627efe3b8a55c158e669107b
+content-type: application/json
+
+###
+GET http://localhost:8002/vehiculos/find/6246888f78d4782f532baa87
+content-type: application/json
