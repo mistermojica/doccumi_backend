@@ -1,7 +1,7 @@
 var vehiculos = require("../controllers/vehiculos.server.controller");
 
 module.exports = function (app) {
-  // app.route("/vehiculos/list").get(vehiculos.list);
+  app.route("/vehiculos/list").get(vehiculos.list);
   app.route("/vehiculos/create").post(vehiculos.create);
   app.route("/vehiculos/find/:id").get(vehiculos.findById);
   app.route("/vehiculos/listpop").get(vehiculos.listpop);

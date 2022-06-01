@@ -339,7 +339,8 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Vehiculos.find({ vehDueno: req.params.dueno })
+  db.Vehiculos.find({})
+  // db.Vehiculos.find({ vehDueno: req.params.dueno })
     .select("-__v")
     .where("plaEstado")
     .ne("borrado")
