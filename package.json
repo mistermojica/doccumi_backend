@@ -67,5 +67,8 @@
     "validator": "^13.7.0",
     "voca": "^1.4.0",
     "webpage": "^0.3.0"
+  },
+  "devDependencies": {
+    "cypress": "^9.7.0"
   }
 }
