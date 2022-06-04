@@ -240,6 +240,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
     {
       // const targetPage = page;
       const filepath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png';
+      const filepath2 = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/amadita.png';
       // const element = await targetPage.$('input[type="file"]'); //_ac69
       // await element.uploadFile(filepath);
       // console.log("FOTO CARGADA", filepath);
