@@ -1,28 +1,28 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn dev
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.10/libexec/bin/yarn.js add npm i puppeteer-extra-plugin-stealth
 
 PATH: 
-  /Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/omarmojica/miniconda3/bin:/Users/omarmojica/miniconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.9/bin
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 
 Yarn version: 
-  1.22.18
+  1.22.10
 
 Node version: 
-  16.14.2
+  16.15.0
 
 Platform: 
   darwin x64
 
 Trace: 
   TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received [Object: null prototype]
-      at new NodeError (node:internal/errors:371:5)
+      at new NodeError (node:internal/errors:372:5)
       at validateString (node:internal/validators:120:11)
       at Object.isAbsolute (node:path:1157:5)
-      at module.exports.exports.default (/usr/local/lib/node_modules/yarn/lib/cli.js:97080:16)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:51322:63
+      at module.exports.exports.default (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:101024:16)
+      at /usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:51525:63
       at Generator.next (<anonymous>)
-      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+      at step (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:321:13
 
 npm manifest: 
   {
