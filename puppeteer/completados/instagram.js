@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer'); // v13.0.0 or later
+var path = require('path');
 
 (async () => {
     const browser = await puppeteer.launch({
@@ -7,7 +8,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
     });
     const page = await browser.newPage();
     // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
-    const timeout = 10000;
+    const timeout = 20000;
     page.setDefaultTimeout(timeout);
 
     async function waitForSelectors(selectors, frame, options) {
@@ -218,12 +219,28 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
         await element.click({ offset: { x: 124.84375, y: 12.9375} });
         await Promise.all(promises);
     }
+    // {
+    //   const targetPage = page;
+    //   const element = await waitForSelectors([["aria/Not Now"],[".cmbtv"]], targetPage, { timeout, visible: true }); //.cmbtv [type]
+    //   await scrollIntoViewIfNeeded(element, timeout);
+    //   await element.click({ offset: { x: 203, y: 27} });
+    // }
     {
-        const targetPage = page;
-        const element = await waitForSelectors([["aria/Not Now"],["button._a9--._a9_1"]], targetPage, { timeout, visible: true });
-        await scrollIntoViewIfNeeded(element, timeout);
-        await element.click({ offset: { x: 203, y: 27} });
+      await page.waitForXPath("//button[contains(text(),'Not Now')]");
+      let next = await page.$x("//button[contains(text(),'Not Now')]");
+      await next[0].click();
     }
+    {
+      await page.waitForXPath("//button[contains(text(),'Not Now')]");
+      let next = await page.$x("//button[contains(text(),'Not Now')]");
+      await next[0].click();
+    }
+    // {
+    //     const targetPage = page;
+    //     const element = await waitForSelectors([["aria/Not Now"],["button._a9--._a9_1"]], targetPage, { timeout, visible: true });
+    //     await scrollIntoViewIfNeeded(element, timeout);
+    //     await element.click({ offset: { x: 203, y: 27} });
+    // }
     {
         const targetPage = page;
         const element = await waitForSelectors([["aria/New post"],["button._abl-._abm2"]], targetPage, { timeout, visible: true });
@@ -238,13 +255,12 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
     }
     {
       const targetPage = page;
-      const filepath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png';
+      const filepath = __dirname + '/circulo.png';
       // await element.uploadFile(filepath);
       let fileInputs = await targetPage.$$('input[type="file"]');
       let input = fileInputs[fileInputs.length - 1];
       await input.uploadFile(filepath);
       console.log("FOTO CARGADA NUEVA", filepath);
-
     }
     {
       await page.waitForXPath("//button[contains(text(),'Next')]");
