@@ -18,7 +18,9 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
           console.error(err);
         }
       }
-      throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
+      if (!options.noexit){
+        throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
+      }
     }
 
     async function scrollIntoViewIfNeeded(element, timeout) {
@@ -176,6 +178,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
         const type = await element.evaluate(el => el.type);
         if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
           await element.type("bitubi.do", { delay: 10 });
+          console.log('Entrada usuario 1');
         } else {
           await element.focus();
           await element.evaluate((el, value) => {
@@ -183,6 +186,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
             el.dispatchEvent(new Event('input', { bubbles: true }));
             el.dispatchEvent(new Event('change', { bubbles: true }));
           }, "bitubi.do");
+          console.log('Entrada usuario 2');
         }
     }
     {
@@ -200,6 +204,8 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
         const type = await element.evaluate(el => el.type);
         if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
           await element.type("btb@$!#2423OM", { delay: 20 });
+          console.log('Entrada contraseña 1');
+
         } else {
           await element.focus();
           await element.evaluate((el, value) => {
@@ -207,6 +213,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
             el.dispatchEvent(new Event('input', { bubbles: true }));
             el.dispatchEvent(new Event('change', { bubbles: true }));
           }, "btb@$!#2423OM");
+          console.log('Entrada contraseña 2');
         }
     }
     {
@@ -217,12 +224,14 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
         await scrollIntoViewIfNeeded(element, timeout);
         await element.click({ offset: { x: 124.84375, y: 12.9375} });
         await Promise.all(promises);
+        console.log('Click Botón Login');
     }
     {
         const targetPage = page;
-        const element = await waitForSelectors([["aria/Not Now"],["button._a9--._a9_1"]], targetPage, { timeout, visible: true });
+        const element = await waitForSelectors([["aria/Not Now"],["button._a9--._a9_1"]], targetPage, { timeout, visible: true, noexit: true });
         await scrollIntoViewIfNeeded(element, timeout);
         await element.click({ offset: { x: 203, y: 27} });
+        console.log('Click Botón "Not Now"');
     }
     {
         const targetPage = page;
