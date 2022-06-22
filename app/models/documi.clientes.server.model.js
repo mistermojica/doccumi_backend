@@ -23,7 +23,7 @@ var ClientesSchema = new Schema({
     cliSector              : {type: String, default: "", required: true},
     cliPais                : {type: String, default: "", required: true},
     cliNacionalidad        : {type: String, default: "", required: true},
-    cliFotoCedula          : {type: String, default: "", required: true},
+    cliFotoCedula          : {type: Array, default: [], required: false},
     cliEstado              : {type: String, default: "activo", index: true},
     cliFechaCreacion       : {type: Date, default: Date.now, index: true},
     cliFechaModificacion   : {type: Date, default: Date.now, index: true}
