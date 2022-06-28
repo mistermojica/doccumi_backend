@@ -16,8 +16,35 @@ POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
 {
+  "to" : "instagram",
+  "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
+  "caption" : "Hyundai Grandeur 2012",
+  "location" : "Santo Domingo, Dominican Republic",
+  "show": true
+}
+
+###
+POST http://localhost:8002/publicaciones/publish
+content-type: application/json
+
+{
   "to" : "marketplace",
   "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png",
+  "caption" : "Hyundai Grandeur 2012",
+  "location" : "Santo Domingo, Dominican Republic",
+  "year": "2012",
+  "brand": "Hyundai",
+  "model": "Grandeur",
+  "show": true
+}
+
+###
+POST http://localhost:8002/publicaciones/publish
+content-type: application/json
+
+{
+  "to" : "marketplace",
+  "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "year": "2012",
