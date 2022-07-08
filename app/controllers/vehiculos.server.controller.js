@@ -24,6 +24,11 @@ mapEstadoVehiculos.set("taller", {
   corta: "En Taller",
   larga: "Vehículos en Taller",
 });
+mapEstadoVehiculos.set("activo", {
+  tipo: "success",
+  corta: "Activo",
+  larga: "Vehículos Activos",
+});
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -277,7 +282,7 @@ exports.dashboard = function (req, res, next) {
             console.log("vehEstado", vehEstado);
             let estveh = mapEstadoVehiculos.get(vehEstado);
             let grupo = {
-              tipo: estveh.tipo,
+              tipo: estveh?.tipo,
               cantidad: 1,
               descripcion_larga: estveh.larga,
               descripcion_corta: estveh.corta,
