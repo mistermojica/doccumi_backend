@@ -13,6 +13,12 @@ exports.publish = function (req, res, next) {
 
   let result;
 
+  console.log('req.body:', req.body);
+
+  let ctx = {url: req.body.url, image: req.body.image, cb: console.log};
+
+  publicaHelper.download(ctx);
+
   if (req.body.to === 'instagram') {
     publicaHelper.instagram(req.body).then((resIG) => {
       console.log("result resIG:", resIG);
@@ -32,8 +38,6 @@ exports.publish = function (req, res, next) {
       result = errMP;
     });
   }
-
-  
 };
 
 function respuesta(res, ctx){

@@ -1,8 +1,11 @@
 var mofac = require("../../config/ModelFactory");
 var db = mofac("documi");
+const publicaHelper = require("../helpers/publicaciones.server.helper");
 var entityName = "Vehículo(s)";
 let mapEstadoVehiculos = new Map();
 let mapVariants = new Map();
+let intFotosVehiculosLength = 0;
+let arrFotosVehiculos = [];
 
 mapEstadoVehiculos.set("venta", {
   tipo: "success",
@@ -23,6 +26,11 @@ mapEstadoVehiculos.set("taller", {
   tipo: "danger",
   corta: "En Taller",
   larga: "Vehículos en Taller",
+});
+mapEstadoVehiculos.set("activo", {
+  tipo: "info",
+  corta: "Activo",
+  larga: "Activos",
 });
 
 exports.list = function (req, res, next) {
@@ -73,14 +81,63 @@ exports.create = function (req, res, next) {
         data: err,
       });
     } else {
-      res.json({
-        status: "SUCCESS",
-        message: `${entityName} creado exitosamente.`,
-        data: entity,
-      });
+      if (req.body.vehFotoMatricula.length > 0) {
+        intFotosVehiculosLength = req.body.vehFotoMatricula.length;
+        req.body.vehFotoMatricula.forEach(url => {
+          publicaHelper.download({url: url.replace('https', 'http'), cb: addFilesToArray});
+        });
+      }
+      // res.json({
+      //   status: "SUCCESS",
+      //   message: `${entityName} creado exitosamente.`,
+      //   data: entity,
+      // });
     }
   });
 };
+
+function addFilesToArray(file) {
+  console.log('addFilesToArray() || file:', file);
+  arrFotosVehiculos.push(file);
+  if (intFotosVehiculosLength === arrFotosVehiculos.length) {
+
+    let ctx = {
+      "image": arrFotosVehiculos,
+      "caption" : "Hyundai Grandeur 2012",
+      "location" : "Santo Domingo, Dominican Republic",
+      "year": "2012",
+      "brand": "Hyundai",
+      "model": "Grandeur",
+      "show": true
+    }
+
+    publish(ctx);
+  }
+}
+
+function publish(ctx) {
+  console.log('publish() || ctx:', ctx);
+
+  // if (req.body.to === 'instagram') {
+    publicaHelper.instagram(ctx).then((resIG) => {
+      console.log("result resIG:", resIG);
+      result = resIG;
+    }).catch((errIG) => {
+      console.log("result errIG:", errIG);
+      result = resIG;
+    });
+  // }
+
+  // if (req.body.to === 'marketplace') {
+    publicaHelper.marketplace(ctx).then((resMP) => {
+      console.log("result resMP:", resMP);
+      result = resMP;
+    }).catch((errMP) => {
+      console.log("result errMP:", errMP);
+      result = errMP;
+    });
+  // }
+}
 
 exports.update = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

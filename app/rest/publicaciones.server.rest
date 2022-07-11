@@ -5,7 +5,8 @@ content-type: application/json
 
 {
   "to" : "instagram",
-  "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png",
+  "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/file.png",
+  "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "show": true
@@ -18,6 +19,7 @@ content-type: application/json
 {
   "to" : "instagram",
   "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
+  "url": "https://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "show": true
@@ -30,6 +32,7 @@ content-type: application/json
 {
   "to" : "marketplace",
   "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png",
+  "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "year": "2012",
@@ -45,6 +48,7 @@ content-type: application/json
 {
   "to" : "marketplace",
   "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
+  "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "year": "2012",
