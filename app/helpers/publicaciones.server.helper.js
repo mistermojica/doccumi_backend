@@ -191,14 +191,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("comparainfo@gmail.com");
+            await element.type("rafaelgarciaweb@gmail.com");
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "comparainfo@gmail.com");
+            }, "rafaelgarciaweb@gmail.com");
           }
       }
       {
@@ -215,14 +215,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("facebook@$!#2423OM");
+            await element.type("Romg2413");
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "facebook@$!#2423OM");
+            }, "Romg2413");
           }
       }
       {
@@ -456,6 +456,8 @@ exports.marketplace = function(ctx) {
           // const element = await targetPage.$('input[type="file"]');
           // await element.uploadFile(filepath);
           const element = await waitForSelectors([[".pq6dq46d.q676j6op"]], targetPage, { timeout, visible: true });
+          // await page.waitForXPath("//span[contains(text(),'Agregar fotos')]");
+          // const element = await waitForSelectors([['aria/Agregar fotos[role="button"]']], targetPage, { timeout, visible: true });
           // console.log("element", element);
           const [fileChooser] = await Promise.all([
             targetPage.waitForFileChooser(),
@@ -466,7 +468,17 @@ exports.marketplace = function(ctx) {
       }
       {
           const targetPage = page;
-          const element = await waitForSelectors([[".s1i5eluu.qypqp5cg"]], targetPage, { timeout, visible: true });
+          // let element = "";
+          // targetPage.querySelector("span").forEach(elem => {
+          //   if (elem.textContent.includes("Seguiente")) {
+          //     element = elem;
+          //   }
+          // });
+          // const element = await waitForSelectors([["//span[contains(text(),'Siguiente')]"]], targetPage, { timeout, visible: true });
+          await page.waitForXPath("//span[contains(text(),'Siguiente')]");
+          const element = await waitForSelectors([['aria/Siguiente[role="button"]']], targetPage, { timeout, visible: true });
+          // console.log("element:", element);
+          // const element = await waitForSelectors([[".s1i5eluu.qypqp5cg"]], targetPage, { timeout, visible: true });
           console.log("VEHICULO REVISADO");
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 66.421875, y: 7} });

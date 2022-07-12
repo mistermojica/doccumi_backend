@@ -119,13 +119,13 @@ function publish(ctx) {
   console.log('publish() || ctx:', ctx);
 
   // if (req.body.to === 'instagram') {
-    publicaHelper.instagram(ctx).then((resIG) => {
-      console.log("result resIG:", resIG);
-      result = resIG;
-    }).catch((errIG) => {
-      console.log("result errIG:", errIG);
-      result = resIG;
-    });
+    // publicaHelper.instagram(ctx).then((resIG) => {
+    //   console.log("result resIG:", resIG);
+    //   result = resIG;
+    // }).catch((errIG) => {
+    //   console.log("result errIG:", errIG);
+    //   result = resIG;
+    // });
   // }
 
   // if (req.body.to === 'marketplace') {
