@@ -87,11 +87,11 @@ exports.create = function (req, res, next) {
           publicaHelper.download({url: url.replace('https', 'http'), cb: addFilesToArray});
         });
       }
-      // res.json({
-      //   status: "SUCCESS",
-      //   message: `${entityName} creado exitosamente.`,
-      //   data: entity,
-      // });
+      res.json({
+        status: "SUCCESS",
+        message: `${entityName} creado exitosamente.`,
+        data: entity,
+      });
     }
   });
 };
