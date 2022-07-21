@@ -176,7 +176,7 @@ function generaPDF(ctx){
                 campos: ctx.campos
             }
 
-            console.log("ctxdoc:", ctxdoc);
+            // console.log("ctxdoc:", ctxdoc);
 
             let promesa = procesaDocumento(ctxdoc)
             .then((resPD) => {
@@ -220,9 +220,22 @@ function procesaDocumento(ctx){
         campos.forEach((campo) => {
             let placeholder = '{' + campo.camNombre + '}';
             let buscador = new RegExp(placeholder, 'g');
-            let reemplazo = vehiculo[campo.camCampo] || cliente[campo.camCampo];
+            let reemplazo = "";
+            if (['vehFotoMatricula', 'cliFotoCedula'].includes(campo.camCampo)) {
+                let fotos = vehiculo[campo.camCampo] || cliente[campo.camCampo];
+                if (Array.isArray(fotos) && fotos.length > 1) {
+                    fotos.forEach(foto => {
+                        reemplazo = reemplazo + `<img src="${foto}" width="200px" style="margin: 2px;">`;
+                    });
+                } else {
+                    reemplazo = `<img width="300px" src="${fotos[0]}">`;
+                }
+            } else {
+                reemplazo = vehiculo[campo.camCampo] || cliente[campo.camCampo];
+            }
             plantilla = plantilla.replace(buscador, reemplazo);
         });
+        console.log("plantilla D:", plantilla);
 
         pdf.create(plantilla, configpdf).toFile('./public/'.concat(ctx.documento.docTipoDocumento).concat(".pdf"), function(err, res) {
             if (err){
