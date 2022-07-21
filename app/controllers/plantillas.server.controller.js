@@ -1,5 +1,6 @@
 var mofac = require("../../config/ModelFactory");
 var db = mofac("documi");
+var strMgr = require("../utils/strManager");
 var entityName = "Plantilla(s)";
 var _ = require("underscore");
 
@@ -130,7 +131,7 @@ exports.duplicate = function (req, res, next) {
           data: {},
         });
       } else {
-        let bodyEntity = e2o(entitydb);
+        let bodyEntity = strMgr.e2o(entitydb);
         delete bodyEntity._id;
         bodyEntity.plaNombre = bodyEntity.plaNombre + " - (DUPLICADO)";
         let newEntity = new db.Plantillas(bodyEntity);
