@@ -221,14 +221,14 @@ function procesaDocumento(ctx){
             let placeholder = '{' + campo.camNombre + '}';
             let buscador = new RegExp(placeholder, 'g');
             let reemplazo = "";
-            if (['vehFotoMatricula', 'cliFotoCedula'].includes(campo.camCampo)) {
+            if (['vehFotoMatricula', 'vehFotos', 'cliFotoCedula'].includes(campo.camCampo)) {
                 let fotos = vehiculo[campo.camCampo] || cliente[campo.camCampo];
                 if (Array.isArray(fotos) && fotos.length > 1) {
                     fotos.forEach(foto => {
                         reemplazo = reemplazo + `<img src="${foto}" width="200px" style="margin: 2px;">`;
                     });
                 } else {
-                    reemplazo = `<img width="300px" src="${fotos[0]}">`;
+                    reemplazo = `<img width="400px" src="${fotos[0]}">`;
                 }
             } else {
                 reemplazo = vehiculo[campo.camCampo] || cliente[campo.camCampo];

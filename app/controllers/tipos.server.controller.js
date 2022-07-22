@@ -122,8 +122,8 @@ exports.findByModel = function(req, res, next) {
     db.Tipos.
     find({tipModelo: req.params.modelo}).
     select("-__v").
-    where("estado").ne("borrado").
-    sort("tipOrden").
+    where("tipEstado").ne("borrado").
+    sort("tipNombre").
     populate({
         path: "_estado_", 
         select: "codigo nombre -_id",
