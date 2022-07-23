@@ -208,11 +208,11 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Clientes.find({})
-  // db.Clientes.find({ cliDueno: req.params.dueno })
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Clientes.find({cliDueno: dueno})
     .select("-__v")
-    .where("plaEstado")
-    .ne("borrado")
+    .where("plaEstado").ne("borrado")
     .sort({ orden: 1 })
     .lean()
     .populate({

@@ -3,11 +3,12 @@ const validator = require('validator');
 let Schema = mongoose.Schema;
 
 var DocumentosSchema = new Schema({
-    docCliente                  : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
-    docVehiculo                 : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
-    docPlantilla                : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
-    docNombre                   : {type: String, default: "", index: true},
+    docCliente                  : {type: mongoose.Schema.ObjectId, required: true, default: null, index: true},
+    docVehiculo                 : {type: mongoose.Schema.ObjectId, required: true, default: null, index: true},
+    docPlantilla                : {type: mongoose.Schema.ObjectId, required: true, default: null, index: true},
+    docTipoId                   : {type: mongoose.Schema.ObjectId, required: true, default: null, index: true},
     docTipoDocumento            : {type: String, default: "", required: true, index: true},
+    docNombre                   : {type: String, default: "", index: true},
     docContenido                : {type: String, default: ""},
     docEstado                   : {type: String, default: "activo", index: true},
     docFechaCreacion            : {type: Date, default: Date.now, index: true},

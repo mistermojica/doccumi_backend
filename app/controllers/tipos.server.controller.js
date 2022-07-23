@@ -2,6 +2,7 @@ var mofac = require('../../config/ModelFactory');
 var db = mofac("documi");
 var entityName = "Tipos(s)";
 var _ = require('underscore');
+const strMgr = require("../utils/strManager");
 
 exports.list = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -130,6 +131,37 @@ exports.findByModel = function(req, res, next) {
         match: {isActive: true}
     }).
     exec(function(err, data) {
+        if (err) {
+            console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
+            res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
+        }
+        else {
+            res.json({status: "SUCCESS", message: `${entityName} encontrado exitosamente.`, data: data});
+        }
+    });
+};
+
+exports.findByModeloDueno = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    
+    const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+    const query = {tipModelo: req.params.modelo, $or:[{"tipDueno": dueno}, {"tipDueno": null}]}
+
+    db.Tipos.
+    find(query).
+    select("-__v").
+    where("tipEstado").ne("borrado").
+    sort("tipNombre").
+    populate({
+        path: "_estado_", 
+        select: "codigo nombre -_id",
+        match: {isActive: true}
+    }).
+    exec(function(err, data) {
+        strMgr.mlCL("data:", data);
+
         if (err) {
             console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
             res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});

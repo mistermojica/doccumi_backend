@@ -15,6 +15,7 @@ var ClientesSchema = new Schema({
         //     }
         // }
     },
+    cliDueno               : {type: mongoose.Schema.ObjectId, default: null, index: true},
     cliNombreCompleto      : {type: String, default: "", required: true},
     cliTelefono            : {type: String, default: "", required: true},
     cliCorreoElectronico   : {type: String, default: "", required: true},

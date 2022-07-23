@@ -5,11 +5,12 @@ let Schema = mongoose.Schema;
 var PlantillasSchema = new Schema(
   {
     plaNombre: { type: String, default: "", required: true, index: true },
-    plaTipoDocumento: {
-      type: String,
-      default: "",
+    plaTipoDocumento: { type: String, default: "", required: true },
+    plaTipoId: {
+      type: mongoose.Schema.ObjectId,
+      default: null,
       required: true,
-      index: true,
+      index: true
     },
     plaDueno: { type: mongoose.Schema.ObjectId, default: "", index: true },
     plaContenido: { type: String, default: "", required: true },

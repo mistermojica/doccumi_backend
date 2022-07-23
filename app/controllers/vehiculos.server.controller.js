@@ -6,6 +6,7 @@ let mapEstadoVehiculos = new Map();
 let mapVariants = new Map();
 let intFotosVehiculosLength = 0;
 let arrFotosVehiculos = [];
+const strMgr = require("../utils/strManager");
 
 mapEstadoVehiculos.set("venta", {
   tipo: "success",
@@ -397,11 +398,11 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Vehiculos.find({})
-  // db.Vehiculos.find({ vehDueno: req.params.dueno })
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Vehiculos.find({vehDueno: dueno})
     .select("-__v")
-    .where("plaEstado")
-    .ne("borrado")
+    .where("plaEstado").ne("borrado")
     .sort({ orden: 1 })
     .lean()
     .populate({

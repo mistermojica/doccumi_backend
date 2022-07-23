@@ -261,8 +261,7 @@ exports.findByTipo = function (req, res, next) {
 
   db.Plantillas.find({ plaTipoDocumento: req.params.tipo })
     .select("-__v -plaContenido")
-    .where("plaEstado")
-    .equals("activo")
+    .where("plaEstado").equals("activo")
     .populate({
       path: "_estado_",
       select: "codigo nombre -_id",
@@ -271,6 +270,42 @@ exports.findByTipo = function (req, res, next) {
     .exec(function (err, data) {
       if (err) {
         console.log(__filename + " >> .findByTipo: " + JSON.stringify(err));
+        res.json({
+          status: "FAILED",
+          message: `Error al obtener la ${entityName}.`,
+          data: {},
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: `${entityName} encontrado exitosamente.`,
+          data: data,
+        });
+      }
+    });
+};
+
+exports.findByIdTipo = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  strMgr.mlCL('findByIdTipo() || { plaTipoId: req.params.tipoid }:', { plaTipoId: req.params.tipoid });
+
+  db.Plantillas.find({ plaTipoId: req.params.tipoid })
+    .select("-__v -plaContenido")
+    .where("plaEstado").equals("activo")
+    // .populate({
+    //   path: "_estado_",
+    //   select: "codigo nombre -_id",
+    //   match: { isActive: true },
+    // })
+    .exec(function (err, data) {
+      strMgr.mlCL('findByIdTipo() || data:', data);
+      if (err) {
+        console.log(__filename + " >> .findByIdTipo: " + JSON.stringify(err));
         res.json({
           status: "FAILED",
           message: `Error al obtener la ${entityName}.`,

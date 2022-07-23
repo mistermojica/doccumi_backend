@@ -10,7 +10,8 @@ var VehiculosSchema = new Schema({
         default: "", 
         index: true
     },
-    vehChasis               : {type: String, default: "", required: true, unique: [true, "Esta chasis ya existe!"],},
+    vehChasis               : {type: String, default: "", required: true, unique: [true, "Esta chasis ya existe!"]},
+    vehDueno                : {type: mongoose.Schema.ObjectId, default: null, index: true},
     vehStatusVehiculo       : {type: String, default: "", index: true, required: true},
     vehTipoEmision          : {type: String, default: "", index: true, required: true},
     vehTipoVehiculo         : {type: String, default: "", index: true, required: true},

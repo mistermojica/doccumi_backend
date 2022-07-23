@@ -2,6 +2,7 @@ var mofac = require("../../config/ModelFactory");
 var db = mofac("documi");
 var entityName = "Campo(s)";
 var _ = require("underscore");
+const strMgr = require("../utils/strManager");
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -176,8 +177,8 @@ exports.findByDueno = function (req, res, next) {
 
   let dueno = req.params.dueno === "null" ? null : req.params.dueno;
 
-  db.Campos.find({})
-  // db.Campos.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
+  // db.Campos.find({})
+  db.Campos.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
     .select("-__v")
     .where("camEstado")
     .ne("borrado")
@@ -188,6 +189,7 @@ exports.findByDueno = function (req, res, next) {
       match: { isActive: true },
     })
     .exec(function (err, data) {
+      strMgr.mlCL("findByDueno() || data:", data);
       if (err) {
         console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
         res.json({

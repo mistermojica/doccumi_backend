@@ -3,6 +3,7 @@ const validator = require('validator');
 let Schema = mongoose.Schema;
 
 var TiposSchema = new Schema({
+    tipDueno                    : {type: mongoose.Schema.ObjectId, default: null, index: true},
     tipCodigo                   : {type: String, default: "", required: true, index: true, unique: true},
     tipNombre                   : {type: String, default: "", required: true, index: true},
     tipModelo                   : {type: String, default: "", required: true, index: true},

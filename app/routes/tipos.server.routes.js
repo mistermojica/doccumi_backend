@@ -5,6 +5,7 @@ module.exports = function(app) {
     app.route('/tipos/create').post(tipos.create);
     app.route('/tipos/find/:id').get(tipos.findById);
     app.route('/tipos/bymodel/:modelo').get(tipos.findByModel);
+    app.route('/tipos/bymodelodueno/:modelo/:dueno').get(tipos.findByModeloDueno);
     app.route('/tipos/listpop').get(tipos.listpop);
     app.route('/tipos/update').post(tipos.update);
     app.route('/tipos/delete/:_id').get(tipos.delete);
