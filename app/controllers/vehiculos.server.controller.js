@@ -297,11 +297,11 @@ exports.dashboard = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("req.params", req.params);
-
   // db.Vehiculos.find({})
-  db.Vehiculos
-    .find({})
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Vehiculos.find({vehDueno: dueno})
+  // db.Vehiculos.find({})
     .select("-__v")
     // .where('vehDueno').eq(req.params.dueno)
     .where("estado")

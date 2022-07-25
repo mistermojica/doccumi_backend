@@ -292,8 +292,6 @@ exports.findByIdTipo = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  strMgr.mlCL('findByIdTipo() || { plaTipoId: req.params.tipoid }:', { plaTipoId: req.params.tipoid });
-
   db.Plantillas.find({ plaTipoId: req.params.tipoid })
     .select("-__v -plaContenido")
     .where("plaEstado").equals("activo")
@@ -328,8 +326,9 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Plantillas.find({})
-  // db.Plantillas.find({ plaDueno: req.params.dueno })
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Plantillas.find({plaDueno: dueno})
     .select("-__v")
     .where("plaEstado")
     .ne("borrado")
