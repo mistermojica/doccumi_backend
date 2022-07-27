@@ -82,10 +82,15 @@ exports.create = function (req, res, next) {
         data: err,
       });
     } else {
-      if (req.body.vehFotoMatricula.length > 0) {
-        intFotosVehiculosLength = req.body.vehFotoMatricula.length;
-        req.body.vehFotoMatricula.forEach(url => {
-          publicaHelper.download({url: url.replace('https', 'http'), cb: addFilesToArray});
+      if (req.body.vehFotos.length > 0) {
+        intFotosVehiculosLength = req.body.vehFotos.length;
+        req.body.vehFotos.forEach(url => {
+          // ESTA LINEA HABILITA AL SERVICIO A PUBLICAR LAS FOTOS EN EL MARKETPLACE.
+          // FUE DESHABILITADA PARA EVITAR QUE HAGA LA PUBLICACION AL MOMENTO DE LA
+          // CREACION DEL VEHICULO. EN SU DEFECTO SE IMPLEMENTARÁ UN BOTÓN EN LA LISTA
+          // DE VEHICULOS PARA PUBLICAR DESDE AHI.
+          //
+          // publicaHelper.download({url: url.replace('https', 'http'), cb: addFilesToArray});
         });
       }
       res.json({
