@@ -216,7 +216,8 @@ exports.update = function (req, res, next) {
       } else {
         entitydb.usuario = req.body.usuario;
         if (req.body.contrasena !== ''){
-          entitydb.contrasena = cdkencmgr.encryptsha(req.body.contrasena);
+          // entitydb.contrasena = cdkencmgr.encryptsha(req.body.contrasena);
+          entitydb.contrasena = req.body.contrasena;
         }
         entitydb.nombre = req.body.nombre;
         entitydb.telefono = req.body.telefono;
