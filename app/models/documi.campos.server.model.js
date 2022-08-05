@@ -16,6 +16,7 @@ var CamposSchema = new Schema(
     camCampo: { type: String, default: "", required: true, index: true },
     camDueno: { type: mongoose.Schema.ObjectId, default: "", index: true },
     camOrden: { type: Number, default: 0, required: true, index: true },
+    camTipo: { type: String, default: "privado", index: true },
     camEstado: { type: String, default: "activo", index: true },
     camFechaCreacion: { type: Date, default: Date.now, index: true },
     camFechaModificacion: { type: Date, default: Date.now, index: true },

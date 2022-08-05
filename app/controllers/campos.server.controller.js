@@ -177,8 +177,45 @@ exports.findByDueno = function (req, res, next) {
 
   let dueno = req.params.dueno === "null" ? null : req.params.dueno;
 
-  // db.Campos.find({})
-  db.Campos.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
+  db.Campos.find({ $or: [{ camDueno: dueno }, { camTipo: 'publico' }] })
+    .select("-__v")
+    .where("camEstado")
+    .ne("borrado")
+    .sort("camOrden")
+    .populate({
+      path: "_estado_",
+      select: "codigo nombre -_id",
+      match: { isActive: true },
+    })
+    .exec(function (err, data) {
+      strMgr.mlCL("findByDueno() || data:", data);
+      if (err) {
+        console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
+        res.json({
+          status: "FAILED",
+          message: `Error al obtener el ${entityName}.`,
+          data: {},
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: `${entityName} encontrado exitosamente.`,
+          data: data,
+        });
+      }
+    });
+};
+
+exports.findByDuenoPrivado = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  let dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Campos.find({ $and: [{ camDueno: dueno }, { camTipo: 'privado' }] })
     .select("-__v")
     .where("camEstado")
     .ne("borrado")
