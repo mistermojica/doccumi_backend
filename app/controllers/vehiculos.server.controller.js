@@ -166,20 +166,10 @@ exports.update = function (req, res, next) {
           data: {},
         });
       } else {
-        entitydb.vehNoRegistroPlaca   = req.body.vehNoRegistroPlaca;
-        entitydb.vehChasis            = req.body.vehChasis;
-        entitydb.vehStatusVehiculo    = req.body.vehStatusVehiculo;
-        entitydb.vehTipoEmision       = req.body.vehTipoEmision;
-        entitydb.vehTipoVehiculo      = req.body.vehTipoVehiculo;
-        entitydb.vehAnoFabricacion    = req.body.vehAnoFabricacion;
-        entitydb.vehMarca             = req.body.vehMarca;
-        entitydb.vehModelo            = req.body.vehModelo;
-        entitydb.vehColor             = req.body.vehColor;
-        entitydb.vehPrecio            = req.body.vehPrecio;
-        entitydb.vehCosto             = req.body.vehCosto;
-        entitydb.vehFotoMatricula     = req.body.vehFotoMatricula;
-        entitydb.vehFotos             = req.body.vehFotos;
-        entitydb.vehEstado            = req.body.vehEstado;
+        _.each(req.body, function (value, key) {
+          console.log(key, value);
+          entitydb[key] = req.body[key];
+        });
         entitydb.vehFechaModificacion = new Date();
         entitydb.save(function (err) {
           if (err) {

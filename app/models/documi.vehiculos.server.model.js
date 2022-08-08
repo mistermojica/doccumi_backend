@@ -23,6 +23,7 @@ var VehiculosSchema = new Schema({
     vehCosto                : {type: Number, default: "", index: true, required: true},
     vehFotoMatricula        : {type: Array, default: [], required: false},
     vehFotos                : {type: Array, default: [], required: false},
+    vehCamposAdicionales    : {type: Array, default: [], required: false},
     vehEstado               : {type: String, default: "pendiente", index: true},
     vehFechaCreacion        : {type: Date, default: Date.now, index: true},
     vehFechaModificacion    : {type: Date, default: Date.now, index: true}

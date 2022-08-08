@@ -87,9 +87,7 @@ exports.update = function (req, res, next) {
           console.log(key, value);
           entitydb[key] = req.body[key];
         });
-
         entitydb.plaFechaModificacion = new Date();
-
         entitydb.save(function (err) {
           if (err) {
             console.log(__filename + " >> .update: " + JSON.stringify(err));
