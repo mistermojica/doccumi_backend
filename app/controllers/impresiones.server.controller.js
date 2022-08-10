@@ -142,12 +142,14 @@ function getCampos(ctx){
 
     let promesa = new Promise((resolve, reject) => {
 
-        db.Campos.
-        find({}).
-        where('camEmpresa').equals(null).
-        select("-__v").
-        where("plaEstado").ne("borrado").
-        exec(function(err, data) {
+        let dueno = ctx.impDueno === "null" ? null : ctx.impDueno;
+
+        db.Campos.find({ $or: [{ camDueno: dueno }, { camTipo: 'publico' }] })
+        .select("-__v")
+        .where("camEstado")
+        .ne("borrado")
+        .sort("camOrden")
+        .exec(function(err, data) {
             if (err) {
                 console.log(__filename + ' >> .getCampos: ' + JSON.stringify(err));
                 reject({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
@@ -216,11 +218,18 @@ function procesaDocumento(ctx){
         let cliente = ctx.cliente;
         let vehiculo = ctx.vehiculo;
         let campos = ctx.campos;
+        let campoAdicionalesV = new Map(vehiculo.vehCamposAdicionales.map(campo => {
+            return [campo.name.replace('doccumi_cf_', ''), campo.value];
+        }));
+        let camposAdicionalesC = new Map(cliente.cliCamposAdicionales.map(campo => {
+            return [campo.name.replace('doccumi_cf_', ''), campo.value];
+        }));
 
         campos.forEach((campo) => {
             let placeholder = '{' + campo.camNombre + '}';
             let buscador = new RegExp(placeholder, 'g');
             let reemplazo = "";
+            
             if (['vehFotoMatricula', 'vehFotos', 'cliFotoCedula'].includes(campo.camCampo)) {
                 let fotos = vehiculo[campo.camCampo] || cliente[campo.camCampo];
                 if (Array.isArray(fotos) && fotos.length > 1) {
@@ -230,12 +239,14 @@ function procesaDocumento(ctx){
                 } else {
                     reemplazo = `<img width="400px" src="${fotos[0]}">`;
                 }
+            } else if (campoAdicionalesV.get(campo.camCampo) || camposAdicionalesC.get(campo.camCampo)) {
+                reemplazo = campoAdicionalesV.get(campo.camCampo) || camposAdicionalesC.get(campo.camCampo);
             } else {
                 reemplazo = vehiculo[campo.camCampo] || cliente[campo.camCampo];
             }
             plantilla = plantilla.replace(buscador, reemplazo);
         });
-        console.log("plantilla D:", plantilla);
+        // console.log("plantilla D:", plantilla);
 
         pdf.create(plantilla, configpdf).toFile('./public/'.concat(ctx.documento.docTipoDocumento).concat(".pdf"), function(err, res) {
             if (err){

@@ -7,6 +7,7 @@ let mapVariants = new Map();
 let intFotosVehiculosLength = 0;
 let arrFotosVehiculos = [];
 const strMgr = require("../utils/strManager");
+var _ = require('underscore');
 
 mapEstadoVehiculos.set("venta", {
   tipo: "success",
