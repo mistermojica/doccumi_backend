@@ -116,6 +116,44 @@ exports.findById = function(req, res, next) {
     });
 };
 
+exports.findByDueno = function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+  
+    let dueno = req.params.dueno === "null" ? null : req.params.dueno;
+  
+    db.Tipos.find({ $or: [{ tipDueno: dueno }] })
+      .select("-__v")
+      .where("tipEstado")
+      .ne("borrado")
+      .sort("tipOrden")
+      .populate({
+        path: "_estado_",
+        select: "codigo nombre -_id",
+        match: { isActive: true },
+      })
+      .exec(function (err, data) {
+        strMgr.mlCL("findByDueno() || data:", data);
+        if (err) {
+          console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
+          res.json({
+            status: "FAILED",
+            message: `Error al obtener el ${entityName}.`,
+            data: {},
+          });
+        } else {
+          res.json({
+            status: "SUCCESS",
+            message: `${entityName} encontrado exitosamente.`,
+            data: data,
+          });
+        }
+      });
+  };
+
 exports.findByModel = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
