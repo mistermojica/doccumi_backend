@@ -2,16 +2,15 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 let Schema = mongoose.Schema;
 
-var CamposSchema = new Schema(
+var CamposSchema = new Schema (
   {
-    camCodigo: {
+    camCodigo: { type: String, required: true, index: true },
+    camNombre: {
       type: String,
-      default: "",
       required: true,
-      index: true,
-      unique: true,
+      unique: [true, "Este nombre de campo ya existe."],
+      index: true
     },
-    camNombre: { type: String, default: "", required: true, index: true },
     camModelo: { type: String, default: "", required: true, index: true },
     camCampo: { type: String, default: "", required: true, index: true },
     camDueno: { type: mongoose.Schema.ObjectId, default: "", index: true },

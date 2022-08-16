@@ -46,9 +46,13 @@ exports.create = function (req, res, next) {
   entity.save(function (err) {
     if (err) {
       console.log(__filename + " >> .create: " + JSON.stringify(err));
+      let message = `Error en la creación del ${entityName}.`;
+      if (err?.code === 11000 && err?.keyPattern?.camNombre === 1){
+        message = `Este nombre de ${entityName} ya existe.`;
+      }
       res.json({
         status: "FAILED",
-        message: `Error en la creación del ${entityName}.`,
+        message: message,
         data: err,
       });
     } else {

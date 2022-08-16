@@ -214,21 +214,20 @@ exports.update = function (req, res, next) {
           result: {},
         });
       } else {
-        entitydb.usuario = req.body.usuario;
-        if (req.body.contrasena !== ''){
-          // entitydb.contrasena = cdkencmgr.encryptsha(req.body.contrasena);
-          entitydb.contrasena = req.body.contrasena;
-        }
-        entitydb.nombre = req.body.nombre;
-        entitydb.telefono = req.body.telefono;
-        entitydb.whatsapp = req.body.whatsapp;
-        entitydb.email = req.body.email;
-        entitydb.tipo = req.body.tipo;
-        entitydb.estado = req.body.estado;
-        entitydb.puede_admin_ofertas = req.body.puede_admin_ofertas;
-        entitydb.puede_admin_empleados = req.body.puede_admin_Usuarios;
-        entitydb.puede_admin_sucursales = req.body.puede_admin_sucursales;
+        _.each(req.body, function (value, key) {
+          if (key === "contrasena" && value !== ''){
+            // entitydb.contrasena = cdkencmgr.encryptsha(req.body[key]);
+            entitydb[key] = req.body[key];
+          } else {
+            if (key !== "contrasena"){
+              entitydb[key] = req.body[key];
+            }
+          }
+        });
+
         entitydb.fecha_modificacion = new Date();
+
+        console.log({entitydb});
 
         entitydb.save(function (err) {
           if (err) {
