@@ -8,6 +8,8 @@ var UsuarioSchema = new Schema({
     telefono                : {type: String},
     whatsapp                : {type: String},
     email                   : {type: String},
+    foto                    : {type: String},
+    logo                    : {type: String},
     tipo                    : {type: String, index: true},
     nombre_empresa          : {type: String},
     estado                  : {type: String, default: "activo", index: true},
