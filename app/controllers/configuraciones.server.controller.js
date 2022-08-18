@@ -1,27 +1,8 @@
 var mofac = require('../../config/ModelFactory');
 var db = mofac("doccumi");
-var entityName = "Tipos(s)";
+var entityName = "Configuración(es)";
 var _ = require('underscore');
 const strMgr = require("../utils/strManager");
-
-exports.list = function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-    db.Tipos.
-    find({}).
-    where("estado").ne("borrado").
-    exec(function(err, data) {
-        if (err) {
-            console.log(__filename + ' >> .list: ' + JSON.stringify(err));
-            res.json({status: "FAILED", message: `Error en la lista de ${entityName}.`, data: {}});
-        }
-        else {
-            console.log("data:", data);
-            res.json({status: "SUCCESS", message: `Lista de ${entityName} generada exitosamente.`, data: data});
-        }
-    });
-};
 
 exports.create = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -29,7 +10,7 @@ exports.create = function(req, res, next) {
 
     console.log("create() || req.body:", req.body);
 
-    var entity = new db.Tipos(req.body);
+    var entity = new db.Configuraciones(req.body);
     entity.save(function(err) {
         if (err) {
             console.log(__filename + ' >> .create: ' + JSON.stringify(err));
@@ -45,11 +26,9 @@ exports.update = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    console.log("update() || req.body:", req.body);
-
-    db.Tipos.
+    db.Configuraciones.
     findOne({_id: req.body._id}).
-    where("estado").ne("borrado").
+    where("conEstado").ne("borrado").
     exec(function(err, entitydb) {
         if (err) {
             console.log(__filename + ' >> .update: ' + JSON.stringify(err));
@@ -80,7 +59,7 @@ exports.delete = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    db.Tipos.
+    db.Configuraciones.
     deleteOne({_id: req.params._id}, function(err){
         if (err) {
             console.log(__filename + ' >> .delete: ' + JSON.stringify(err));
@@ -96,10 +75,10 @@ exports.findById = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    db.Tipos.
+    db.Configuraciones.
     findOne({_id: req.params.id}).
     select("-__v").
-    where("estado").ne("borrado").
+    where("conEstado").ne("borrado").
     populate({
         path: "_estado_", 
         select: "codigo nombre -_id",
@@ -122,14 +101,13 @@ exports.findByDueno = function (req, res, next) {
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept"
     );
-  
+
     let dueno = req.params.dueno === "null" ? null : req.params.dueno;
-  
-    db.Tipos.find({ $or: [{ tipDueno: dueno }] })
+
+    db.Configuraciones.find({ $or: [{ conDueno: dueno }] })
       .select("-__v")
-      .where("tipEstado")
+      .where("conEstado")
       .ne("borrado")
-      .sort("tipOrden")
       .populate({
         path: "_estado_",
         select: "codigo nombre -_id",
@@ -152,72 +130,16 @@ exports.findByDueno = function (req, res, next) {
           });
         }
       });
-  };
-
-exports.findByModel = function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-    db.Tipos.
-    find({tipModelo: req.params.modelo}).
-    select("-__v").
-    where("tipEstado").ne("borrado").
-    sort("tipNombre").
-    populate({
-        path: "_estado_", 
-        select: "codigo nombre -_id",
-        match: {isActive: true}
-    }).
-    exec(function(err, data) {
-        if (err) {
-            console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
-            res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
-        }
-        else {
-            res.json({status: "SUCCESS", message: `${entityName} encontrado exitosamente.`, data: data});
-        }
-    });
-};
-
-exports.findByModeloDueno = function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    
-    const dueno = req.params.dueno === "null" ? null : req.params.dueno;
-
-    const query = {tipModelo: req.params.modelo, $or:[{"tipDueno": dueno}, {"tipDueno": null}]}
-
-    db.Tipos.
-    find(query).
-    select("-__v").
-    where("tipEstado").ne("borrado").
-    sort("tipNombre").
-    populate({
-        path: "_estado_", 
-        select: "codigo nombre -_id",
-        match: {isActive: true}
-    }).
-    exec(function(err, data) {
-        strMgr.mlCL("data:", data);
-
-        if (err) {
-            console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
-            res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
-        }
-        else {
-            res.json({status: "SUCCESS", message: `${entityName} encontrado exitosamente.`, data: data});
-        }
-    });
 };
 
 exports.listpop = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    db.Tipos.
+    db.Configuraciones.
     find({}).
     select("-__v").
-    where("estado").ne("borrado").
+    where("conEstado").ne("borrado").
     sort({orden: 1}).
     lean().
     populate({

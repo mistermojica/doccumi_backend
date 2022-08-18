@@ -1,10 +1,11 @@
 const HttpStatus = require("http-status-codes");
 const mofac = require("../../config/ModelFactory");
-const db = mofac("documi");
+const db = mofac("doccumi");
 const entityName = "Usuario(s)";
 const cdkencmgr = require("../utils/encryptionManager");
 const jwt = require("jsonwebtoken");
 const _ = require("underscore");
+var strMgr = require("../utils/strManager");
 
 exports.login = function (req, res, next) {
   // res.header("Access-Control-Allow-Origin", "*");
@@ -183,17 +184,60 @@ exports.create = function (req, res, next) {
       res.json({
         success: false,
         message: `Error en la creación de ${entityName}.`,
-        result: {},
+        result: err,
       });
     } else {
-      res.json({
-        success: true,
-        message: `${entityName} se creó exitosamente.`,
-        result: entity,
+      createConfiguraciones({_id: entity._id}).then((resConf) => {
+        console.log({resConf});
+        res.json({
+          success: true,
+          message: `${entityName} se creó exitosamente.`,
+          result: {
+            profile: strMgr.e2o(entity),
+            settings: strMgr.e2o(resConf)
+          }
+        });
+      }).catch((errConf) => {
+        console.log({errConf});
+        res.json({
+          success: false,
+          message: `Error en la creación de ${entityName}.`,
+          result: errConf,
+        });
       });
     }
   });
 };
+
+function createConfiguraciones(ctx) {
+  var promise = new Promise(function (resolve, reject) {
+
+    var ctxSave = {
+      conDueno: ctx._id,
+      conIGUsuario: '',
+      conIGContrasena: '',
+      conFBUsuario: '',
+      conFBContrasena: '',
+      conSCUsuario: '',
+      conSCContrasena: '',
+      conEstado: 'activo'
+    };
+
+    console.log("ctxSave:", ctxSave);
+
+    var entity = new db.Configuraciones(ctxSave);
+    entity.save(function (err) {
+      if (err) {
+        console.log(__filename + " >> .createConfiguraciones: " + JSON.stringify(err));
+        reject(err);
+      } else {
+        resolve(entity);
+      }
+    });
+  });
+
+  return promise;
+}
 
 exports.update = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -374,7 +418,7 @@ exports.profile = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Usuarios.findOne({ _id: req.params._id })
+  db.Usuarios.findOne({_id: req.params._id})
     .select("-__v")
     .where("estado")
     .ne("borrado")
@@ -389,11 +433,11 @@ exports.profile = function (req, res, next) {
     //     select: "-__v",
     //     match: {estado: "activo"}
     // }).
-    .populate({
-      path: "_estado_",
-      select: "codigo nombre",
-      match: { isActive: true },
-    })
+    // .populate({
+    //   path: "_estado_",
+    //   select: "codigo nombre",
+    //   match: { isActive: true },
+    // })
     .exec(function (err, data) {
       if (err) {
         console.log(__filename + " >> .findById: " + JSON.stringify(err));
@@ -403,14 +447,56 @@ exports.profile = function (req, res, next) {
           result: {},
         });
       } else {
-        res.json({
-          success: true,
-          message: `${entityName} se encontró exitosamente.`,
-          result: data,
+        getConfiguraciones({conDueno: req.params._id}).then((resConf) => {
+          console.log({resConf});
+          res.json({
+            success: true,
+            message: `${entityName} se encontró exitosamente.`,
+            result: {
+              profile: strMgr.e2o(data),
+              settings: strMgr.e2o(resConf)
+            }
+          });
+        }).catch((errConf) => {
+          console.log({errConf});
+          res.json({
+            success: false,
+            message: `Error en la búsqueda de ${entityName}.`,
+            result: errConf,
+          });
         });
       }
     });
 };
+
+function getConfiguraciones(ctx) {
+  console.log({ctx});
+
+  var promise = new Promise(function (resolve, reject) {
+
+    db.Configuraciones
+    .findOne({conDueno: ctx.conDueno})
+    .where("conEstado")
+    .ne("borrado")
+    .lean()
+    // .populate({
+    //   path: "_estado_",
+    //   select: "codigo nombre",
+    //   match: { isActive: true },
+    // })
+    .exec(function (err, data) {
+      if (err) {
+        console.log(__filename + " >> .getConfiguraciones: " + JSON.stringify(err));
+        reject(err);
+      } else {
+        console.log(data);
+        resolve(data);
+      }
+    });
+  });
+
+  return promise;
+}
 
 function mlCL(paramMsg, paramData) {
   console.log('\r\n==================');

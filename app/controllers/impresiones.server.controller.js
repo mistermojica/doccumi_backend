@@ -1,5 +1,5 @@
 var mofac = require('../../config/ModelFactory');
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = "Cliente(s)";
 var _ = require('underscore');
 var fs = require('fs');

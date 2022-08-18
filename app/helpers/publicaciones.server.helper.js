@@ -191,14 +191,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("rafaelgarciaweb@gmail.com");
+            await element.type(ctx.conFBUsuario);
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "rafaelgarciaweb@gmail.com");
+            }, ctx.conFBUsuario);
           }
       }
       {
@@ -215,14 +215,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("Romg2413");
+            await element.type(ctx.conFBContrasena);
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "Romg2413");
+            }, ctx.conFBContrasena);
           }
       }
       {
@@ -700,7 +700,7 @@ exports.instagram = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("bitubi.do", { delay: 10 });
+            await element.type(ctx.conIGUsuario, { delay: 10 }); //"bitubi.do"
             console.log('Entrada usuario 1');
           } else {
             await element.focus();
@@ -708,7 +708,7 @@ exports.instagram = function(ctx) {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "bitubi.do");
+            }, ctx.conIGUsuario); //"bitubi.do"
             console.log('Entrada usuario 2');
           }
       }
@@ -726,7 +726,7 @@ exports.instagram = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("btb@$!#2423OM", { delay: 20 });
+            await element.type(ctx.conIGContrasena, { delay: 20 }); //"btb@$!#2423OM"
             console.log('Entrada contraseña 1');
 
           } else {
@@ -735,7 +735,7 @@ exports.instagram = function(ctx) {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "btb@$!#2423OM");
+            }, ctx.conIGContrasena); //"btb@$!#2423OM"
             console.log('Entrada contraseña 2');
           }
       }

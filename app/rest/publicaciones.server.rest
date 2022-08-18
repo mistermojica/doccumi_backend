@@ -1,9 +1,11 @@
+@dueno = 627efe3b8a55c158e669107b
 
 ###
 POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
 {
+  "dueno": "{{dueno}}",
   "to" : "instagram",
   "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/file.png",
   "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
@@ -17,6 +19,7 @@ POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
 {
+  "dueno": "{{dueno}}",
   "to" : "instagram",
   "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
   "url": "https://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
@@ -30,6 +33,7 @@ POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
 {
+  "dueno": "{{dueno}}",
   "to" : "marketplace",
   "image": "/Users/omarmojica/Proyectos/documi/backend/public/uploads/circulo.png",
   "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",
@@ -46,6 +50,7 @@ POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
 {
+  "dueno": "{{dueno}}",
   "to" : "marketplace",
   "image": "/Users/omarmojica/proyectos/documi/documibackend/public/uploads/circulo.png",
   "url": "http://res.cloudinary.com/omarmojica/image/upload/v1657338810/documi/isbaf1btjqqsjtdfh815.png",

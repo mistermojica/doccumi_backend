@@ -1,5 +1,5 @@
 var mofac = require("../../config/ModelFactory");
-var db = mofac("documi");
+var db = mofac("doccumi");
 const publicaHelper = require("../helpers/publicaciones.server.helper");
 var entityName = "Vehículo(s)";
 let mapEstadoVehiculos = new Map();

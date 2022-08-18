@@ -1,7 +1,7 @@
 var StatusCodes = require('http-status-codes').StatusCodes;
 var strMgr = require("../utils/strManager");
 var mofac = require('../../config/ModelFactory');
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = 'Rol';
 
 exports._ROMG = function(value) {

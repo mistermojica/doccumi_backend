@@ -6,6 +6,7 @@ var PublicacionesSchema = new Schema({
     pubCliente                  : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
     pubVehiculo                 : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
     pubPlantilla                : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
+    pubDueno                    : {type: mongoose.Schema.ObjectId, required: true, default: "", index: true},
     pubNombre                   : {type: String, default: "", index: true},
     pubTipoDocumento            : {type: String, default: "", required: true, index: true},
     pubContenido                : {type: String, default: ""},

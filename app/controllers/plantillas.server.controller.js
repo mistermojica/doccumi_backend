@@ -1,5 +1,5 @@
 var mofac = require("../../config/ModelFactory");
-var db = mofac("documi");
+var db = mofac("doccumi");
 var strMgr = require("../utils/strManager");
 var entityName = "Plantilla(s)";
 var _ = require("underscore");

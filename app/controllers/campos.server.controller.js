@@ -1,5 +1,5 @@
 var mofac = require("../../config/ModelFactory");
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = "Campo(s)";
 var _ = require("underscore");
 const strMgr = require("../utils/strManager");
