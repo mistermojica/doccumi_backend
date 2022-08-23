@@ -899,13 +899,13 @@ exports.download = function (ctx) {
   let fileName = downPath.concat(ext);
   console.log('download() || fileName:', fileName);
   var file = fs.createWriteStream(fileName);
-  http.get(ctx.url, function(response) {
+  http.get(ctx.url, (response) => {
     response.pipe(file);
-    file.on('finish', function() {
+    file.on('finish', () => {
       file.close();  // close() is async, call cb after close completes.
       ctx.cb(fileName);
     });
-  }).on('error', function(err) { // Handle errors
+  }).on('error', (err) => { // Handle errors
     fs.unlink(dest); // Delete the file async. (But we don't check the result)
     console.log('err.message:', err.message);
   });
