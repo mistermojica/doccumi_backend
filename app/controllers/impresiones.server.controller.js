@@ -319,6 +319,12 @@ function creaArchivo(ctx){
 
     let promesa = new Promise((resolve, reject) => {
 
+        try {
+            
+        } catch (error) {
+            
+        }
+
         let data = "This is a file containing a collection"
             + " of programming languages.\n"
             + "1. C\n2. C++\n3. Python";
@@ -326,7 +332,8 @@ function creaArchivo(ctx){
         fs.writeFileSync("public/programming.txt", data);
         console.log("File written successfully\n");
         console.log("The written has the following contents:");
-        console.log(fs.readFileSync("programming.txt", "utf8"));
+        console.log(fs.readFileSync("public/programming.txt", "utf8"));
+        console.log("END The written has the following contents:");
 
 
         if (ctx.tipo_documento === 'pdf') {
