@@ -17,7 +17,7 @@ exports.create = function(req, res, next) {
 
     console.log("req.body:", req.body);
 
-    urlserver = req.headers.host;
+    urlserver = req.headers.host.replace('443', '');
 
     let ctx = {tipos: req.body.impTipos};
 
@@ -228,7 +228,7 @@ function procesaDocumento(ctx){
             let placeholder = '{' + campo.camNombre + '}';
             let buscador = new RegExp(placeholder, 'g');
             let reemplazo = "";
-            
+
             if (['vehFotoMatricula', 'vehFotos', 'cliFotoCedula'].includes(campo.camCampo)) {
                 let fotos = vehiculo[campo.camCampo] || cliente[campo.camCampo];
                 if (Array.isArray(fotos) && fotos.length > 1) {
@@ -266,7 +266,7 @@ function procesaDocumento(ctx){
                 return errCA;
             });
             arrDocsPromesas.push(creaPDFPromise);
-        } 
+        }
 
         if (ctx.tipos.includes('docx')) {
             ctx.tipo_documento = 'docx';
@@ -319,25 +319,8 @@ function creaArchivo(ctx){
 
     let promesa = new Promise((resolve, reject) => {
 
-        try {
-            
-        } catch (error) {
-            
-        }
-
-        let data = "This is a file containing a collection"
-            + " of programming languages.\n"
-            + "1. C\n2. C++\n3. Python";
-  
-        fs.writeFileSync("public/programming.txt", data);
-        console.log("File written successfully\n");
-        console.log("The written has the following contents:");
-        console.log(fs.readFileSync("public/programming.txt", "utf8"));
-        console.log("END The written has the following contents:");
-
-
         if (ctx.tipo_documento === 'pdf') {
-            
+
             const filePath = './public/'.concat(ctx.documento.docTipoDocumento).concat('_').concat(uuidCode).concat(".pdf");
 
             pdf.create(ctx.plantilla, ctx.configpdf).toFile(filePath, function(err, res) {

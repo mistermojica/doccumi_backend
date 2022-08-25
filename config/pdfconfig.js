@@ -37,7 +37,7 @@ var config = {
   // },
 
   // Rendering options
-  "base": "file://Users/omarmojica/Proyectos/documi/backend/public/", // Base path that's used to load files (images, css, js) when they aren't referenced using a host
+  "base": "file:///home/ec2-user/doccumi/backend/public/", // Base path that's used to load files (images, css, js) when they aren't referenced using a host
 
   // Zooming option, can be used to scale images if `options.type` is not pdf
   "zoomFactor": "1", // default is 1
@@ -47,7 +47,8 @@ var config = {
   "quality": "75",         // only used for types png & jpeg
 
   // Script options
-  // "phantomPath": "./node_modules/phantom/bin/phantom.js", // PhantomJS binary which should get downloaded automatically
+  //"phantomPath": "./node_modules/phantom/bin/phantom.js", // PhantomJS binary which should get downloaded automatically
+  "phantomPath": "./node_modules/phantomjs-prebuilt/bin/phantomjs", // PhantomJS binary which should get downloaded automatically
   "phantomArgs": [], // array of strings used as phantomjs args e.g. ["--ignore-ssl-errors=yes"]
   "localUrlAccess": true, // Prevent local file:// access by passing '--local-url-access=false' to phantomjs
                             // For security reasons you should keep the default value if you render arbritary html/js.
