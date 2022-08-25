@@ -1,12 +1,12 @@
 module.exports = {
     apps : [{
-      //name: 'CDV_HTTP_SERVER',
+      name: 'BACKEND',
       script: 'server.js',
-      //watch: '.'
-      watch: ["server", "client"],
+      watch: 'app',
+      // watch: ["app"],
       // Delay between restart
       watch_delay: 1000,
-      ignore_watch : ["node_modules", "public"],
+      ignore_watch : ["node_modules", "public", ".git"],
       watch_options: {
         "followSymlinks": false
       }
