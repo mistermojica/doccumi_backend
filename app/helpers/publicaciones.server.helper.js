@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer'); // v13.0.0 or later
-const { reject } = require('underscore');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
@@ -894,7 +893,8 @@ function delay(time) {
 }
 
 exports.download = function (ctx) {
-  let downPath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/' + new Date().getMilliseconds() ;
+  // let downPath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/' + new Date().getMilliseconds() ;
+  let downPath = '/home/ec2-user/doccumi/backend/public/uploads/' + new Date().getMilliseconds() ;
   let ext = path.extname(ctx.url);
   let fileName = downPath.concat(ext);
   console.log('download() || fileName:', fileName);

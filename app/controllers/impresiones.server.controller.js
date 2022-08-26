@@ -8,6 +8,7 @@ const HTMLtoDOCX = require('html-to-docx');
 const configpdf = require("../../config/pdfconfig")();
 const imageToBase64 = require('image-to-base64');
 const { v4: uuidv4 } = require('uuid');
+var HtmlDocx = require('html-docx-js');
 
 let urlserver = "";
 
@@ -231,16 +232,48 @@ function procesaDocumento(ctx){
 
             if (['vehFotoMatricula', 'vehFotos', 'cliFotoCedula'].includes(campo.camCampo)) {
                 let fotos = vehiculo[campo.camCampo] || cliente[campo.camCampo];
+                let fotoWidth = '';
+                switch (campo.camCampo) {
+                    case 'vehFotoMatricula':
+                        fotoWidth = '500px';
+                        break;
+                    case 'vehFotos':
+                        fotoWidth = '200px';
+                        break;
+                    case 'cliFotoCedula':
+                        fotoWidth = '300px';
+                        break;
+                    default:
+                        fotoWidth = '200px';
+                        break;
+                }
+
                 if (Array.isArray(fotos) && fotos.length > 1) {
+                    // reemplazo = '<style>img {width: 100px;} table {border: 3px solid white;}</style><table><tr>';
+                    // let colcounter = 0;
                     fotos.forEach(foto => {
                         // (async () => {
                             // const foto64 = await getImageBase64(foto);
                         // })();
-                        reemplazo = reemplazo + `<img src="${foto}" width="200px" style="margin: 2px;">`;
+                        // if (colcounter < 2){
+                            reemplazo = reemplazo + `<img width="${fotoWidth}" src="${foto}" style="margin: 3px;">`;
+                            // if (ctx.tipos.includes('docx')) {
+                            //     reemplazo = reemplazo + `<br><br><br><br>`;
+                            // }
+                            // reemplazo = reemplazo + `<td><img width="200px" src="${foto}" style="width:200px"></td>`;
+                            // colcounter = colcounter + 1;
+                        // } else {
+                            // reemplazo = reemplazo + '</tr><tr>';
+                            // colcounter = 0;s
+                        // }
                     });
+                    // reemplazo = reemplazo + '</tr></table>';
+                    // console.log({reemplazo});
                 } else {
-                    reemplazo = `<img width="400px" src="${fotos[0]}">`;
+                    // console.log('fotos[0]:', fotos[0]);
+                    reemplazo = `<img width="${fotoWidth}" src="${fotos[0]}" style="margin: 3px;">`;
                 }
+                // console.log('reemplazo:', reemplazo);
             } else if (campoAdicionalesV.get(campo.camCampo) || camposAdicionalesC.get(campo.camCampo)) {
                 reemplazo = campoAdicionalesV.get(campo.camCampo) || camposAdicionalesC.get(campo.camCampo);
             } else {
@@ -313,6 +346,13 @@ function getImageBase64(imgSrc) {
     });
 }
 
+function base64_encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
+}
+
 function creaArchivo(ctx){
 
     const uuidCode = uuidv4();
@@ -340,24 +380,36 @@ function creaArchivo(ctx){
 
             const filePath = './public/'.concat(ctx.documento.docTipoDocumento).concat('_').concat(uuidCode).concat(".docx");
 
-            (async () => {
-                const fileBuffer = await HTMLtoDOCX(ctx.plantilla, null, {
-                    table: { row: { cantSplit: true } },
-                    footer: true,
-                    pageNumber: true
-                });
+            var docx = HtmlDocx.asBlob(ctx.plantilla);
+            fs.writeFile(filePath, docx, function(error) {
+                if (error) {
+                    console.log(filePath, 'Docx file creation failed', error);
+                    reject(error);
+                } else {
+                    const resOut = filePath.split("/public/");
+                    const docUrl = "http://".concat(urlserver).concat("/").concat(resOut[1]);
+                    resolve({"tipo": ctx.tipo.tipNombre, "documento": docUrl, "doc": ctx.tipo_documento});
+                }
+            });
 
-                fs.writeFile(filePath, fileBuffer, (error) => {
-                    if (error) {
-                        console.log(filePath, 'Docx file creation failed', error);
-                        reject(error);
-                    } else {
-                        const resOut = filePath.split("/public/");
-                        const docUrl = "http://".concat(urlserver).concat("/").concat(resOut[1]);
-                        resolve({"tipo": ctx.tipo.tipNombre, "documento": docUrl, "doc": ctx.tipo_documento});
-                    }
-                });
-            })();   
+            // (async () => {
+            //     const fileBuffer = await HTMLtoDOCX(ctx.plantilla, null, {
+            //         table: { row: { cantSplit: true } },
+            //         footer: true,
+            //         pageNumber: true
+            //     });
+
+            //     fs.writeFile(filePath, fileBuffer, (error) => {
+            //         if (error) {
+            //             console.log(filePath, 'Docx file creation failed', error);
+            //             reject(error);
+            //         } else {
+            //             const resOut = filePath.split("/public/");
+            //             const docUrl = "http://".concat(urlserver).concat("/").concat(resOut[1]);
+            //             resolve({"tipo": ctx.tipo.tipNombre, "documento": docUrl, "doc": ctx.tipo_documento});
+            //         }
+            //     });
+            // })();   
         }
     });
 
