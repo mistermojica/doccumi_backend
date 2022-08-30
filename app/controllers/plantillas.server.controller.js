@@ -1,8 +1,10 @@
-var mofac = require("../../config/ModelFactory");
-var db = mofac("doccumi");
-var strMgr = require("../utils/strManager");
-var entityName = "Plantilla(s)";
-var _ = require("underscore");
+const mofac = require("../../config/ModelFactory");
+const db = mofac("doccumi");
+const strMgr = require("../utils/strManager");
+const entityName = "Plantilla(s)";
+const _ = require("underscore");
+const mammoth = require("mammoth");
+const formidable = require('formidable');
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -41,7 +43,7 @@ exports.create = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("create() || req.body:", req.body);
+  // console.log("create() || req.body:", req.body);
 
   var entity = new db.Plantillas(req.body);
   entity.save(function (err) {
@@ -69,7 +71,7 @@ exports.update = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("update() || req.body:", req.body);
+  // console.log("update() || req.body:", req.body);
 
   db.Plantillas.findOne({ _id: req.body._id })
     .where("plaEstado")
@@ -115,7 +117,7 @@ exports.duplicate = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("update() || req.body:", req.body);
+  // console.log("update() || req.body:", req.body);
 
   db.Plantillas.findOne({ _id: req.params._id })
     .where("plaEstado")
@@ -387,3 +389,67 @@ exports.findByDueno = function (req, res, next) {
       }
     });
 };
+
+exports.import = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  console.log("import() || req.body:", req.body);
+
+  const form = formidable({ multiples: false });
+
+  form.parse(req, (error, fields, files) => {
+
+    console.log({files});
+
+    if (error) {
+      res.json({
+        status: "FAILED",
+        message: `Error en la importación de la ${entityName}. E1`,
+        data: error,
+      });
+    } else {
+      mammoth.convertToHtml({path: files[0].path})
+      .then((result) => {
+        console.log("html:", result.value);
+        console.log("messages:", result.messages);
+        res.json({
+          status: "SUCCESS",
+          message: `La importación de la ${entityName} fue exitosa.`,
+          data: result.value,
+        });
+      })
+      .catch((error) => {
+        console.log("error:", error);
+        res.json({
+          status: "FAILED",
+          message: `Error en la importación de la ${entityName}. E2`,
+          data: error,
+        });
+      })
+      .done();
+    }
+  });
+
+  // var entity = new db.Plantillas(req.body);
+  // entity.save(function (err) {
+  //   if (err) {
+  //     console.log(__filename + " >> .create: " + JSON.stringify(err));
+  //     res.json({
+  //       status: "FAILED",
+  //       message: `Error en la creación del ${entityName}.`,
+  //       data: err,
+  //     });
+  //   } else {
+  //     res.json({
+  //       status: "SUCCESS",
+  //       message: `${entityName} creado exitosamente.`,
+  //       data: entity,
+  //     });
+  //   }
+  // });
+};
+

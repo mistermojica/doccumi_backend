@@ -15,6 +15,7 @@
   "license": "Private",
   "homepage": "https://www.ocrblockchain.com",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.159.0",
     "@aws-sdk/client-textract": "^3.52.0",
     "@sendgrid/mail": "^7.4.4",
     "ably": "^1.2.1",
@@ -52,6 +53,7 @@
     "json2csv": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mammoth": "^1.4.21",
     "merge-images": "^2.0.0",
     "mime": "^2.4.6",
     "moment": "^2.15.1",

@@ -5,7 +5,8 @@ const entityName = "Usuario(s)";
 const cdkencmgr = require("../utils/encryptionManager");
 const jwt = require("jsonwebtoken");
 const _ = require("underscore");
-var strMgr = require("../utils/strManager");
+const strMgr = require("../utils/strManager");
+const comMgr = require("../helpers/comunicaciones.server.helper");
 
 exports.login = function (req, res, next) {
   // res.header("Access-Control-Allow-Origin", "*");
@@ -470,7 +471,7 @@ exports.profile = function (req, res, next) {
 };
 
 function getConfiguraciones(ctx) {
-  console.log({ctx});
+  // console.log({ctx});
 
   var promise = new Promise(function (resolve, reject) {
 
@@ -497,6 +498,102 @@ function getConfiguraciones(ctx) {
 
   return promise;
 }
+
+exports.recoverpassword = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  db.Usuarios.findOne({email: req.body.email})
+  .select("nombre email")
+  .where("estado")
+  .ne("borrado")
+  .lean()
+  .exec(function (err, data) {
+    if (err) {
+      console.log(__filename + " >> .recoverpassword: " + JSON.stringify(err));
+      res.json({
+        status: 'NOTFOUND',
+        message: `No reconocemos este correo electrónico.`,
+        result: {},
+      });
+    } else {
+      var token = {
+        code: jwt.sign({ payload: cdkencmgr.encrypt({id: data._id}) }, process.env.TOKEN_SECRET, {
+          expiresIn: "1h",
+        }),
+        expires: { time: 1, type: "h" },
+      };
+
+      console.log({token});
+
+      const ctx = {
+        to: data?.nombre.split(" ")[0] + " <" + data.email + ">",
+        subject: "Restablecer tu contraseña",
+        content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 18px;">Hola ${data?.nombre.split(" ")[0]},<br><br>Hemos recibido una solicitud para restablecer tu contraseña.<br><br>Si no realizaste la solicitud, simplemente ignora este mensaje. De lo contrario, puedes restablecer tu contraseña.<br><br><a style="background-color: #007bff; border-color: #007bff; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 18px; padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; margin: 4px 2px; border-radius: 4px;" href="${req.headers.origin}/recover-password?id=${token.code}">Restablecer tu contraseña</a><br><br>Gracias,<br><br>El equipo de DOCCUMI</p>`
+      }
+
+      comMgr.sendEmail(ctx);
+
+      res.json({
+        status: "SUCCESS",
+        message: `Hemos enviado un enlace para restablecer tu contraseña a la dirección ${req.body.email}`,
+        data: {}
+      });
+    }
+  });
+}
+
+exports.resetpassword = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  console.log("body:", req.body);
+
+  jwt.verify(req.body.id, process.env.TOKEN_SECRET, (err, data) => {
+    if (err) {
+      res.status(HttpStatus.FORBIDDEN).json({status: 'ERROR', message: 'El enlace de recuperación de contraseña es incorrecto o está vencido.', code: "999", data: {}});
+    } else {
+      const payload = cdkencmgr.decrypt(data.payload);
+
+      db.Usuarios.findOne({_id: payload.id})
+      .where("estado")
+      .ne("borrado")
+      .exec(function (err, entitydb) {
+        if (err) {
+          console.log(__filename + " >> .resetpassword: " + JSON.stringify(err));
+          res.json({
+            status: 'ERROR',
+            message: `Este ${entityName} no existe.`,
+            result: {},
+          });
+        } else {
+          // entitydb.contrasena = cdkencmgr.encryptsha(req.body.password);
+          entitydb.contrasena = req.body.password;
+          entitydb.fecha_modificacion = new Date();
+          entitydb.save(function (err) {
+            if (err) {
+              console.log(__filename + " >> .resetpassword: " + JSON.stringify(err));
+              res.json({
+                status: "ERROR",
+                message: `Error en la recuperación de la contraseña, por favor contacte al administrador.`,
+                result: {},
+              });
+            } else {
+              res.json({
+                status: "SUCCESS",
+                message: `Contraseña restaurada exitosamente.`,
+                result: entitydb,
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
 
 function mlCL(paramMsg, paramData) {
   console.log('\r\n==================');
