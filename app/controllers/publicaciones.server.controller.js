@@ -1,5 +1,5 @@
 const mofac = require("../../config/ModelFactory");
-const db = mofac("documi");
+const db = mofac("doccumi");
 const entityName = "Publicación(s)";
 const _ = require("underscore");
 const publicaHelper = require("../helpers/publicaciones.server.helper");
@@ -13,28 +13,95 @@ exports.publish = function (req, res, next) {
 
   let result;
 
-  if (req.body.to === 'instagram') {
-    publicaHelper.instagram(req.body).then((resIG) => {
-      console.log("result resIG:", resIG);
-      result = resIG;
-    }).catch((errIG) => {
-      console.log("result errIG:", errIG);
-      result = resIG;
-    });
-  }
+  console.log('req.body:', req.body);
 
-  if (req.body.to === 'marketplace') {
-    publicaHelper.marketplace(req.body).then((resMP) => {
-      console.log("result resMP:", resMP);
-      result = resMP;
-    }).catch((errMP) => {
-      console.log("result errMP:", errMP);
-      result = errMP;
-    });
-  }
+  let ctx = {
+    url: req.body.url,
+    image: req.body.image,
+    cb: console.log
+  };
 
+  publicaHelper.download(ctx);
+
+  getConfiguraciones({conDueno: req.body.dueno})
+  .then((resConf) => {
+    console.log({resConf});
+    const ctxConfig = {...req.body, ...resConf};
+    console.log({ctxConfig});
+
+    if (req.body.to === 'instagram') {
+      publicaHelper.instagram(ctxConfig)
+      .then((resIG) => {
+        console.log("result resIG:", resIG);
+        res.json({
+          success: false,
+          message: `${entityName} en Instagram realizada de forma exitosa.`,
+          result: resIG,
+        });
+      })
+      .catch((errIG) => {
+        console.log("result errIG:", errIG);
+        res.json({
+          success: false,
+          message: `Error inesperado al realizar ${entityName} en Instagram.`,
+          result: errIG,
+        });
+      });
+    }
   
+    if (req.body.to === 'marketplace') {
+      publicaHelper.marketplace(ctxConfig)
+      .then((resMP) => {
+        console.log("result resMP:", resMP);
+        res.json({
+          success: false,
+          message: `${entityName} en Market Place realizada de forma exitosa.`,
+          result: resMP,
+        });
+      })
+      .catch((errMP) => {
+        console.log("result errMP:", errMP);
+        res.json({
+          success: false,
+          message: `Error inesperado al realizar ${entityName} en Market Place.`,
+          result: errMP,
+        });
+      });
+    }
+  })
+  .catch((errConf) => {
+    console.log({errConf});
+    res.json({
+      success: false,
+      message: `Error inesperado al realizar ${entityName}.`,
+      result: errConf,
+    });
+  });
 };
+
+function getConfiguraciones(ctx) {
+  console.log({ctx});
+
+  var promise = new Promise(function (resolve, reject) {
+
+    db.Configuraciones
+    .findOne({conDueno: ctx.conDueno})
+    .where("conEstado")
+    .ne("borrado")
+    .lean()
+    .exec(function (err, data) {
+      if (err) {
+        console.log(__filename + " >> .getConfiguraciones: " + JSON.stringify(err));
+        reject(err);
+      } else {
+        console.log(data);
+        resolve(data);
+      }
+    });
+  });
+
+  return promise;
+}
 
 function respuesta(res, ctx){
   res.json({
@@ -52,7 +119,7 @@ exports.list = function (req, res, next) {
   );
 
   db.Publicaciones.find({})
-    .where("camEstado")
+    .where("pubEstado")
     .ne("borrado")
     .exec(function (err, data) {
       if (err) {
@@ -111,7 +178,7 @@ exports.update = function (req, res, next) {
   console.log("update() || req.body:", req.body);
 
   db.Publicaciones.findOne({ _id: req.body._id })
-    .where("camEstado")
+    .where("pubEstado")
     .ne("borrado")
     .exec(function (err, entitydb) {
       if (err) {
@@ -127,7 +194,7 @@ exports.update = function (req, res, next) {
           entitydb[key] = req.body[key];
         });
 
-        entitydb.plaFechaModificacion = new Date();
+        entitydb.pubFechaModificacion = new Date();
 
         entitydb.save(function (err) {
           if (err) {
@@ -183,7 +250,7 @@ exports.findById = function (req, res, next) {
 
   db.Publicaciones.findOne({ _id: req.params.id })
     .select("-__v")
-    .where("camEstado")
+    .where("pubEstado")
     .ne("borrado")
     .populate({
       path: "_estado_",
@@ -217,12 +284,12 @@ exports.findByDueno = function (req, res, next) {
 
   let dueno = req.params.dueno === "null" ? null : req.params.dueno;
 
-  db.Publicaciones.find({})
-  // db.Publicaciones.find({ $or: [{ camDueno: dueno }, { camDueno: null }] })
+  // db.Publicaciones.find({})
+  db.Publicaciones.find({ $or: [{ pubDueno: dueno }, { pubDueno: null }] })
     .select("-__v")
-    .where("camEstado")
+    .where("pubEstado")
     .ne("borrado")
-    .sort("camOrden")
+    .sort("pubOrden")
     .populate({
       path: "_estado_",
       select: "codigo nombre -_id",
@@ -255,7 +322,7 @@ exports.listpop = function (req, res, next) {
 
   db.Publicaciones.find({})
     .select("-__v")
-    .where("camEstado")
+    .where("pubEstado")
     .ne("borrado")
     .sort({ orden: 1 })
     .lean()

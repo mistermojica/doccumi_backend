@@ -42,3 +42,12 @@ content-type: application/json
     "email": "cecilianazaretlopez@gmail.com",
     "password": "Cnla1324"
 }
+
+###
+POST http://localhost:8000/usuarios/recoverpassword
+content-type: application/json
+
+{
+    "nombre": "Cecilia Nazaret López 2",
+    "email": "cecilianazaretlopez@gmail.com"
+}

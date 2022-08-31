@@ -9,6 +9,7 @@ var express 	    = require('./config/express');
 var app           = express();
 var bodyParser    = require("body-parser");
 var morgan 		    = require('morgan');
+var fs 		        = require('fs');
 // const { encryptsha, decrypt, encrypt } = require('./app/utils/encryptionManager');
 
 module.exports = app;

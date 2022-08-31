@@ -1,5 +1,5 @@
 var mofac = require("../../config/ModelFactory");
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = "Cliente(s)";
 var _ = require("underscore");
 
@@ -85,7 +85,6 @@ exports.update = function (req, res, next) {
           console.log(key, value);
           entitydb[key] = req.body[key];
         });
-
         entitydb.cliFechaModificacion = new Date();
         entitydb.save(function (err) {
           if (err) {
@@ -208,11 +207,11 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Clientes.find({})
-  // db.Clientes.find({ cliDueno: req.params.dueno })
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Clientes.find({cliDueno: dueno})
     .select("-__v")
-    .where("plaEstado")
-    .ne("borrado")
+    .where("plaEstado").ne("borrado")
     .sort({ orden: 1 })
     .lean()
     .populate({

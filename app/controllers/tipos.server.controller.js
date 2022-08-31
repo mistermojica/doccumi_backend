@@ -1,7 +1,8 @@
 var mofac = require('../../config/ModelFactory');
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = "Tipos(s)";
 var _ = require('underscore');
+const strMgr = require("../utils/strManager");
 
 exports.list = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -115,6 +116,44 @@ exports.findById = function(req, res, next) {
     });
 };
 
+exports.findByDueno = function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+  
+    let dueno = req.params.dueno === "null" ? null : req.params.dueno;
+  
+    db.Tipos.find({ $or: [{ tipDueno: dueno }] })
+      .select("-__v")
+      .where("tipEstado")
+      .ne("borrado")
+      .sort("tipOrden")
+      .populate({
+        path: "_estado_",
+        select: "codigo nombre -_id",
+        match: { isActive: true },
+      })
+      .exec(function (err, data) {
+        strMgr.mlCL("findByDueno() || data:", data);
+        if (err) {
+          console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
+          res.json({
+            status: "FAILED",
+            message: `Error al obtener el ${entityName}.`,
+            data: {},
+          });
+        } else {
+          res.json({
+            status: "SUCCESS",
+            message: `${entityName} encontrado exitosamente.`,
+            data: data,
+          });
+        }
+      });
+  };
+
 exports.findByModel = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -122,14 +161,45 @@ exports.findByModel = function(req, res, next) {
     db.Tipos.
     find({tipModelo: req.params.modelo}).
     select("-__v").
-    where("estado").ne("borrado").
-    sort("tipOrden").
+    where("tipEstado").ne("borrado").
+    sort("tipNombre").
     populate({
         path: "_estado_", 
         select: "codigo nombre -_id",
         match: {isActive: true}
     }).
     exec(function(err, data) {
+        if (err) {
+            console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
+            res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
+        }
+        else {
+            res.json({status: "SUCCESS", message: `${entityName} encontrado exitosamente.`, data: data});
+        }
+    });
+};
+
+exports.findByModeloDueno = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    
+    const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+    const query = {tipModelo: req.params.modelo, $or:[{"tipDueno": dueno}, {"tipDueno": null}]}
+
+    db.Tipos.
+    find(query).
+    select("-__v").
+    where("tipEstado").ne("borrado").
+    sort("tipNombre").
+    populate({
+        path: "_estado_", 
+        select: "codigo nombre -_id",
+        match: {isActive: true}
+    }).
+    exec(function(err, data) {
+        strMgr.mlCL("data:", data);
+
         if (err) {
             console.log(__filename + ' >> .findByModel: ' + JSON.stringify(err));
             res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});

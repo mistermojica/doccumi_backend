@@ -1,8 +1,13 @@
 var mofac = require("../../config/ModelFactory");
-var db = mofac("documi");
+var db = mofac("doccumi");
+const publicaHelper = require("../helpers/publicaciones.server.helper");
 var entityName = "Vehículo(s)";
 let mapEstadoVehiculos = new Map();
 let mapVariants = new Map();
+let intFotosVehiculosLength = 0;
+let arrFotosVehiculos = [];
+const strMgr = require("../utils/strManager");
+var _ = require('underscore');
 
 mapEstadoVehiculos.set("venta", {
   tipo: "success",
@@ -25,9 +30,9 @@ mapEstadoVehiculos.set("taller", {
   larga: "Vehículos en Taller",
 });
 mapEstadoVehiculos.set("activo", {
-  tipo: "success",
+  tipo: "info",
   corta: "Activo",
-  larga: "Vehículos Activos",
+  larga: "Activos",
 });
 
 exports.list = function (req, res, next) {
@@ -78,6 +83,17 @@ exports.create = function (req, res, next) {
         data: err,
       });
     } else {
+      if (req.body.vehFotos.length > 0) {
+        intFotosVehiculosLength = req.body.vehFotos.length;
+        req.body.vehFotos.forEach(url => {
+          // ESTA LINEA HABILITA AL SERVICIO A PUBLICAR LAS FOTOS EN EL MARKETPLACE.
+          // FUE DESHABILITADA PARA EVITAR QUE HAGA LA PUBLICACION AL MOMENTO DE LA
+          // CREACION DEL VEHICULO. EN SU DEFECTO SE IMPLEMENTARÁ UN BOTÓN EN LA LISTA
+          // DE VEHICULOS PARA PUBLICAR DESDE AHI.
+          //
+          // publicaHelper.download({url: url.replace('https', 'http'), cb: addFilesToArray});
+        });
+      }
       res.json({
         status: "SUCCESS",
         message: `${entityName} creado exitosamente.`,
@@ -86,6 +102,49 @@ exports.create = function (req, res, next) {
     }
   });
 };
+
+function addFilesToArray(file) {
+  console.log('addFilesToArray() || file:', file);
+  arrFotosVehiculos.push(file);
+  if (intFotosVehiculosLength === arrFotosVehiculos.length) {
+
+    let ctx = {
+      "image": arrFotosVehiculos,
+      "caption" : "Hyundai Grandeur 2012",
+      "location" : "Santo Domingo, Dominican Republic",
+      "year": "2012",
+      "brand": "Hyundai",
+      "model": "Grandeur",
+      "show": true
+    }
+
+    publish(ctx);
+  }
+}
+
+function publish(ctx) {
+  console.log('publish() || ctx:', ctx);
+
+  // if (req.body.to === 'instagram') {
+    // publicaHelper.instagram(ctx).then((resIG) => {
+    //   console.log("result resIG:", resIG);
+    //   result = resIG;
+    // }).catch((errIG) => {
+    //   console.log("result errIG:", errIG);
+    //   result = resIG;
+    // });
+  // }
+
+  // if (req.body.to === 'marketplace') {
+    publicaHelper.marketplace(ctx).then((resMP) => {
+      console.log("result resMP:", resMP);
+      result = resMP;
+    }).catch((errMP) => {
+      console.log("result errMP:", errMP);
+      result = errMP;
+    });
+  // }
+}
 
 exports.update = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -108,19 +167,10 @@ exports.update = function (req, res, next) {
           data: {},
         });
       } else {
-        entitydb.vehNoRegistroPlaca = req.body.vehNoRegistroPlaca;
-        entitydb.vehChasis = req.body.vehChasis;
-        entitydb.vehStatusVehiculo = req.body.vehStatusVehiculo;
-        entitydb.vehTipoEmision = req.body.vehTipoEmision;
-        entitydb.vehTipoVehiculo = req.body.vehTipoVehiculo;
-        entitydb.vehAnoFabricacion = req.body.vehAnoFabricacion;
-        entitydb.vehMarca = req.body.vehMarca;
-        entitydb.vehModelo = req.body.vehModelo;
-        entitydb.vehColor = req.body.vehColor;
-        entitydb.vehPrecio = req.body.vehPrecio;
-        entitydb.vehCosto = req.body.vehCosto;
-        entitydb.vehFotoMatricula = req.body.vehFotoMatricula;
-        entitydb.vehEstado = req.body.vehEstado;
+        _.each(req.body, function (value, key) {
+          console.log(key, value);
+          entitydb[key] = req.body[key];
+        });
         entitydb.vehFechaModificacion = new Date();
         entitydb.save(function (err) {
           if (err) {
@@ -243,11 +293,11 @@ exports.dashboard = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("req.params", req.params);
-
   // db.Vehiculos.find({})
-  db.Vehiculos
-    .find({})
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Vehiculos.find({vehDueno: dueno})
+  // db.Vehiculos.find({})
     .select("-__v")
     // .where('vehDueno').eq(req.params.dueno)
     .where("estado")
@@ -344,11 +394,11 @@ exports.findByDueno = function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  db.Vehiculos.find({})
-  // db.Vehiculos.find({ vehDueno: req.params.dueno })
+  const dueno = req.params.dueno === "null" ? null : req.params.dueno;
+
+  db.Vehiculos.find({vehDueno: dueno})
     .select("-__v")
-    .where("plaEstado")
-    .ne("borrado")
+    .where("plaEstado").ne("borrado")
     .sort({ orden: 1 })
     .lean()
     .populate({

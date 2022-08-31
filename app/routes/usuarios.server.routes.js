@@ -8,4 +8,6 @@ module.exports = function(app) {
     app.route('/usuarios/update').post(usuarios.update);
     app.route('/usuarios/login').post(usuarios.login);
     app.route('/usuarios/profile/:_id').get(usuarios.profile);
+    app.route('/usuarios/recoverpassword').post(usuarios.recoverpassword);
+    app.route('/usuarios/resetpassword').post(usuarios.resetpassword);
 };

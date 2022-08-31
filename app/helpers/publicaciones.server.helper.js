@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer'); // v13.0.0 or later
-const { reject } = require('underscore');
+const path = require('path');
+const http = require('http');
+const fs = require('fs');
 
 exports.marketplace = function(ctx) {
   var promise = new Promise(function(resolve, reject) {
@@ -188,14 +190,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("comparainfo@gmail.com");
+            await element.type(ctx.conFBUsuario);
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "comparainfo@gmail.com");
+            }, ctx.conFBUsuario);
           }
       }
       {
@@ -212,14 +214,14 @@ exports.marketplace = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("facebook@$!#2423OM");
+            await element.type(ctx.conFBContrasena);
           } else {
             await element.focus();
             await element.evaluate((el, value) => {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "facebook@$!#2423OM");
+            }, ctx.conFBContrasena);
           }
       }
       {
@@ -449,14 +451,33 @@ exports.marketplace = function(ctx) {
       }
       {
           const targetPage = page;
-          const filepath = ctx.image;
-          const element = await targetPage.$('input[type="file"]');
-          await element.uploadFile(filepath);
-          console.log("FOTO CARGADA", filepath);
+          // const filepath = ctx.image;
+          // const element = await targetPage.$('input[type="file"]');
+          // await element.uploadFile(filepath);
+          const element = await waitForSelectors([[".pq6dq46d.q676j6op"]], targetPage, { timeout, visible: true });
+          // await page.waitForXPath("//span[contains(text(),'Agregar fotos')]");
+          // const element = await waitForSelectors([['aria/Agregar fotos[role="button"]']], targetPage, { timeout, visible: true });
+          // console.log("element", element);
+          const [fileChooser] = await Promise.all([
+            targetPage.waitForFileChooser(),
+            element.click()
+          ]);
+          await fileChooser.accept(ctx.image);
+          console.log("FOTO CARGADA", ctx.image);
       }
       {
           const targetPage = page;
-          const element = await waitForSelectors([[".s1i5eluu.qypqp5cg"]], targetPage, { timeout, visible: true });
+          // let element = "";
+          // targetPage.querySelector("span").forEach(elem => {
+          //   if (elem.textContent.includes("Seguiente")) {
+          //     element = elem;
+          //   }
+          // });
+          // const element = await waitForSelectors([["//span[contains(text(),'Siguiente')]"]], targetPage, { timeout, visible: true });
+          await page.waitForXPath("//span[contains(text(),'Siguiente')]");
+          const element = await waitForSelectors([['aria/Siguiente[role="button"]']], targetPage, { timeout, visible: true });
+          // console.log("element:", element);
+          // const element = await waitForSelectors([[".s1i5eluu.qypqp5cg"]], targetPage, { timeout, visible: true });
           console.log("VEHICULO REVISADO");
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 66.421875, y: 7} });
@@ -678,7 +699,7 @@ exports.instagram = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("bitubi.do", { delay: 10 });
+            await element.type(ctx.conIGUsuario, { delay: 10 }); //"bitubi.do"
             console.log('Entrada usuario 1');
           } else {
             await element.focus();
@@ -686,7 +707,7 @@ exports.instagram = function(ctx) {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "bitubi.do");
+            }, ctx.conIGUsuario); //"bitubi.do"
             console.log('Entrada usuario 2');
           }
       }
@@ -704,7 +725,7 @@ exports.instagram = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           const type = await element.evaluate(el => el.type);
           if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
-            await element.type("btb@$!#2423OM", { delay: 20 });
+            await element.type(ctx.conIGContrasena, { delay: 20 }); //"btb@$!#2423OM"
             console.log('Entrada contraseña 1');
 
           } else {
@@ -713,7 +734,7 @@ exports.instagram = function(ctx) {
               el.value = value;
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
-            }, "btb@$!#2423OM");
+            }, ctx.conIGContrasena); //"btb@$!#2423OM"
             console.log('Entrada contraseña 2');
           }
       }
@@ -753,12 +774,22 @@ exports.instagram = function(ctx) {
       }
       {
         const targetPage = page;
-        const filepath = ctx.image;
+        // const filepath = ctx.image;
         // await element.uploadFile(filepath);
-        let fileInputs = await targetPage.$$('input[type="file"]');
-        let input = fileInputs[fileInputs.length - 1];
-        await input.uploadFile(filepath);
-        console.log("FOTO CARGADA NUEVA", filepath);
+        // let fileInputs = await targetPage.$$('input[type="file"]');
+        // let input = fileInputs[fileInputs.length - 1];
+        // console.log("fileInputs:", fileInputs);
+        // console.log("input:", input);
+        // await input.uploadFile(filepath);
+        
+        const element = await waitForSelectors([["aria/Select from computer"],["button._acan._acap._acas"]], targetPage, { timeout, visible: true });
+        const [fileChooser] = await Promise.all([
+          targetPage.waitForFileChooser(),
+          element.click()
+        ]);
+        await fileChooser.accept(ctx.image);
+
+        console.log("FOTO CARGADA NUEVA", ctx.image);
       }
       {
         await page.waitForXPath("//button[contains(text(),'Next')]");
@@ -860,3 +891,22 @@ function delay(time) {
       setTimeout(resolve, time)
   });
 }
+
+exports.download = function (ctx) {
+  // let downPath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/' + new Date().getMilliseconds() ;
+  let downPath = '/home/ec2-user/doccumi/backend/public/uploads/' + new Date().getMilliseconds() ;
+  let ext = path.extname(ctx.url);
+  let fileName = downPath.concat(ext);
+  console.log('download() || fileName:', fileName);
+  var file = fs.createWriteStream(fileName);
+  http.get(ctx.url, (response) => {
+    response.pipe(file);
+    file.on('finish', () => {
+      file.close();  // close() is async, call cb after close completes.
+      ctx.cb(fileName);
+    });
+  }).on('error', (err) => { // Handle errors
+    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+    console.log('err.message:', err.message);
+  });
+};

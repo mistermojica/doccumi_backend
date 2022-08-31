@@ -1,7 +1,7 @@
 {
    "Tenants": {
       "production": {
-         "documi": {
+         "doccumi": {
             "dbConfig":"mongodb+srv://cardoc:Romg2413@cardoccluster0.slugv.mongodb.net/documidb?retryWrites=true&w=majority",
             "dbName":"documidb"
          },
@@ -11,7 +11,7 @@
          }
       },
       "development": {
-         "documi": {
+         "doccumi": {
             "dbConfig":"mongodb://localhost:27017/documidb",
             "dbName":"documidb"
          },

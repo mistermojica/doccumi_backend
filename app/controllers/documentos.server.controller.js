@@ -1,5 +1,5 @@
 var mofac = require('../../config/ModelFactory');
-var db = mofac("documi");
+var db = mofac("doccumi");
 var entityName = "Plantilla(s)";
 var _ = require('underscore');
 
@@ -79,8 +79,6 @@ exports.update = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    console.log("update() || req.body:", req.body);
-
     const {docCliente, docVehiculo, docTipoDocumento} = req.body;
 
     console.log("update() || docCliente:", docCliente);
@@ -100,10 +98,7 @@ exports.update = function(req, res, next) {
             res.json({status: "FAILED", message: `Error al obtener ${entityName}.`, data: {}});
         }
         else {
-            console.log('entitydb 1:', entitydb);
-
             _.each(req.body, function (value, key) {
-                console.log(key, value);
                 entitydb[key] = req.body[key];
             });
 
@@ -114,7 +109,6 @@ exports.update = function(req, res, next) {
                     res.json({status: "FAILED", message: `Error en la actualización de ${entityName}.`, data: {}});
                 }
                 else {
-                    console.log('entitydb 2:', entitydb);
                     res.json({status: "SUCCESS", message: `${entityName} se actualizó exitosamente.`, data: entitydb});
                 }
             });

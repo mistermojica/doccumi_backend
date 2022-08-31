@@ -7,7 +7,7 @@ var fs = require("fs");
 var v = require('voca');
 
 module.exports = function factory(paramTenant) {
-    //mlCL("paramTenant", paramTenant);
+    mlCL("paramTenant", paramTenant);
 
     let tenantObj = 
         typeof config.Tenants[process.env.NODE_ENV][paramTenant] === "undefined" ? 
