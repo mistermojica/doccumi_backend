@@ -8,6 +8,8 @@ const app = express();
 const { resolve } = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const url = require('node:url');
+const querystring = require('node:querystring');
 // Replace if using a different env file or config
 require('dotenv').config({ path: './.env' });
 
@@ -64,9 +66,51 @@ app.use((req, res, next) => {
   }
 });
 
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+  return 1400;
+};
+
 app.get('/', (req, res) => {
   const path = resolve(process.env.STATIC_DIR + '/register.html');
   res.sendFile(path);
+});
+
+app.get('/doccumi-payment-response', async (req, res) => {
+  const myUrl = url.parse(req.originalUrl);
+  res.send(querystring.parse(myUrl.query));
+});
+
+app.post("/create-payment-intent", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  console.log(req.body);
+
+  const { items } = req.body;
+  // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
+  // and attach the PaymentMethod to a new Customer
+  const customer = await stripe.customers.create();
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    customer: customer.id,
+    setup_future_usage: "off_session",
+    amount: calculateOrderAmount(items),
+    currency: "usd",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
 });
 
 app.get('/config', async (req, res) => {

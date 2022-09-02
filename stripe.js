@@ -41,7 +41,7 @@ const chargeCustomer = async (customerId) => {
   }
 };
 
-app.post("/createpaymentintent", async (req, res) => {
+app.post("/create-payment-intent", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
