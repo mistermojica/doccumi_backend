@@ -12,6 +12,7 @@ const url = require('node:url');
 const querystring = require('node:querystring');
 // Replace if using a different env file or config
 require('dotenv').config({ path: './.env' });
+const entities = new Map();
 
 if (
   !process.env.STRIPE_SECRET_KEY ||
@@ -74,11 +75,23 @@ const calculateOrderAmount = (items) => {
 };
 
 app.get('/', (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   const path = resolve(process.env.STATIC_DIR + '/register.html');
   res.sendFile(path);
 });
 
 app.get('/doccumi-payment-response', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   const myUrl = url.parse(req.originalUrl);
   res.send(querystring.parse(myUrl.query));
 });
@@ -114,34 +127,71 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 app.get('/config', async (req, res) => {
+  // app.use(cors());
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
   const prices = await stripe.prices.list({
-    lookup_keys: ['sample_basic', 'sample_premium'],
-    expand: ['data.product']
+    // lookup_keys: ['sample_basic', 'sample_premium'],
+    // expand: ['data.product'],
+    limit: 3
   });
 
-  res.send({
+  entities.set("prices", prices);
+
+  const result = {
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
     prices: prices.data,
-  });
+  };
+
+  console.log({result});
+
+  res.send(result);
 });
 
 app.post('/create-customer', async (req, res) => {
+  // req.headers.append('Access-Control-Allow-Origin', 'http://localhost:8004');
+  // req.headers.append('Access-Control-Allow-Credentials', 'true');
+
+  // res.header("Access-Control-Allow-Origin", "http://localhost:8004");
+  // res.header(
+  //   "Access-Control-Allow-Headers",
+  //   "Origin, X-Requested-With, Content-Type, Accept"
+  // );
+
   // Create a new customer object
   const customer = await stripe.customers.create({
     email: req.body.email,
   });
 
+  entities.set("customerId", customer.id);
+
   // Save the customer.id in your database alongside your user.
   // We're simulating authentication with a cookie.
   res.cookie('customer', customer.id, { maxAge: 900000, httpOnly: true });
+  res.cookie.customer = customer.id;
 
-  res.send({ customer: customer });
+  console.log('cookies:', req.cookies);
+  console.log('customer:', {customer});
+
+  res.send({customer});
 });
 
 app.post('/create-subscription', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   // Simulate authenticated user. In practice this will be the
   // Stripe Customer ID related to the authenticated user.
-  const customerId = req.cookies['customer'];
+  // const customerId = req.cookies['customer'];
+
+  console.log('entities:', Array.from(entities.entries()));
+
+  const customerId = entities.get("customerId");
 
   // Create the subscription
   const priceId = req.body.priceId;
@@ -166,6 +216,12 @@ app.post('/create-subscription', async (req, res) => {
 });
 
 app.get('/invoice-preview', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   const customerId = req.cookies['customer'];
   const priceId = process.env[req.query.newPriceLookupKey.toUpperCase()];
 
@@ -186,6 +242,12 @@ app.get('/invoice-preview', async (req, res) => {
 });
 
 app.post('/cancel-subscription', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   // Cancel the subscription
   try {
     const deletedSubscription = await stripe.subscriptions.del(
@@ -199,6 +261,12 @@ app.post('/cancel-subscription', async (req, res) => {
 });
 
 app.post('/update-subscription', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   try {
     const subscription = await stripe.subscriptions.retrieve(
       req.body.subscriptionId
@@ -219,6 +287,12 @@ app.post('/update-subscription', async (req, res) => {
 });
 
 app.get('/subscriptions', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   // Simulate authenticated user. In practice this will be the
   // Stripe Customer ID related to the authenticated user.
   const customerId = req.cookies['customer'];
@@ -232,10 +306,12 @@ app.get('/subscriptions', async (req, res) => {
   res.json({subscriptions});
 });
 
-app.post(
-  '/webhook',
-  bodyParser.raw({ type: 'application/json' }),
-  async (req, res) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
     // Retrieve the event by verifying the signature using the raw body and secret.
     let event;
 

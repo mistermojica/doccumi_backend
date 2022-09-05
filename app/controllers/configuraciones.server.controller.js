@@ -3,6 +3,14 @@ var db = mofac("doccumi");
 var entityName = "Configuración(es)";
 var _ = require('underscore');
 const strMgr = require("../utils/strManager");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2020-08-27',
+    appInfo: { // For sample support and debugging, not required for production:
+      name: "stripe-samples/subscription-use-cases/fixed-price",
+      version: "0.0.1",
+      url: "https://github.com/stripe-samples/subscription-use-cases/fixed-price"
+    }
+  });
 
 exports.create = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -154,5 +162,29 @@ exports.listpop = function(req, res, next) {
         else {
             res.json({status: "SUCCESS", message: `Lista de ${entityName} generada exitosamente.`, data: data});
         }
+    });
+};
+
+exports.config = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    let prices = [];
+    stripe.prices.list({
+    // lookup_keys: ['sample_basic', 'sample_premium'],
+    // expand: ['data.product'],
+    limit: 3
+    }).then((resPrices) => {
+        prices = resPrices;
+        console.log({resPrices});
+        const result = {
+            publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+            prices: prices.data,
+        };
+        console.log({result});
+        res.send(result);
+    })
+    .catch((error) => {
+        console.error(error)
     });
 };

@@ -6,4 +6,5 @@ module.exports = function(app) {
     app.route('/configuraciones/find/:id').get(configuraciones.findById);
     app.route('/configuraciones/findbydueno/:dueno').get(configuraciones.findByDueno);
     app.route('/configuraciones/update').post(configuraciones.update);
+    app.route('/configuraciones/config').get(configuraciones.config);
 };
