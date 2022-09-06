@@ -299,7 +299,7 @@ app.get('/subscriptions', async (req, res) => {
 
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
-    status: 'all',
+    status: 'active',
     expand: ['data.default_payment_method'],
   });
 
