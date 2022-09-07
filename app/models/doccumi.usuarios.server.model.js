@@ -5,6 +5,7 @@ var UsuarioSchema = new Schema({
     usuario                 : {type: String, index: true},
     contrasena              : {type: String, index: true},
     nombre                  : {type: String, index: true},
+    usuario_stripe          : {type: String, index: true},
     telefono                : {type: String},
     whatsapp                : {type: String},
     email                   : {type: String},

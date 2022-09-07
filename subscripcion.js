@@ -126,9 +126,7 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 });
 
-app.get('/config', async (req, res) => {
-  // app.use(cors());
-
+app.get('/prices', async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
@@ -163,6 +161,7 @@ app.post('/create-customer', async (req, res) => {
   // Create a new customer object
   const customer = await stripe.customers.create({
     email: req.body.email,
+    name: req.body.name,
   });
 
   entities.set("customerId", customer.id);
@@ -191,7 +190,7 @@ app.post('/create-subscription', async (req, res) => {
 
   console.log('entities:', Array.from(entities.entries()));
 
-  const customerId = entities.get("customerId");
+  const customerId = req.body.customerId; //entities.get("customerId");
 
   // Create the subscription
   const priceId = req.body.priceId;
