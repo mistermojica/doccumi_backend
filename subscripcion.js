@@ -132,7 +132,7 @@ app.get('/prices', async (req, res) => {
 
   const prices = await stripe.prices.list({
     // lookup_keys: ['sample_basic', 'sample_premium'],
-    // expand: ['data.product'],
+    expand: ['data.product'],
     limit: 3
   });
 
