@@ -202,6 +202,7 @@ app.post('/create-subscription', async (req, res) => {
 
   // Create the subscription
   const priceId = req.body.priceId;
+  // const payment_method = req.body.paymentMethod;
 
   try {
     const subscription = await stripe.subscriptions.create({
@@ -307,7 +308,7 @@ app.get('/subscriptions', async (req, res) => {
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
     status: 'active',
-    expand: ['data.default_payment_method'],
+    expand: ['data.default_payment_method', 'data.plan.product'],
   });
 
   res.json({subscriptions});
