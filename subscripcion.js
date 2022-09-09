@@ -108,11 +108,14 @@ app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
   // and attach the PaymentMethod to a new Customer
-  const customer = await stripe.customers.create();
+  // const customer = await stripe.customers.create();
+  const customerId = req.cookies['customer'];
+
+  console.log({customerId});
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    customer: customer.id,
+    customer: customerId,
     setup_future_usage: "off_session",
     amount: calculateOrderAmount(items),
     currency: "usd",
@@ -200,27 +203,70 @@ app.post('/create-subscription', async (req, res) => {
 
   const customerId = req.body.customerId; //entities.get("customerId");
 
+  const subscriptions = await stripe.subscriptions.list({
+    customer: req.body.customerId,
+    status: 'active'
+  });
+
   // Create the subscription
   const priceId = req.body.priceId;
   // const payment_method = req.body.paymentMethod;
 
-  try {
-    const subscription = await stripe.subscriptions.create({
-      customer: customerId,
-      items: [{
-        price: priceId,
-      }],
-      payment_behavior: 'default_incomplete',
-      expand: ['latest_invoice.payment_intent'],
-    });
+  if (subscriptions.data.length > 0){
+    try {
+      // subscriptions.data.forEach((subscription) => {
+      //   console.log(subscription.id);
+      //   const deletedSubscription = stripe.subscriptions.del(
+      //     subscription.id
+      //   );
+      //   console.log({deletedSubscription});
+      // });
+      const subscriptionId = subscriptions.data[0].id;
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
+        expand: ['default_payment_method', 'latest_invoice.payment_intent']
+      });
+      console.log({subscription});
+      console.log('payment_intent:', subscription.latest_invoice.payment_intent);
+      stripe.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: false,
+        proration_behavior: 'create_prorations',
+        default_payment_method: subscription.latest_invoice.payment_intent.payment_method,
+        items: [{
+          id: subscription.items.data[0].id,
+          price: priceId,
+        }]
+      });
 
-    res.send({
-      subscriptionId: subscription.id,
-      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-    });
-  } catch (error) {
-    return res.status(400).send({ error: { message: error.message } });
+      res.send({
+        subscriptionId: subscriptionId,
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        message: "Subscripción modificada."
+      });
+    } catch (error) {
+      return res.status(400).send({ error: { message: error.message } });
+    }
+  } else {
+    try {
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{
+          price: priceId,
+        }],
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+      });
+
+      res.send({
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        items: subscription.items.data
+      });
+    } catch (error) {
+      return res.status(400).send({ error: { message: error.message } });
+    }
   }
+
+  
 });
 
 app.get('/invoice-preview', async (req, res) => {
