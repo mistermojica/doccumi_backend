@@ -132,8 +132,11 @@ app.post("/create-payment-intent", async (req, res) => {
   //   },
   // });
 
+  console.log({paymentIntent});
+
   res.send({
     clientSecret: paymentIntent.client_secret,
+    // paymentMethodOptions: paymentIntent.payment_method_options
   });
 });
 
@@ -212,7 +215,31 @@ app.post('/create-subscription', async (req, res) => {
   const priceId = req.body.priceId;
   // const payment_method = req.body.paymentMethod;
 
-  if (subscriptions.data.length > 0){
+  const paymentMethod = await stripe.paymentMethods.create(
+    {
+      type: 'card',
+      card: {
+        number: '4242424242424242',
+        exp_month: 6,
+        exp_year: 2024,
+        cvc: '314',
+      },
+    }
+  );
+
+  const attachPaymentToCustomer = await stripe.paymentMethods.attach(
+    paymentMethod.id,  // <-- your payment method ID collected via Stripe.js
+    { customer: customerId } // <-- your customer id from the request body  
+  ); 
+  
+  const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+    customerId, { // <-- your customer id from the request body
+      invoice_settings: {
+        default_payment_method: paymentMethod.id, // <-- your payment method ID collected via Stripe.js
+      },
+  });
+
+  if (subscriptions.data.length > 0) {
     try {
       // subscriptions.data.forEach((subscription) => {
       //   console.log(subscription.id);
@@ -227,19 +254,26 @@ app.post('/create-subscription', async (req, res) => {
       });
       console.log({subscription});
       console.log('payment_intent:', subscription.latest_invoice.payment_intent);
-      stripe.subscriptions.update(subscriptionId, {
+      const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: false,
         proration_behavior: 'create_prorations',
-        default_payment_method: subscription.latest_invoice.payment_intent.payment_method,
-        items: [{
-          id: subscription.items.data[0].id,
-          price: priceId,
-        }]
+        expand: ['latest_invoice.payment_intent'],
+        payment_settings: {
+          payment_method_types: ['card']
+        },
+        items: [{ id: subscription.items.data[0].id, price: priceId, quantity: 1 }], // <-- plans and prices are compatible Prices is a newer API
+        default_payment_method: paymentMethod.id, // <-- your payment method ID collected via Stripe.js
+        // items: [{
+        //   id: subscription.items.data[0].id,
+        //   price: priceId,
+        // }]
       });
+
+      console.log({updatedSubscription});
 
       res.send({
         subscriptionId: subscriptionId,
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        clientSecret: updatedSubscription.latest_invoice.payment_intent.client_secret,
         message: "Subscripción modificada."
       });
     } catch (error) {
@@ -265,8 +299,6 @@ app.post('/create-subscription', async (req, res) => {
       return res.status(400).send({ error: { message: error.message } });
     }
   }
-
-  
 });
 
 app.get('/invoice-preview', async (req, res) => {
