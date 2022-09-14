@@ -340,6 +340,29 @@ app.get("/list-payment-methods", async (req, res) => {
   }
 });
 
+app.get("/load-customer", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  // List payment methods
+  try {
+    // const customerId = req.body.customerId;
+    // const customerId = req.cookies["customer"];
+    const customerId = 'cus_MO102LWNKL56WZ';
+
+    const customer = await stripe.customers.retrieve(customerId);
+
+    console.log(customer);
+
+    res.send({customer: customer});
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
+});
+
 app.get("/invoice-preview", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
