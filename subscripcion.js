@@ -72,6 +72,7 @@ const calculateOrderAmount = (items) => {
   // Replace this constant with a calculation of the order's amount
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
+  console.log("calculateOrderAmount:", {items});
   return 1400;
 };
 
@@ -110,9 +111,10 @@ app.post("/create-payment-intent", async (req, res) => {
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
   // and attach the PaymentMethod to a new Customer
   // const customer = await stripe.customers.create();
-  const customerId = req.cookies["customer"];
+  // const customerId = req.cookies["customer"];
+  const customerId = "cus_MO102LWNKL56WZ";
 
-  console.log({ customerId });
+  console.log({customerId});
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -133,7 +135,7 @@ app.post("/create-payment-intent", async (req, res) => {
   //   },
   // });
 
-  console.log({ paymentIntent });
+  console.log({paymentIntent});
 
   res.send({
     clientSecret: paymentIntent.client_secret,
@@ -325,7 +327,7 @@ app.get("/list-payment-methods", async (req, res) => {
   try {
     // const customerId = req.body.customerId;
     // const customerId = req.cookies["customer"];
-    const customerId = 'cus_MO102LWNKL56WZ';
+    const customerId = "cus_MO102LWNKL56WZ";
 
     const paymentMethods = await stripe.paymentMethods.list({
       customer: customerId,
@@ -351,13 +353,15 @@ app.get("/load-customer", async (req, res) => {
   try {
     // const customerId = req.body.customerId;
     // const customerId = req.cookies["customer"];
-    const customerId = 'cus_MO102LWNKL56WZ';
+    const customerId = "cus_MO102LWNKL56WZ";
 
-    const customer = await stripe.customers.retrieve(customerId);
+    const customer = await stripe.customers.retrieve(customerId, {
+      // expand: ["default_payment_method"]
+    });
 
-    console.log(customer);
+    console.log('load-customer:', customer.invoice_settings.default_payment_method);
 
-    res.send({customer: customer});
+    res.send({ customer: customer });
   } catch (error) {
     return res.status(400).send({ error: { message: error.message } });
   }
@@ -448,7 +452,7 @@ app.get("/subscriptions", async (req, res) => {
 
   // Simulate authenticated user. In practice this will be the
   // Stripe Customer ID related to the authenticated user.
-  const customerId = 'cus_MO102LWNKL56WZ';
+  const customerId = "cus_MO102LWNKL56WZ";
   console.log({customerId});
 
   const subscriptions = await stripe.subscriptions.list({
