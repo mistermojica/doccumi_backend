@@ -329,14 +329,35 @@ app.get("/list-payment-methods", async (req, res) => {
     // const customerId = req.cookies["customer"];
     const customerId = "cus_MO102LWNKL56WZ";
 
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: customerId,
-      type: "card",
-    });
+    const paymentMethods = await stripe.customers.listPaymentMethods(
+      customerId,
+      {type: "card"}
+    );
 
-    console.log(paymentMethods.data);
+    res.send({ cards: paymentMethods.data });
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
+});
 
-    res.send({ payment_methods: paymentMethods });
+app.post("/delete-payment-method", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  // List payment methods
+  try {
+    const paymentId = req.body.paymentMethodId;
+
+    const paymentMethod = await stripe.paymentMethods.detach(
+      paymentId
+    );
+
+    console.log({paymentMethod});
+
+    res.send({ paymentMethod: paymentMethod });
   } catch (error) {
     return res.status(400).send({ error: { message: error.message } });
   }
