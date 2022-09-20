@@ -1,0 +1,8 @@
+###
+POST http://localhost:8004/create-subscription
+content-type: application/json
+
+{
+    "priceId": "price_1LchTvEkshniE30JSTNGKRo1",
+    "customerId": "cus_MO102LWNKL56WZ"
+}

@@ -73,7 +73,8 @@ const calculateOrderAmount = (items) => {
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
   console.log("calculateOrderAmount:", {items});
-  return 1400;
+  
+  return items.amount;
 };
 
 app.get("/", (req, res) => {
@@ -105,37 +106,32 @@ app.post("/create-payment-intent", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log(req.body);
+  console.log('create-payment-intent:', req.body);
 
-  const { items } = req.body;
+  const {items} = req.body;
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
   // and attach the PaymentMethod to a new Customer
   // const customer = await stripe.customers.create();
   // const customerId = req.cookies["customer"];
-  const customerId = "cus_MO102LWNKL56WZ";
+  const customerId = req.body.customerId;
 
   console.log({customerId});
+
+  const price = await stripe.prices.retrieve(req.body.priceId);
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customerId,
     setup_future_usage: "off_session",
-    amount: calculateOrderAmount(items),
+    amount: price.unit_amount,
     currency: "usd",
     automatic_payment_methods: {
       enabled: true,
     },
   });
 
-  // const paymentIntent = await stripe.paymentIntents.create({
-  //   amount: calculateOrderAmount(items),
-  //   currency: 'usd',
-  //   automatic_payment_methods: {
-  //     enabled: true,
-  //   },
-  // });
-
-  console.log({paymentIntent});
+  // console.log({paymentIntent});
+  console.log(paymentIntent.client_secret);
 
   res.send({
     clientSecret: paymentIntent.client_secret,
@@ -150,6 +146,8 @@ app.get("/prices", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
+  const customerId = "cus_MO102LWNKL56WZ";
+
   const prices = await stripe.prices.list({
     // lookup_keys: ['sample_basic', 'sample_premium'],
     expand: ["data.product"],
@@ -158,12 +156,18 @@ app.get("/prices", async (req, res) => {
 
   entities.set("prices", prices);
 
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    status: "active"
+  });
+
   const result = {
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
     prices: prices.data,
+    currentPriceId: subscriptions?.data[0]?.items?.data[0]?.price?.id
   };
 
-  console.log({ result });
+  console.log({result});
 
   res.send(result);
 });
@@ -208,113 +212,187 @@ app.post("/create-subscription", async (req, res) => {
   // Stripe Customer ID related to the authenticated user.
   // const customerId = req.cookies['customer'];
 
-  // console.log('entities:', Array.from(entities.entries()));
+  console.log('create-subscription:', req.body);
 
   const customerId = req.body.customerId; //entities.get("customerId");
-
-  const subscriptions = await stripe.subscriptions.list({
-    customer: req.body.customerId,
-    status: "active",
-  });
-
-  // Create the subscription
   const priceId = req.body.priceId;
-  // const payment_method = req.body.paymentMethod;
 
-  const paymentMethod = await stripe.paymentMethods.create({
-    type: "card",
-    card: {
-      number: "4242424242424242",
-      exp_month: 6,
-      exp_year: 2024,
-      cvc: "314",
-    },
-  });
+  // const subscriptions = await stripe.subscriptions.list({
+  //   customer: customerId,
+  //   status: "active",
+  // });
 
-  const attachPaymentToCustomer = await stripe.paymentMethods.attach(
-    paymentMethod.id, // <-- your payment method ID collected via Stripe.js
-    { customer: customerId } // <-- your customer id from the request body
-  );
+  const customer = await stripe.customers.retrieve(customerId, {});
 
-  const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
-    customerId,
-    {
-      // <-- your customer id from the request body
-      invoice_settings: {
-        default_payment_method: paymentMethod.id, // <-- your payment method ID collected via Stripe.js
-      },
-    }
-  );
+  const paymentMethodId = customer.invoice_settings.default_payment_method;
+  if (!paymentMethodId){
+    res.send({
+      status: false,
+      message: "Este cliente no tiene un método de pago predeterminado.",
+      result: {},
+    });
+  }
 
-  if (subscriptions.data.length > 0) {
-    try {
-      // subscriptions.data.forEach((subscription) => {
-      //   console.log(subscription.id);
-      //   const deletedSubscription = stripe.subscriptions.del(
-      //     subscription.id
-      //   );
-      //   console.log({deletedSubscription});
-      // });
-      const subscriptionId = subscriptions.data[0].id;
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
-        expand: ["default_payment_method", "latest_invoice.payment_intent"],
-      });
-      // console.log({subscription});
-      // console.log('payment_intent:', subscription.latest_invoice.payment_intent);
-      const updatedSubscription = await stripe.subscriptions.update(
-        subscriptionId,
-        {
-          cancel_at_period_end: false,
-          proration_behavior: "create_prorations",
-          expand: ["latest_invoice.payment_intent"],
-          payment_settings: {
-            payment_method_types: ["card"],
-          },
-          items: [
-            { id: subscription.items.data[0].id, price: priceId, quantity: 1 },
-          ], // <-- plans and prices are compatible Prices is a newer API
-          default_payment_method: paymentMethod.id, // <-- your payment method ID collected via Stripe.js
-          // items: [{
-          //   id: subscription.items.data[0].id,
-          //   price: priceId,
-          // }]
-        }
-      );
+  // PARA CREAR NUEVO METODO DE PAGO
+  // const paymentMethod = await stripe.paymentMethods.create({
+  //   type: "card",
+  //   card: {
+  //     number: "4242424242424242",
+  //     exp_month: 6,
+  //     exp_year: 2024,
+  //     cvc: "314",
+  //   },
+  // });
 
-      // console.log({updatedSubscription});
+  // paymentMethodId = paymentMethod.id;
 
-      res.send({
-        subscriptionId: subscriptionId,
-        clientSecret:
-          updatedSubscription.latest_invoice.payment_intent.client_secret,
-        message: "Subscripción modificada.",
-      });
-    } catch (error) {
-      return res.status(400).send({ error: { message: error.message } });
-    }
-  } else {
+  // ESTO SOLO DEBO HACERLO AL CREAR UN CLIENTE O SI UN CLIENTE NO TIENE UN METODO DE PAGO POR DEFECTO
+  // const attachPaymentToCustomer = await stripe.paymentMethods.attach(
+  //   paymentMethodId, // <-- your payment method ID collected via Stripe.js
+  //   { customer: customerId } // <-- your customer id from the request body
+  // );
+
+  // ESTO SOLO DEBO HACERLO AL CREAR UN CLIENTE O SI UN CLIENTE NO TIENE UN METODO DE PAGO POR DEFECTO
+  // const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+  //   customerId,
+  //   {
+  //     // <-- your customer id from the request body
+  //     invoice_settings: {
+  //       default_payment_method: paymentMethodId, // <-- your payment method ID collected via Stripe.js
+  //     },
+  //   }
+  // );
+
+  // if (subscriptions.data.length > 0) {
+    
+  // } else {
     try {
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [
           {
             price: priceId,
-          },
+            quantity: 1
+          }
         ],
         payment_behavior: "default_incomplete",
-        expand: ["latest_invoice.payment_intent"],
+        expand: ["latest_invoice.payment_intent"]
       });
 
       res.send({
         subscriptionId: subscription.id,
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,
         items: subscription.items.data,
+        subscription: subscription,
       });
     } catch (error) {
-      return res.status(400).send({ error: { message: error.message } });
+      return res.status(400).send({ code: '222', error: { message: error.message } });
     }
-  }
+  // }
 });
+
+app.post("/update-subscription", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  try {
+    const priceId = req.body.priceId;
+    const subscriptionId = req.body.subscriptionId; //subscriptions.data[0].id;
+    const customerId = req.body.customerId; //entities.get("customerId");
+
+    calculateProration(req.body).then((res) => {
+      console.log('calculateProration:', {res});
+    }).catch((err) => {
+      console.log('calculateProration:', {err});
+    });
+
+    const customer = await stripe.customers.retrieve(customerId, {});
+    const paymentMethodId = customer.invoice_settings.default_payment_method;
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ["default_payment_method", "latest_invoice.payment_intent"],
+    });
+    const updatedSubscription = await stripe.subscriptions.update(
+      subscriptionId,
+      {
+        cancel_at_period_end: false,
+        proration_behavior: "create_prorations",
+        expand: ["latest_invoice.payment_intent"],
+        payment_settings: {
+          payment_method_types: ["card"]
+        },
+        items: [
+          {
+            id: subscription.items.data[0].id,
+            price: priceId,
+            quantity: 1
+          }
+        ],
+        default_payment_method: paymentMethodId
+      }
+    );
+
+    res.send({
+      subscriptionId: subscriptionId,
+      clientSecret: updatedSubscription.latest_invoice.payment_intent.client_secret,
+      message: "Subscripción modificada."
+    });
+  } catch (error) {
+    return res.status(400).send({ code: '111', error: { message: error.message } });
+  }
+
+  // try {
+  //   const subscription = await stripe.subscriptions.retrieve(
+  //     req.body.subscriptionId
+  //   );
+  //   const updatedSubscription = await stripe.subscriptions.update(
+  //     req.body.subscriptionId,
+  //     {
+  //       items: [
+  //         {
+  //           id: subscription.items.data[0].id,
+  //           price: process.env[req.body.newPriceLookupKey.toUpperCase()],
+  //         },
+  //       ],
+  //     }
+  //   );
+
+  //   res.send({ subscription: updatedSubscription });
+  // } catch (error) {
+  //   return res.status(400).send({ error: { message: error.message } });
+  // }
+});
+
+const calculateProration = async (ctx) => {
+  // Set proration date to this moment:
+  const proration_date = Math.floor(Date.parse('2022-10-05') / 1000);
+  console.log({proration_date});
+
+  const customerId = ctx.customerId;
+  const subscriptionId = ctx.subscriptionId;
+  const priceId = ctx.priceId;
+
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+  // See what the next invoice would look like with a price switch
+  // and proration set:
+  const items = [{
+    id: subscription.items.data[0].id,
+    price: priceId // Switch to new price
+  }];
+
+  const invoice = await stripe.invoices.retrieveUpcoming({
+    customer: customerId,
+    subscription: subscriptionId,
+    subscription_items: items,
+    subscription_proration_date: proration_date
+  });
+
+  console.log('invoice.lines.data:', invoice.lines.data);
+  return invoice;
+}
 
 app.get("/list-payment-methods", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -340,6 +418,39 @@ app.get("/list-payment-methods", async (req, res) => {
   }
 });
 
+app.post("/set-default-payment-method", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  console.log('set-default-payment-method:', req.body);
+
+  const customerId = req.body.customerId;
+  const paymentMethodId = req.body.paymentMethodId;
+
+  try {
+    const customer = await stripe.customers.update(
+      customerId,
+      {
+        invoice_settings: {
+          default_payment_method: paymentMethodId
+        },
+        metadata: {
+          order_id: 'DOCCUMI-0000001'
+        }
+      }
+    );
+
+    console.log({customer});
+
+    res.send({ customerUpdated: customer });
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
+});
+
 app.post("/delete-payment-method", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -347,15 +458,16 @@ app.post("/delete-payment-method", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
+  // console.log('delete-payment-method:', req.body);
+
   // List payment methods
   try {
     const paymentId = req.body.paymentMethodId;
-
     const paymentMethod = await stripe.paymentMethods.detach(
       paymentId
     );
 
-    console.log({paymentMethod});
+    // console.log({paymentMethod});
 
     res.send({ paymentMethod: paymentMethod });
   } catch (error) {
@@ -375,7 +487,6 @@ app.get("/load-customer", async (req, res) => {
     // const customerId = req.body.customerId;
     // const customerId = req.cookies["customer"];
     const customerId = "cus_MO102LWNKL56WZ";
-
     const customer = await stripe.customers.retrieve(customerId, {
       // expand: ["default_payment_method"]
     });
@@ -395,7 +506,8 @@ app.get("/invoice-preview", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  const customerId = req.cookies["customer"];
+  // const customerId = req.cookies["customer"];
+  const customerId = "cus_MO102LWNKL56WZ";
   const priceId = process.env[req.query.newPriceLookupKey.toUpperCase()];
 
   const subscription = await stripe.subscriptions.retrieve(
@@ -435,35 +547,6 @@ app.post("/cancel-subscription", async (req, res) => {
   }
 });
 
-app.post("/update-subscription", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-
-  try {
-    const subscription = await stripe.subscriptions.retrieve(
-      req.body.subscriptionId
-    );
-    const updatedSubscription = await stripe.subscriptions.update(
-      req.body.subscriptionId,
-      {
-        items: [
-          {
-            id: subscription.items.data[0].id,
-            price: process.env[req.body.newPriceLookupKey.toUpperCase()],
-          },
-        ],
-      }
-    );
-
-    res.send({ subscription: updatedSubscription });
-  } catch (error) {
-    return res.status(400).send({ error: { message: error.message } });
-  }
-});
-
 app.get("/subscriptions", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -478,7 +561,7 @@ app.get("/subscriptions", async (req, res) => {
 
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
-    status: "all",
+    status: "active",
     expand: ["data.default_payment_method", "data.plan.product"],
   });
 
