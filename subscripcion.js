@@ -302,13 +302,6 @@ app.post("/update-subscription", async (req, res) => {
     const priceId = req.body.priceId;
     const subscriptionId = req.body.subscriptionId; //subscriptions.data[0].id;
     const customerId = req.body.customerId; //entities.get("customerId");
-
-    calculateProration(req.body).then((res) => {
-      console.log('calculateProration:', {res});
-    }).catch((err) => {
-      console.log('calculateProration:', {err});
-    });
-
     const customer = await stripe.customers.retrieve(customerId, {});
     const paymentMethodId = customer.invoice_settings.default_payment_method;
     const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
@@ -364,35 +357,6 @@ app.post("/update-subscription", async (req, res) => {
   //   return res.status(400).send({ error: { message: error.message } });
   // }
 });
-
-const calculateProration = async (ctx) => {
-  // Set proration date to this moment:
-  const proration_date = Math.floor(Date.parse('2022-10-05') / 1000);
-  console.log({proration_date});
-
-  const customerId = ctx.customerId;
-  const subscriptionId = ctx.subscriptionId;
-  const priceId = ctx.priceId;
-
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-
-  // See what the next invoice would look like with a price switch
-  // and proration set:
-  const items = [{
-    id: subscription.items.data[0].id,
-    price: priceId // Switch to new price
-  }];
-
-  const invoice = await stripe.invoices.retrieveUpcoming({
-    customer: customerId,
-    subscription: subscriptionId,
-    subscription_items: items,
-    subscription_proration_date: proration_date
-  });
-
-  console.log('invoice.lines.data:', invoice.lines.data);
-  return invoice;
-}
 
 app.get("/list-payment-methods", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -499,33 +463,33 @@ app.get("/load-customer", async (req, res) => {
   }
 });
 
-app.get("/invoice-preview", async (req, res) => {
+app.post("/invoice-preview", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  // const customerId = req.cookies["customer"];
-  const customerId = "cus_MO102LWNKL56WZ";
-  const priceId = process.env[req.query.newPriceLookupKey.toUpperCase()];
+  const customerId = req.body.customerId;
+  const priceId = req.body.priceId;
+  const subscriptionId = req.body.subscriptionId;
 
   const subscription = await stripe.subscriptions.retrieve(
-    req.query.subscriptionId
+    subscriptionId
   );
 
   const invoice = await stripe.invoices.retrieveUpcoming({
     customer: customerId,
-    subscription: req.query.subscriptionId,
+    subscription: subscriptionId,
     subscription_items: [
       {
         id: subscription.items.data[0].id,
-        price: priceId,
-      },
-    ],
+        price: priceId
+      }
+    ]
   });
 
-  res.send({ invoice });
+  res.send({invoice});
 });
 
 app.post("/cancel-subscription", async (req, res) => {
