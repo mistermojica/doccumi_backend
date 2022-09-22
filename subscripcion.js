@@ -298,15 +298,20 @@ app.post("/update-subscription", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
+  console.log("update-subscription:", req.body);
+
   try {
     const priceId = req.body.priceId;
-    const subscriptionId = req.body.subscriptionId; //subscriptions.data[0].id;
-    const customerId = req.body.customerId; //entities.get("customerId");
+    const subscriptionId = req.body.subscriptionId;
+    const customerId = req.body.customerId;
     const customer = await stripe.customers.retrieve(customerId, {});
     const paymentMethodId = customer.invoice_settings.default_payment_method;
     const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
       expand: ["default_payment_method", "latest_invoice.payment_intent"],
     });
+
+    // console.log('update-subscription:', {subscription});
+
     const updatedSubscription = await stripe.subscriptions.update(
       subscriptionId,
       {
@@ -326,6 +331,12 @@ app.post("/update-subscription", async (req, res) => {
         default_payment_method: paymentMethodId
       }
     );
+
+    console.log('updatedSubscription.latest_invoice.payment_intent:', {
+      subscriptionId: subscriptionId,
+      clientSecret: updatedSubscription.latest_invoice.payment_intent.client_secret,
+      message: "Subscripción modificada."
+    });
 
     res.send({
       subscriptionId: subscriptionId,
