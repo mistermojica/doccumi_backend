@@ -276,8 +276,11 @@ app.post("/create-subscription", async (req, res) => {
           }
         ],
         payment_behavior: "default_incomplete",
+        // collection_method: "charge_automatically",
         expand: ["latest_invoice.payment_intent"]
       });
+
+      console.log("create - subscription:", {subscription});
 
       res.send({
         subscriptionId: subscription.id,
@@ -318,6 +321,7 @@ app.post("/update-subscription", async (req, res) => {
         cancel_at_period_end: false,
         proration_behavior: "create_prorations",
         expand: ["latest_invoice.payment_intent"],
+        // collection_method: "charge_automatically",
         payment_settings: {
           payment_method_types: ["card"]
         },
@@ -331,6 +335,8 @@ app.post("/update-subscription", async (req, res) => {
         default_payment_method: paymentMethodId
       }
     );
+
+    console.log("update - updatedSubscription:", {updatedSubscription});
 
     console.log('updatedSubscription.latest_invoice.payment_intent:', {
       subscriptionId: subscriptionId,
@@ -536,8 +542,8 @@ app.get("/subscriptions", async (req, res) => {
 
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
-    status: "active",
-    expand: ["data.default_payment_method", "data.plan.product"],
+    status: "all",
+    expand: ["data.default_payment_method", "data.plan.product", "data.latest_invoice"],
   });
 
   res.json({ subscriptions });
