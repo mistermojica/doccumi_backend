@@ -72,7 +72,7 @@ const calculateOrderAmount = (items) => {
   // Replace this constant with a calculation of the order's amount
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
-  console.log("calculateOrderAmount:", {items});
+  // console.log("calculateOrderAmount:", {items});
   
   return items.amount;
 };
@@ -115,7 +115,7 @@ app.post("/create-payment-intent", async (req, res) => {
   // const customerId = req.cookies["customer"];
   const customerId = req.body.customerId;
 
-  console.log({customerId});
+  // console.log({customerId});
 
   const price = await stripe.prices.retrieve(req.body.priceId);
 
@@ -131,7 +131,7 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 
   // console.log({paymentIntent});
-  console.log(paymentIntent.client_secret);
+  // console.log(paymentIntent.client_secret);
 
   res.send({
     clientSecret: paymentIntent.client_secret,
@@ -167,7 +167,7 @@ app.get("/prices", async (req, res) => {
     currentPriceId: subscriptions?.data[0]?.items?.data[0]?.price?.id
   };
 
-  console.log({result});
+  // console.log({result});
 
   res.send(result);
 });
@@ -301,7 +301,7 @@ app.post("/update-subscription", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log("update-subscription:", req.body);
+  // console.log("update-subscription:", req.body);
 
   try {
     const priceId = req.body.priceId;
@@ -336,7 +336,55 @@ app.post("/update-subscription", async (req, res) => {
       }
     );
 
-    console.log("update - updatedSubscription:", {updatedSubscription});
+
+    // console.log('subscription.latest_invoice.payment_intent:', subscription.latest_invoice.payment_intent);
+    // console.log('subscription.latest_invoice.billing_reason:', subscription.latest_invoice.billing_reason);
+    // console.log('paymentMethodId 111:', paymentMethodId);
+
+    if (subscription.latest_invoice.billing_reason == "subscription_create") {
+      // The subscription automatically activates after successful payment
+      // Set the payment method used to pay the first invoice
+      // as the default payment method for that subscription
+      const paymentIntentId = subscription.latest_invoice.payment_intent.id;
+
+      // Retrieve the payment intent used to pay the subscription
+      // const paymentIntent = await stripe.paymentIntents.retrieve(
+      //   paymentIntentId
+      // );
+
+      const paymentIntent = await stripe.paymentIntents.confirm(
+        paymentIntentId,
+        {payment_method: paymentMethodId}
+      );
+
+      // console.log('paymentMethodId 111:', paymentMethodId);
+
+      // try {
+      //   const subscriptionN = await stripe.subscriptions.update(
+      //     subscriptionId,
+      //     {
+      //       default_payment_method: paymentMethodId,
+      //     }
+      //   );
+
+      //   console.log({subscriptionN});
+
+      //   console.log("Default payment method set for subscription 3:", paymentMethodId);
+      // } catch (err) {
+      //   console.log(err);
+      //   console.log(
+      //     `⚠️  Falied to update the default payment method for subscription: ${subscriptionId}`
+      //   );
+      // }
+    }
+
+    const subscriptionN = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ["default_payment_method", "latest_invoice.payment_intent"],
+    });
+
+    // console.log('update-subscription:', {subscriptionN});
+
+    // console.log("update - updatedSubscription:", {updatedSubscription});
 
     console.log('updatedSubscription.latest_invoice.payment_intent:', {
       subscriptionId: subscriptionId,
@@ -406,7 +454,7 @@ app.post("/set-default-payment-method", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  console.log('set-default-payment-method:', req.body);
+  // console.log('set-default-payment-method:', req.body);
 
   const customerId = req.body.customerId;
   const paymentMethodId = req.body.paymentMethodId;
@@ -424,7 +472,7 @@ app.post("/set-default-payment-method", async (req, res) => {
       }
     );
 
-    console.log({customer});
+    // console.log({customer});
 
     res.send({ customerUpdated: customer });
   } catch (error) {
@@ -472,7 +520,7 @@ app.get("/load-customer", async (req, res) => {
       // expand: ["default_payment_method"]
     });
 
-    console.log('load-customer:', customer.invoice_settings.default_payment_method);
+    // console.log('load-customer:', customer.invoice_settings.default_payment_method);
 
     res.send({ customer: customer });
   } catch (error) {
