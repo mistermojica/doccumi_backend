@@ -1,12 +1,13 @@
-var config = require('./config'),
+const config = require('./config'),
     express = require('express'),
     bodyParser = require('body-parser'),
     fs = require("fs"),
-    errHandler = require('../app/utils/errorHandler');
+    errHandler = require('../app/utils/errorHandler'),
+    cookieParser = require("cookie-parser");
 
-var cdkencmgr = require("../app/utils/encryptionManager");
-var _ = require("underscore");
-var cors = require("cors");
+const cdkencmgr = require("../app/utils/encryptionManager");
+const _ = require("underscore");
+const cors = require("cors");
 
 module.exports = function() {
     var app = express();
@@ -21,6 +22,9 @@ module.exports = function() {
     app.use(bodyParser.json());
 
     //app.use({ useNewUrlParser: true });
+
+    // Use cookies to simulate logged in user.
+    app.use(cookieParser());
 
     var requireEncription = false;
 
