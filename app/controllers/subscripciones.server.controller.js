@@ -202,31 +202,54 @@ exports.create_payment_method = async function (req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
 
-    const paymentMethod = await stripe.paymentMethods.create({
-        type: "card",
-        card: {
-          number: req.body.cardNumber,
-          exp_month: req.body.cardMonth,
-          exp_year: req.body.cardYear,
-          cvc: req.body.cardCVC,
-        },
-    });
+    try {
+
+    // const paymentMethod = await stripe.paymentMethods.create({
+    //     type: "card",
+    //     card: {
+    //       number: req.body.cardNumber,
+    //       exp_month: req.body.cardMonth,
+    //       exp_year: req.body.cardYear,
+    //       cvc: req.body.cardCVC,
+    //     },
+    // });
+
+    console.log('body:', req.body);
 
     const attachPaymentToCustomer = await stripe.paymentMethods.attach(
-        paymentMethod.id,
+        req.body.paymentMethodId,
         {
             customer: req.body.customerId,
         }
     );
 
-    const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
-        req.body.customerId,
-        {
-            invoice_settings: {
-              default_payment_method: paymentMethod.id,
-            },
-        }
-    );
+    console.log({attachPaymentToCustomer});
+
+    if (req.body?.makeDefault === true){
+        const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+            req.body.customerId,
+            {
+                invoice_settings: {
+                    default_payment_method: req.body.paymentMethodId,
+                },
+            }
+        );
+
+        console.log({updateCustomerDefaultPaymentMethod});
+    }
+
+    res.send({
+      status: true,
+      message: "Método de pago creado exitosamente.",
+      result: attachPaymentToCustomer,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: "Error inesperado al crear método de pago, por favor trqte de nuevo.",
+      result: error,
+    });
+  }
 };
 
 exports.create_subscription = async function (req, res, next) {
