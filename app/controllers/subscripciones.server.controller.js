@@ -143,7 +143,7 @@ exports.prices = async function (req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
 
-    const customerId = "cus_MO102LWNKL56WZ";
+    const customerId = req.body.customerId;
 
     const prices = await stripe.prices.list({
         // lookup_keys: ['sample_basic', 'sample_premium'],
@@ -305,9 +305,10 @@ exports.create_subscription = async function (req, res, next) {
             subscriptionId: subscription.id,
             clientSecret: subscription.latest_invoice.payment_intent.client_secret,
             items: subscription.items.data,
-            subscription: subscription,
+            subscription: subscription
         });
     } catch (error) {
+      console.log({error});
       return res
         .status(400)
         .send({ code: "222", error: { message: error.message } });
@@ -456,9 +457,7 @@ exports.list_payment_methods = async function (req, res, next) {
 
   // List payment methods
   try {
-    // const customerId = req.body.customerId;
-    // const customerId = req.cookies["customer"];
-    const customerId = "cus_MO102LWNKL56WZ";
+    const customerId = req.body.customerId;
 
     const paymentMethods = await stripe.customers.listPaymentMethods(
       customerId,
@@ -530,16 +529,11 @@ exports.load_customer = async function (req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
 
-    // List payment methods
     try {
-        // const customerId = req.body.customerId;
-        // const customerId = req.cookies["customer"];
-        const customerId = "cus_MO102LWNKL56WZ";
+        const customerId = req.body.customerId;
         const customer = await stripe.customers.retrieve(customerId, {
           // expand: ["default_payment_method"]
         });
-
-        // console.log('load-customer:', customer.invoice_settings.default_payment_method);
 
         res.send({ customer: customer });
     } catch (error) {
@@ -600,10 +594,7 @@ exports.subscriptions = async function (req, res, next) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  // Simulate authenticated user. In practice this will be the
-  // Stripe Customer ID related to the authenticated user.
-  const customerId = "cus_MO102LWNKL56WZ";
-  console.log({ customerId });
+  const customerId = req.body.customerId;
 
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,

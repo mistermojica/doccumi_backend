@@ -146,7 +146,7 @@ app.get("/prices", async (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  const customerId = "cus_MO102LWNKL56WZ";
+  const customerId = req.body.customerId;
 
   const prices = await stripe.prices.list({
     // lookup_keys: ['sample_basic', 'sample_premium'],
@@ -434,7 +434,7 @@ app.get("/list-payment-methods", async (req, res) => {
   try {
     // const customerId = req.body.customerId;
     // const customerId = req.cookies["customer"];
-    const customerId = "cus_MO102LWNKL56WZ";
+    const customerId = req.body.customerId;
 
     const paymentMethods = await stripe.customers.listPaymentMethods(
       customerId,
@@ -515,7 +515,7 @@ app.get("/load-customer", async (req, res) => {
   try {
     // const customerId = req.body.customerId;
     // const customerId = req.cookies["customer"];
-    const customerId = "cus_MO102LWNKL56WZ";
+    const customerId = req.body.customerId;
     const customer = await stripe.customers.retrieve(customerId, {
       // expand: ["default_payment_method"]
     });
@@ -585,7 +585,7 @@ app.get("/subscriptions", async (req, res) => {
 
   // Simulate authenticated user. In practice this will be the
   // Stripe Customer ID related to the authenticated user.
-  const customerId = "cus_MO102LWNKL56WZ";
+  const customerId = req.body.customerId;
   console.log({customerId});
 
   const subscriptions = await stripe.subscriptions.list({
