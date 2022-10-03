@@ -86,124 +86,123 @@ const calculateOrderAmount = (items) => {
 };
 
 exports.payment_response = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    const myUrl = url.parse(req.originalUrl);
-    res.send(querystring.parse(myUrl.query));
+  const myUrl = url.parse(req.originalUrl);
+  res.send(querystring.parse(myUrl.query));
 };
 
 exports.create_payment_intent = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    console.log("create-payment-intent:", req.body);
+  console.log("create-payment-intent:", req.body);
 
-    const { items } = req.body;
-    // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
-    // and attach the PaymentMethod to a new Customer
-    // const customer = await stripe.customers.create();
-    // const customerId = req.cookies["customer"];
-    const customerId = req.body.customerId;
+  const { items } = req.body;
+  // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
+  // and attach the PaymentMethod to a new Customer
+  // const customer = await stripe.customers.create();
+  // const customerId = req.cookies["customer"];
+  const customerId = req.body.customerId;
 
-    // console.log({customerId});
+  // console.log({customerId});
 
-    const price = await stripe.prices.retrieve(req.body.priceId);
+  const price = await stripe.prices.retrieve(req.body.priceId);
 
-    // Create a PaymentIntent with the order amount and currency
-    const paymentIntent = await stripe.paymentIntents.create({
-      customer: customerId,
-      setup_future_usage: "off_session",
-      amount: price.unit_amount,
-      currency: "usd",
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    customer: customerId,
+    setup_future_usage: "off_session",
+    amount: price.unit_amount,
+    currency: "usd",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
 
-    // console.log({paymentIntent});
-    // console.log(paymentIntent.client_secret);
+  // console.log({paymentIntent});
+  // console.log(paymentIntent.client_secret);
 
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-      // paymentMethodOptions: paymentIntent.payment_method_options
-    });
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+    // paymentMethodOptions: paymentIntent.payment_method_options
+  });
 };
 
 exports.prices = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    const customerId = req.body.customerId;
+  const customerId = req.body.customerId;
 
-    const prices = await stripe.prices.list({
-        // lookup_keys: ['sample_basic', 'sample_premium'],
-        expand: ["data.product"],
-        limit: 3,
-    });
+  const prices = await stripe.prices.list({
+    // lookup_keys: ['sample_basic', 'sample_premium'],
+    expand: ["data.product"],
+    limit: 3,
+  });
 
-    entities.set("prices", prices);
+  entities.set("prices", prices);
 
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: "active",
-    });
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    status: "active",
+  });
 
-    const result = {
-      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-      prices: prices.data,
-      currentPriceId: subscriptions?.data[0]?.items?.data[0]?.price?.id,
-    };
+  const result = {
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    prices: prices.data,
+    currentPrice: subscriptions?.data[0]?.items?.data[0]?.price
+  };
 
-    // console.log({result});
+  // console.log({result});
 
-    res.send(result);
+  res.send(result);
 };
 
 exports.create_customer = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    // Create a new customer object
-    const customer = await stripe.customers.create({
-      email: req.body.email,
-      name: req.body.name,
-    });
+  // Create a new customer object
+  const customer = await stripe.customers.create({
+    email: req.body.email,
+    name: req.body.name,
+  });
 
-    entities.set("customerId", customer.id);
+  entities.set("customerId", customer.id);
 
-    // Save the customer.id in your database alongside your user.
-    // We're simulating authentication with a cookie.
-    res.cookie("customer", customer.id, { maxAge: 900000, httpOnly: true });
-    res.cookie.customer = customer.id;
+  // Save the customer.id in your database alongside your user.
+  // We're simulating authentication with a cookie.
+  res.cookie("customer", customer.id, { maxAge: 900000, httpOnly: true });
+  res.cookie.customer = customer.id;
 
-    console.log("cookies:", req.cookies);
-    console.log("customer:", { customer });
+  console.log("cookies:", req.cookies);
+  console.log("customer:", { customer });
 
-    res.send({ customer });
+  res.send({ customer });
 };
 
 exports.create_payment_method = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    try {
-
+  try {
     // const paymentMethod = await stripe.paymentMethods.create({
     //     type: "card",
     //     card: {
@@ -214,28 +213,28 @@ exports.create_payment_method = async function (req, res, next) {
     //     },
     // });
 
-    console.log('body:', req.body);
+    console.log("body:", req.body);
 
     const attachPaymentToCustomer = await stripe.paymentMethods.attach(
-        req.body.paymentMethodId,
-        {
-            customer: req.body.customerId,
-        }
+      req.body.paymentMethodId,
+      {
+        customer: req.body.customerId,
+      }
     );
 
-    console.log({attachPaymentToCustomer});
+    console.log({ attachPaymentToCustomer });
 
-    if (req.body?.makeDefault === true){
-        const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
-            req.body.customerId,
-            {
-                invoice_settings: {
-                    default_payment_method: req.body.paymentMethodId,
-                },
-            }
-        );
+    if (req.body?.makeDefault === true) {
+      const updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+        req.body.customerId,
+        {
+          invoice_settings: {
+            default_payment_method: req.body.paymentMethodId,
+          },
+        }
+      );
 
-        console.log({updateCustomerDefaultPaymentMethod});
+      console.log({ updateCustomerDefaultPaymentMethod });
     }
 
     res.send({
@@ -246,206 +245,207 @@ exports.create_payment_method = async function (req, res, next) {
   } catch (error) {
     res.send({
       status: false,
-      message: "Error inesperado al crear método de pago, por favor trqte de nuevo.",
+      message:
+        "Error inesperado al crear método de pago, por favor trqte de nuevo.",
       result: error,
     });
   }
 };
 
 exports.create_subscription = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    // Simulate authenticated user. In practice this will be the
-    // Stripe Customer ID related to the authenticated user.
-    // const customerId = req.cookies['customer'];
+  // Simulate authenticated user. In practice this will be the
+  // Stripe Customer ID related to the authenticated user.
+  // const customerId = req.cookies['customer'];
 
-    const customerId = req.body.customerId; //entities.get("customerId");
-    const priceId = req.body.priceId;
+  const customerId = req.body.customerId; //entities.get("customerId");
+  const priceId = req.body.priceId;
 
-    // const subscriptions = await stripe.subscriptions.list({
-    //   customer: customerId,
-    //   status: "active",
-    // });
+  // const subscriptions = await stripe.subscriptions.list({
+  //   customer: customerId,
+  //   status: "active",
+  // });
 
-    const customer = await stripe.customers.retrieve(customerId, {});
+  const customer = await stripe.customers.retrieve(customerId, {});
 
-    const paymentMethodId = customer.invoice_settings.default_payment_method;
-    if (!paymentMethodId) {
-      res.send({
-        status: false,
-        message: "Este cliente no tiene un método de pago predeterminado.",
-        result: {},
-      });
-    }
+  const paymentMethodId = customer.invoice_settings.default_payment_method;
+  if (!paymentMethodId) {
+    res.send({
+      status: false,
+      message: "Este cliente no tiene un método de pago predeterminado.",
+      result: {},
+    });
+  }
 
-    // if (subscriptions.data.length > 0) {
+  // if (subscriptions.data.length > 0) {
 
-    // } else {
-    try {
-        const subscription = await stripe.subscriptions.create({
-            customer: customerId,
-            items: [
-              {
-                price: priceId,
-                quantity: 1,
-              },
-            ],
-            payment_behavior: "default_incomplete",
-            // collection_method: "charge_automatically",
-            expand: ["latest_invoice.payment_intent"],
-        });
+  // } else {
+  try {
+    const subscription = await stripe.subscriptions.create({
+      customer: customerId,
+      items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      payment_behavior: "default_incomplete",
+      // collection_method: "charge_automatically",
+      expand: ["latest_invoice.payment_intent"],
+    });
 
-        console.log("create - subscription:", { subscription });
+    console.log("create - subscription:", { subscription });
 
-        res.send({
-            subscriptionId: subscription.id,
-            clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-            items: subscription.items.data,
-            subscription: subscription
-        });
-    } catch (error) {
-      console.log({error});
-      return res
-        .status(400)
-        .send({ code: "222", error: { message: error.message } });
-    }
-    // }
+    res.send({
+      subscriptionId: subscription.id,
+      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+      items: subscription.items.data,
+      subscription: subscription,
+    });
+  } catch (error) {
+    console.log({ error });
+    return res
+      .status(400)
+      .send({ code: "222", error: { message: error.message } });
+  }
+  // }
 };
 
 exports.update_subscription = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  // console.log("update-subscription:", req.body);
+
+  try {
+    const priceId = req.body.priceId;
+    const subscriptionId = req.body.subscriptionId;
+    const customerId = req.body.customerId;
+    const customer = await stripe.customers.retrieve(customerId, {});
+    const paymentMethodId = customer.invoice_settings.default_payment_method;
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ["default_payment_method", "latest_invoice.payment_intent"],
+    });
+
+    // console.log('update-subscription:', {subscription});
+
+    const updatedSubscription = await stripe.subscriptions.update(
+      subscriptionId,
+      {
+        cancel_at_period_end: false,
+        proration_behavior: "create_prorations",
+        expand: ["latest_invoice.payment_intent"],
+        // collection_method: "charge_automatically",
+        payment_settings: {
+          payment_method_types: ["card"],
+        },
+        items: [
+          {
+            id: subscription.items.data[0].id,
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        default_payment_method: paymentMethodId,
+      }
     );
 
-    // console.log("update-subscription:", req.body);
+    // console.log('subscription.latest_invoice.payment_intent:', subscription.latest_invoice.payment_intent);
+    // console.log('subscription.latest_invoice.billing_reason:', subscription.latest_invoice.billing_reason);
+    // console.log('paymentMethodId 111:', paymentMethodId);
 
-    try {
-        const priceId = req.body.priceId;
-        const subscriptionId = req.body.subscriptionId;
-        const customerId = req.body.customerId;
-        const customer = await stripe.customers.retrieve(customerId, {});
-        const paymentMethodId = customer.invoice_settings.default_payment_method;
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
-          expand: ["default_payment_method", "latest_invoice.payment_intent"],
-        });
+    if (subscription.latest_invoice.billing_reason == "subscription_create") {
+      // The subscription automatically activates after successful payment
+      // Set the payment method used to pay the first invoice
+      // as the default payment method for that subscription
+      const paymentIntentId = subscription.latest_invoice.payment_intent.id;
 
-        // console.log('update-subscription:', {subscription});
+      // Retrieve the payment intent used to pay the subscription
+      // const paymentIntent = await stripe.paymentIntents.retrieve(
+      //   paymentIntentId
+      // );
 
-        const updatedSubscription = await stripe.subscriptions.update(
-          subscriptionId,
-          {
-            cancel_at_period_end: false,
-            proration_behavior: "create_prorations",
-            expand: ["latest_invoice.payment_intent"],
-            // collection_method: "charge_automatically",
-            payment_settings: {
-              payment_method_types: ["card"],
-            },
-            items: [
-              {
-                id: subscription.items.data[0].id,
-                price: priceId,
-                quantity: 1,
-              },
-            ],
-            default_payment_method: paymentMethodId,
-          }
-        );
+      const paymentIntent = await stripe.paymentIntents.confirm(
+        paymentIntentId,
+        { payment_method: paymentMethodId }
+      );
 
-        // console.log('subscription.latest_invoice.payment_intent:', subscription.latest_invoice.payment_intent);
-        // console.log('subscription.latest_invoice.billing_reason:', subscription.latest_invoice.billing_reason);
-        // console.log('paymentMethodId 111:', paymentMethodId);
+      // console.log('paymentMethodId 111:', paymentMethodId);
 
-        if (subscription.latest_invoice.billing_reason == "subscription_create") {
-            // The subscription automatically activates after successful payment
-            // Set the payment method used to pay the first invoice
-            // as the default payment method for that subscription
-            const paymentIntentId = subscription.latest_invoice.payment_intent.id;
+      // try {
+      //   const subscriptionN = await stripe.subscriptions.update(
+      //     subscriptionId,
+      //     {
+      //       default_payment_method: paymentMethodId,
+      //     }
+      //   );
 
-            // Retrieve the payment intent used to pay the subscription
-            // const paymentIntent = await stripe.paymentIntents.retrieve(
-            //   paymentIntentId
-            // );
+      //   console.log({subscriptionN});
 
-            const paymentIntent = await stripe.paymentIntents.confirm(
-                paymentIntentId,
-                { payment_method: paymentMethodId }
-            );
-
-            // console.log('paymentMethodId 111:', paymentMethodId);
-
-            // try {
-            //   const subscriptionN = await stripe.subscriptions.update(
-            //     subscriptionId,
-            //     {
-            //       default_payment_method: paymentMethodId,
-            //     }
-            //   );
-
-            //   console.log({subscriptionN});
-
-            //   console.log("Default payment method set for subscription 3:", paymentMethodId);
-            // } catch (err) {
-            //   console.log(err);
-            //   console.log(
-            //     `⚠️  Falied to update the default payment method for subscription: ${subscriptionId}`
-            //   );
-            // }
-        }
-
-        const subscriptionN = await stripe.subscriptions.retrieve(subscriptionId, {
-            expand: ["default_payment_method", "latest_invoice.payment_intent"],
-        });
-
-        // console.log('update-subscription:', {subscriptionN});
-
-        // console.log("update - updatedSubscription:", {updatedSubscription});
-
-        console.log("updatedSubscription.latest_invoice.payment_intent:", {
-            subscriptionId: subscriptionId,
-            clientSecret:
-              updatedSubscription.latest_invoice.payment_intent.client_secret,
-            message: "Subscripción modificada.",
-        });
-
-        res.send({
-            subscriptionId: subscriptionId,
-            clientSecret:
-                updatedSubscription.latest_invoice.payment_intent.client_secret,
-            message: "Subscripción modificada.",
-        });
-    } catch (error) {
-      return res
-        .status(400)
-        .send({ code: "111", error: { message: error.message } });
+      //   console.log("Default payment method set for subscription 3:", paymentMethodId);
+      // } catch (err) {
+      //   console.log(err);
+      //   console.log(
+      //     `⚠️  Falied to update the default payment method for subscription: ${subscriptionId}`
+      //   );
+      // }
     }
 
-    // try {
-    //   const subscription = await stripe.subscriptions.retrieve(
-    //     req.body.subscriptionId
-    //   );
-    //   const updatedSubscription = await stripe.subscriptions.update(
-    //     req.body.subscriptionId,
-    //     {
-    //       items: [
-    //         {
-    //           id: subscription.items.data[0].id,
-    //           price: process.env[req.body.newPriceLookupKey.toUpperCase()],
-    //         },
-    //       ],
-    //     }
-    //   );
+    const subscriptionN = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ["default_payment_method", "latest_invoice.payment_intent"],
+    });
 
-    //   res.send({ subscription: updatedSubscription });
-    // } catch (error) {
-    //   return res.status(400).send({ error: { message: error.message } });
-    // }
+    // console.log('update-subscription:', {subscriptionN});
+
+    // console.log("update - updatedSubscription:", {updatedSubscription});
+
+    console.log("updatedSubscription.latest_invoice.payment_intent:", {
+      subscriptionId: subscriptionId,
+      clientSecret:
+        updatedSubscription.latest_invoice.payment_intent.client_secret,
+      message: "Subscripción modificada.",
+    });
+
+    res.send({
+      subscriptionId: subscriptionId,
+      clientSecret:
+        updatedSubscription.latest_invoice.payment_intent.client_secret,
+      message: "Subscripción modificada.",
+    });
+  } catch (error) {
+    return res
+      .status(400)
+      .send({ code: "111", error: { message: error.message } });
+  }
+
+  // try {
+  //   const subscription = await stripe.subscriptions.retrieve(
+  //     req.body.subscriptionId
+  //   );
+  //   const updatedSubscription = await stripe.subscriptions.update(
+  //     req.body.subscriptionId,
+  //     {
+  //       items: [
+  //         {
+  //           id: subscription.items.data[0].id,
+  //           price: process.env[req.body.newPriceLookupKey.toUpperCase()],
+  //         },
+  //       ],
+  //     }
+  //   );
+
+  //   res.send({ subscription: updatedSubscription });
+  // } catch (error) {
+  //   return res.status(400).send({ error: { message: error.message } });
+  // }
 };
 
 exports.list_payment_methods = async function (req, res, next) {
@@ -523,22 +523,22 @@ exports.delete_payment_method = async function (req, res, next) {
 };
 
 exports.load_customer = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-    try {
-        const customerId = req.body.customerId;
-        const customer = await stripe.customers.retrieve(customerId, {
-          // expand: ["default_payment_method"]
-        });
+  try {
+    const customerId = req.body.customerId;
+    const customer = await stripe.customers.retrieve(customerId, {
+      // expand: ["default_payment_method"]
+    });
 
-        res.send({ customer: customer });
-    } catch (error) {
-        return res.status(400).send({ error: { message: error.message } });
-    }
+    res.send({ customer: customer });
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
 };
 
 exports.invoice_preview = async function (req, res, next) {
@@ -610,96 +610,104 @@ exports.subscriptions = async function (req, res, next) {
 };
 
 exports.webhook = async function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  // Retrieve the event by verifying the signature using the raw body and secret.
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      req.header("Stripe-Signature"),
+      process.env.STRIPE_WEBHOOK_SECRET
     );
+  } catch (err) {
+    console.log(err);
+    console.log(`⚠️  Webhook signature verification failed.`);
+    console.log(`⚠️  Check the env file and enter the correct webhook secret.`);
+    return res.sendStatus(400);
+  }
 
-    // Retrieve the event by verifying the signature using the raw body and secret.
-    let event;
+  // Extract the object from the event.
+  const dataObject = event.data.object;
 
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        req.header("Stripe-Signature"),
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      console.log(err);
-      console.log(`⚠️  Webhook signature verification failed.`);
-      console.log(
-        `⚠️  Check the env file and enter the correct webhook secret.`
-      );
-      return res.sendStatus(400);
-    }
+  // Handle the event
+  // Review important events for Billing webhooks
+  // https://stripe.com/docs/billing/webhooks
+  // Remove comment to see the various objects sent for this sample
+  switch (event.type) {
+    case "invoice.payment_succeeded":
+      if (dataObject["billing_reason"] == "subscription_create") {
+        // The subscription automatically activates after successful payment
+        // Set the payment method used to pay the first invoice
+        // as the default payment method for that subscription
+        const subscription_id = dataObject["subscription"];
+        const payment_intent_id = dataObject["payment_intent"];
 
-    // Extract the object from the event.
-    const dataObject = event.data.object;
+        // Retrieve the payment intent used to pay the subscription
+        const payment_intent = await stripe.paymentIntents.retrieve(
+          payment_intent_id
+        );
 
-    // Handle the event
-    // Review important events for Billing webhooks
-    // https://stripe.com/docs/billing/webhooks
-    // Remove comment to see the various objects sent for this sample
-    switch (event.type) {
-      case "invoice.payment_succeeded":
-        if (dataObject["billing_reason"] == "subscription_create") {
-          // The subscription automatically activates after successful payment
-          // Set the payment method used to pay the first invoice
-          // as the default payment method for that subscription
-          const subscription_id = dataObject["subscription"];
-          const payment_intent_id = dataObject["payment_intent"];
-
-          // Retrieve the payment intent used to pay the subscription
-          const payment_intent = await stripe.paymentIntents.retrieve(
-            payment_intent_id
+        try {
+          const subscription = await stripe.subscriptions.update(
+            subscription_id,
+            {
+              default_payment_method: payment_intent.payment_method,
+            }
           );
 
-          try {
-            const subscription = await stripe.subscriptions.update(
-              subscription_id,
-              {
-                default_payment_method: payment_intent.payment_method,
-              }
-            );
-
-            console.log(
-              "Default payment method set for subscription:" +
-                payment_intent.payment_method
-            );
-          } catch (err) {
-            console.log(err);
-            console.log(
-              `⚠️  Falied to update the default payment method for subscription: ${subscription_id}`
-            );
-          }
+          console.log(
+            "Default payment method set for subscription:" +
+              payment_intent.payment_method
+          );
+        } catch (err) {
+          console.log(err);
+          console.log(
+            `⚠️  Falied to update the default payment method for subscription: ${subscription_id}`
+          );
         }
+      }
 
-        break;
-      case "invoice.payment_failed":
-        // If the payment fails or the customer does not have a valid payment method,
-        //  an invoice.payment_failed event is sent, the subscription becomes past_due.
-        // Use this webhook to notify your user that their payment has
-        // failed and to retrieve new card details.
-        break;
-      case "invoice.finalized":
-        // If you want to manually send out invoices to your customers
-        // or store them locally to reference to avoid hitting Stripe rate limits.
-        break;
-      case "customer.subscription.deleted":
-        if (event.request != null) {
-          // handle a subscription cancelled by your request
-          // from above.
-        } else {
-          // handle subscription cancelled automatically based
-          // upon your subscription settings.
-        }
-        break;
-      case "customer.subscription.trial_will_end":
-        // Send notification to your user that the trial will end
-        break;
-      default:
-      // Unexpected event type
-    }
-    res.sendStatus(200);
+      break;
+    case "invoice.payment_failed":
+      // If the payment fails or the customer does not have a valid payment method,
+      //  an invoice.payment_failed event is sent, the subscription becomes past_due.
+      // Use this webhook to notify your user that their payment has
+      // failed and to retrieve new card details.
+      break;
+    case "invoice.finalized":
+      // If you want to manually send out invoices to your customers
+      // or store them locally to reference to avoid hitting Stripe rate limits.
+      break;
+    case "customer.subscription.deleted":
+      if (event.request != null) {
+        // handle a subscription cancelled by your request
+        // from above.
+      } else {
+        // handle subscription cancelled automatically based
+        // upon your subscription settings.
+      }
+      break;
+    case "customer.subscription.trial_will_end":
+      // Send notification to your user that the trial will end
+      break;
+    default:
+    // Unexpected event type
+  }
+  res.sendStatus(200);
+};
+
+const compareStatus = (a, b) => {
+  if (a.status < b.status) {
+    return -1;
+  }
+  if (a.status > b.status) {
+    return 1;
+  }
+  return 0;
 };
