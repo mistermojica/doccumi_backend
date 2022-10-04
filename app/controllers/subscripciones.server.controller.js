@@ -164,7 +164,7 @@ exports.prices = async function (req, res, next) {
     currentPrice: subscriptions?.data[0]?.items?.data[0]?.price
   };
 
-  // console.log({result});
+  console.log('currentPrice:', subscriptions?.data);
 
   res.send(result);
 };
@@ -598,12 +598,37 @@ exports.subscriptions = async function (req, res, next) {
 
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
-    status: "all",
+    status: "active",
     expand: [
       "data.default_payment_method",
       "data.plan.product",
       "data.latest_invoice",
     ],
+    limit: 10
+  });
+
+  res.json({ subscriptions });
+};
+
+exports.subscriptionsByStatus = async function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  const customerId = req.body.customerId;
+  const statusCode = req.body.statusCode;
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    status: statusCode,
+    expand: [
+      "data.default_payment_method",
+      "data.plan.product",
+      "data.latest_invoice",
+    ],
+    limit: 100
   });
 
   res.json({ subscriptions });

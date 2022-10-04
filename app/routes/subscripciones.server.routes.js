@@ -11,6 +11,7 @@ module.exports = function (app) {
   app.route("/subscripciones/prices").post(subscripciones.prices);
 
   app.route("/subscripciones/subscriptions").post(subscripciones.subscriptions);
+  app.route("/subscripciones/subscriptions-by-status").post(subscripciones.subscriptionsByStatus);
   app.route("/subscripciones/create-subscription").post(subscripciones.create_subscription);
   app.route("/subscripciones/update-subscription").post(subscripciones.update_subscription);
   app.route("/subscripciones/cancel-subscription").post(subscripciones.cancel_subscription);
