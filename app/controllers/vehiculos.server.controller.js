@@ -12,28 +12,28 @@ var _ = require('underscore');
 mapEstadoVehiculos.set("venta", {
   tipo: "success",
   corta: "En Venta",
-  larga: "Vehículos en Venta",
+  larga: "Inventario en Venta",
 });
 mapEstadoVehiculos.set("pendiente", {
   tipo: "info",
   corta: "Pendientes",
-  larga: "Vehículos Pendientes",
+  larga: "Inventario Pendientes",
 });
 mapEstadoVehiculos.set("vendido", {
   tipo: "warning",
   corta: "Vendidos",
-  larga: "Vehículos Vendidos",
+  larga: "Inventario Vendidos",
 });
 mapEstadoVehiculos.set("taller", {
   tipo: "danger",
   corta: "En Taller",
-  larga: "Vehículos en Taller",
+  larga: "Inventario en Taller",
 });
-mapEstadoVehiculos.set("activo", {
-  tipo: "info",
-  corta: "Activo",
-  larga: "Activos",
-});
+// mapEstadoVehiculos.set("activo", {
+//   tipo: "info",
+//   corta: "Activo",
+//   larga: "Activos",
+// });
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
