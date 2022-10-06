@@ -1,0 +1,55 @@
+
+###
+POST http://localhost:8000/soportes/create
+content-type: application/json
+
+{
+  "sopDueno": "63363eaee7ec7906d66fd177",
+  "sopCorreo": "mistermojica@gmail.com",
+  "sopAsunto": "NO ME FUNCIONO LA TARJETA 2",
+  "sopTipo": "Facturación",
+  "sopDescripcion": "INTENTÉ pagar con mi tarjeta, pero no funcionó.",
+  "sopEstado": "activo"
+}
+
+###
+POST http://localhost:8000/soportes/update
+content-type: application/json
+
+{
+  "_id": "633ecade36c8701432ff5b72",
+  "sopDueno": "63363eaee7ec7906d66fd177",
+  "sopCorreo": "mistermojica@gmail.com",
+  "sopAsunto": "NO ME FUNCIONO LA TARJETA XXX",
+  "sopTipo": "Facturación",
+  "sopDescripcion": "INTENTÉ pagar con mi tarjeta, pero no funcionó.",
+  "sopEstado": "activo"
+}
+
+###
+GET http://localhost:8000/soportes/list
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/listpop
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/find/633ecade36c8701432ff5b72
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/buscaportipo/Facturación
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/buscapordueno/63363eaee7ec7906d66fd177
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/buscaportipodueno/Facturación/63363eaee7ec7906d66fd177
+content-type: application/json
+
+###
+GET http://localhost:8000/soportes/delete/633e3c32d45d6632701677d1
+content-type: application/json

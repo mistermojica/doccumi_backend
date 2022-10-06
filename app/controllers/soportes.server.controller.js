@@ -45,8 +45,6 @@ exports.update = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    console.log("update() || req.body:", req.body);
-
     db.Soportes.
     findOne({_id: req.body._id}).
     where("sopEstado").ne("borrado").
@@ -96,6 +94,8 @@ exports.findById = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
+    console.log(req.params);
+
     db.Soportes.
     findOne({_id: req.params.id}).
     select("-__v").
@@ -105,7 +105,11 @@ exports.findById = function(req, res, next) {
         select: "codigo nombre -_id",
         match: {isActive: true}
     }).
-    exec(function(err, data) {
+    populate({
+        path: "_usuario_", 
+        match: {estado: "activo"}
+    }).
+    exec((err, data) => {
         if (err) {
             console.log(__filename + ' >> .findById: ' + JSON.stringify(err));
             res.json({status: "FAILED", message: `Error al obtener el ${entityName}.`, data: {}});
@@ -118,39 +122,40 @@ exports.findById = function(req, res, next) {
 
 exports.findByDueno = function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
-  
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
     let dueno = req.params.dueno === "null" ? null : req.params.dueno;
-  
+
     db.Soportes.
     find({ $or: [{ sopDueno: dueno }] })
-      .select("-__v")
-      .where("sopEstado").ne("borrado")
-      .populate({
+    .select("-__v")
+    .where("sopEstado").ne("borrado")
+    .populate({
         path: "_estado_",
         select: "codigo nombre -_id",
         match: { isActive: true },
-      })
-      .exec(function (err, data) {
+    }).
+    populate({
+        path: "_usuario_", 
+        match: {estado: "activo"}
+    })
+    .exec(function (err, data) {
         strMgr.mlCL("findByDueno() || data:", data);
         if (err) {
-          console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
-          res.json({
+            console.log(__filename + " >> .findByDueno: " + JSON.stringify(err));
+            res.json({
             status: "FAILED",
             message: `Error al obtener el ${entityName}.`,
             data: {},
-          });
+            });
         } else {
-          res.json({
+            res.json({
             status: "SUCCESS",
             message: `${entityName} encontrado exitosamente.`,
             data: data,
-          });
+            });
         }
-      });
+    });
   };
 
 exports.findByTipo = function(req, res, next) {
@@ -222,9 +227,13 @@ exports.listpop = function(req, res, next) {
         path: "_estado_",
         select: "codigo nombre"
     }).
+    populate({
+        path: "_usuario_", 
+        match: {estado: "activo"}
+    }).
     exec(function(err, data) {
         if (err) {
-            console.log(__filename + ' >> .findById: ' + JSON.stringify(err));
+            console.log(__filename + ' >> .listpop: ' + JSON.stringify(err));
             res.json({status: "FAILED", message: `Error al obtener la lista de ${entityName}.`, data: err});
         }
         else {

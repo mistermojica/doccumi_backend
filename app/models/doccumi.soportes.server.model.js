@@ -21,4 +21,11 @@ SoportesSchema.virtual('_estado_', {
     justOne: true
 });
 
+SoportesSchema.virtual('_usuario_', {
+    ref:'Usuarios',
+    localField:'sopDueno',
+    foreignField:'_id',
+    justOne: true
+});
+
 mongoose.model('Soportes', SoportesSchema);
