@@ -470,6 +470,24 @@ exports.list_payment_methods = async function (req, res, next) {
   }
 };
 
+exports.get_default_payment_method = async function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  // List payment methods
+  try {
+    const customerId = req.body.customerId;
+
+    const customer = await stripe.customers.retrieve(customerId, {});
+
+    const paymentMethodId = customer.invoice_settings.default_payment_method;
+
+    res.send({defaultPaymentMethodId: paymentMethodId});
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
+};
+
 exports.set_default_payment_method = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(

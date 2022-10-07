@@ -18,6 +18,8 @@ module.exports = function (app) {
 
   app.route("/subscripciones/create-payment-method").post(subscripciones.create_payment_method);
   app.route("/subscripciones/list-payment-methods").post(subscripciones.list_payment_methods);
+  app.route("/subscripciones/get-default-payment-method").post(subscripciones.get_default_payment_method);
+  
   app.route("/subscripciones/set-default-payment-method").post(subscripciones.set_default_payment_method);
   app.route("/subscripciones/delete-payment-method").post(subscripciones.delete_payment_method);
 
