@@ -2,6 +2,8 @@ const { get } = require("lodash");
 var subscripciones = require("../controllers/subscripciones.server.controller");
 
 module.exports = function (app) {
+  app.route("/subscripciones/load-stripe-init").post(subscripciones.load_stripe_init);
+
   app.route("/subscripciones/create-customer").post(subscripciones.create_customer);
   app.route("/subscripciones/load-customer").post(subscripciones.load_customer);
 

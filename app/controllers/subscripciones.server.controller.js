@@ -559,6 +559,38 @@ exports.load_customer = async function (req, res, next) {
   }
 };
 
+exports.load_stripe_init = async function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  try {
+    const customerId = req.body.customerId;
+    const customer = await stripe.customers.retrieve(customerId, {
+      // expand: ["default_payment_method"]
+    });
+
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "active",
+      expand: [
+        "data.default_payment_method",
+        "data.plan.product",
+        "data.latest_invoice",
+      ],
+      limit: 10
+    });
+
+    res.send({ customer, subscriptions });
+  } catch (error) {
+    return res.status(400).send({ error: { message: error.message } });
+  }
+};
+
+
+
 exports.invoice_preview = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
