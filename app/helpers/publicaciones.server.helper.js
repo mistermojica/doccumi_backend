@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer'); // v13.0.0 or later
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
+const {resolve} = require("path");
 
 exports.marketplace = function(ctx) {
   var promise = new Promise(function(resolve, reject) {
@@ -903,8 +904,10 @@ function delay(time) {
 }
 
 exports.download = function (ctx) {
-  // let downPath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/' + new Date().getMilliseconds() ;
-  let downPath = '/home/ec2-user/doccumi/backend/public/uploads/' + new Date().getMilliseconds() ;
+  let downPath = resolve('./public/uploads') + '/' + new Date().getMilliseconds();
+  // let downPath = '/Users/omarmojica/Proyectos/documi/backend/public/uploads/' + new Date().getMilliseconds();
+  // let downPath = '/home/ec2-user/doccumi/backend/public/uploads/' + new Date().getMilliseconds();
+  console.log('download() || downPath:', downPath);
   let ext = path.extname(ctx.url);
   let fileName = downPath.concat(ext);
   console.log('download() || fileName:', fileName);
@@ -912,8 +915,8 @@ exports.download = function (ctx) {
   http.get(ctx.url, (response) => {
     response.pipe(file);
     file.on('finish', () => {
-      file.close();  // close() is async, call cb after close completes.
-      ctx.cb(fileName);
+      file.close(ctx.cb({"id": ctx.id, "file": fileName}));  // close() is async, call cb after close completes.
+      // ctx.cb({"id": ctx.id, "file": fileName});
     });
   }).on('error', (err) => { // Handle errors
     fs.unlink(dest); // Delete the file async. (But we don't check the result)

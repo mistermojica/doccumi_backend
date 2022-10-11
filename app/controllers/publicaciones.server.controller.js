@@ -4,6 +4,7 @@ const entityName = "Publicación(s)";
 const _ = require("underscore");
 let intFotosVehiculosLength = 0;
 let arrFotosVehiculos = [];
+let mapInventariosToPublish = new Map();
 const publicaHelper = require("../helpers/publicaciones.server.helper");
 
 exports.publish = function (req, res, next) {
@@ -16,26 +17,29 @@ exports.publish = function (req, res, next) {
   // ESPECIFICAMENTE DETERMINAR SI ENVIO EL INVENTARIO COMPLETO A LA FUNCION DOWNLOAD
   // O BUSCAR UNA FORMA DE GENERAR LAS RUTAS ABSOLUTAS Y ALMACENARLAS.
 
+  const inventario = req.body.inventario;
+  const to = req.body.to;
+
   if (req.body.inventario.vehFotos.length > 0) {
-    intFotosVehiculosLength = req.body.photos.length;
-    req.body.inventario.vehFotos.forEach(url => {
+    intFotosVehiculosLength = inventario.vehFotos.length;
+    mapInventariosToPublish.set(inventario._id, inventario);
+    inventario.vehFotos.forEach((url) => {
       publicaHelper.download({
-        inventario,
-        // url: url.replace('https', 'http'),
+        id: inventario._id,
+        url: url.replace('https', 'http'),
         // image: req.body.image,
-        
         cb: addFilesToArray
       });
     });
   }
 
-  getConfiguraciones({conDueno: req.body.dueno})
+  getConfiguraciones({conDueno: inventario.vehDueno})
   .then((resConf) => {
     console.log({resConf});
     const ctxConfig = {...req.body, ...resConf};
     console.log({ctxConfig});
 
-    if (req.body.to === 'instagram' && ctx.conIGUsuario && ctx.conIGContrasena) {
+    if (to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
       publicaHelper.instagram(ctxConfig)
       .then((resIG) => {
         console.log("result resIG:", resIG);
@@ -55,7 +59,7 @@ exports.publish = function (req, res, next) {
       });
     }
   
-    if (req.body.to === 'marketplace' && ctx.conFBUsuario && ctx.conFBContrasena) {
+    if (to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
       publicaHelper.marketplace(ctxConfig)
       .then((resMP) => {
         console.log("result resMP:", resMP);
@@ -109,10 +113,16 @@ function getConfiguraciones(ctx) {
   return promise;
 }
 
-function addFilesToArray(file) {
-  console.log('addFilesToArray() || file:', file);
-  arrFotosVehiculos.push(file);
+function addFilesToArray(ctx) {
+  console.log('addFilesToArray():', {ctx});
+  arrFotosVehiculos.push(ctx.file);
+  console.log('addFilesToArray():', {arrFotosVehiculos});
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {
+
+    const inventario = mapInventariosToPublish.get(ctx.id);
+
+    console.log('addFilesToArray:', {inventario});
+    console.log('addFilesToArray:', {arrFotosVehiculos});
 
     let ctx = {
       "image": arrFotosVehiculos,
@@ -124,7 +134,7 @@ function addFilesToArray(file) {
       "show": true
     }
 
-    publish(ctx);
+    // publish(ctx);
   }
 }
 
