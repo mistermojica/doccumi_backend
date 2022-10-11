@@ -915,7 +915,7 @@ exports.download = function (ctx) {
   http.get(ctx.url, (response) => {
     response.pipe(file);
     file.on('finish', () => {
-      file.close(ctx.cb({"id": ctx.id, "file": fileName}));  // close() is async, call cb after close completes.
+      file.close(ctx.cb({"id": ctx.id, "to": ctx.to, "file": fileName}));  // close() is async, call cb after close completes.
       // ctx.cb({"id": ctx.id, "file": fileName});
     });
   }).on('error', (err) => { // Handle errors

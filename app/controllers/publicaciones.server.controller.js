@@ -26,20 +26,25 @@ exports.publish = function (req, res, next) {
     inventario.vehFotos.forEach((url) => {
       publicaHelper.download({
         id: inventario._id,
+        to: to,
         url: url.replace('https', 'http'),
         // image: req.body.image,
         cb: addFilesToArray
       });
     });
   }
+};
 
-  getConfiguraciones({conDueno: inventario.vehDueno})
+const publishToRRSS = (ctx) => {
+  console.log('publishToRRSS:', {ctx});
+
+  getConfiguraciones({conDueno: ctx.vehDueno})
   .then((resConf) => {
     console.log({resConf});
-    const ctxConfig = {...req.body, ...resConf};
+    const ctxConfig = {...ctx, ...resConf};
     console.log({ctxConfig});
 
-    if (to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
+    if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
       publicaHelper.instagram(ctxConfig)
       .then((resIG) => {
         console.log("result resIG:", resIG);
@@ -59,7 +64,7 @@ exports.publish = function (req, res, next) {
       });
     }
   
-    if (to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
+    if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
       publicaHelper.marketplace(ctxConfig)
       .then((resMP) => {
         console.log("result resMP:", resMP);
@@ -117,6 +122,10 @@ function addFilesToArray(ctx) {
   console.log('addFilesToArray():', {ctx});
   arrFotosVehiculos.push(ctx.file);
   console.log('addFilesToArray():', {arrFotosVehiculos});
+  console.log('addFilesToArray():', {mapInventariosToPublish});
+
+  console.log(arrFotosVehiculos.length, {intFotosVehiculosLength});
+
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {
 
     const inventario = mapInventariosToPublish.get(ctx.id);
@@ -124,17 +133,19 @@ function addFilesToArray(ctx) {
     console.log('addFilesToArray:', {inventario});
     console.log('addFilesToArray:', {arrFotosVehiculos});
 
-    let ctx = {
+    let ctxSend = {
+      "vehDueno": inventario.vehDueno,
+      "to": ctx.to,
       "image": arrFotosVehiculos,
-      "caption" : "Hyundai Grandeur 2012",
+      "caption" : inventario.vehMarca + ' ' + inventario.vehModelo + ' ' + inventario.vehAnoFabricacion,
       "location" : "Santo Domingo, Dominican Republic",
-      "year": "2012",
-      "brand": "Hyundai",
-      "model": "Grandeur",
+      "year": inventario.vehAnoFabricacion,
+      "brand": inventario.vehMarca,
+      "model": inventario.vehModelo,
       "show": true
     }
 
-    // publish(ctx);
+    publishToRRSS(ctxSend);
   }
 }
 
