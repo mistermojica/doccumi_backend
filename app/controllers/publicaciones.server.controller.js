@@ -2,26 +2,32 @@ const mofac = require("../../config/ModelFactory");
 const db = mofac("doccumi");
 const entityName = "Publicación(s)";
 const _ = require("underscore");
+let intFotosVehiculosLength = 0;
+let arrFotosVehiculos = [];
 const publicaHelper = require("../helpers/publicaciones.server.helper");
 
 exports.publish = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-
-  let result;
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   console.log('req.body:', req.body);
 
-  let ctx = {
-    url: req.body.url,
-    image: req.body.image,
-    cb: console.log
-  };
+  // ME QUEDE PENDIENTE DE RESOLVER LAS PUBLICACIONES DE FOTOS EN REDES SOCIALES DE
+  // ESPECIFICAMENTE DETERMINAR SI ENVIO EL INVENTARIO COMPLETO A LA FUNCION DOWNLOAD
+  // O BUSCAR UNA FORMA DE GENERAR LAS RUTAS ABSOLUTAS Y ALMACENARLAS.
 
-  publicaHelper.download(ctx);
+  if (req.body.inventario.vehFotos.length > 0) {
+    intFotosVehiculosLength = req.body.photos.length;
+    req.body.inventario.vehFotos.forEach(url => {
+      publicaHelper.download({
+        inventario,
+        // url: url.replace('https', 'http'),
+        // image: req.body.image,
+        
+        cb: addFilesToArray
+      });
+    });
+  }
 
   getConfiguraciones({conDueno: req.body.dueno})
   .then((resConf) => {
@@ -29,12 +35,12 @@ exports.publish = function (req, res, next) {
     const ctxConfig = {...req.body, ...resConf};
     console.log({ctxConfig});
 
-    if (req.body.to === 'instagram') {
+    if (req.body.to === 'instagram' && ctx.conIGUsuario && ctx.conIGContrasena) {
       publicaHelper.instagram(ctxConfig)
       .then((resIG) => {
         console.log("result resIG:", resIG);
         res.json({
-          success: false,
+          success: true,
           message: `${entityName} en Instagram realizada de forma exitosa.`,
           result: resIG,
         });
@@ -49,12 +55,12 @@ exports.publish = function (req, res, next) {
       });
     }
   
-    if (req.body.to === 'marketplace') {
+    if (req.body.to === 'marketplace' && ctx.conFBUsuario && ctx.conFBContrasena) {
       publicaHelper.marketplace(ctxConfig)
       .then((resMP) => {
         console.log("result resMP:", resMP);
         res.json({
-          success: false,
+          success: true,
           message: `${entityName} en Market Place realizada de forma exitosa.`,
           result: resMP,
         });
@@ -101,6 +107,25 @@ function getConfiguraciones(ctx) {
   });
 
   return promise;
+}
+
+function addFilesToArray(file) {
+  console.log('addFilesToArray() || file:', file);
+  arrFotosVehiculos.push(file);
+  if (intFotosVehiculosLength === arrFotosVehiculos.length) {
+
+    let ctx = {
+      "image": arrFotosVehiculos,
+      "caption" : "Hyundai Grandeur 2012",
+      "location" : "Santo Domingo, Dominican Republic",
+      "year": "2012",
+      "brand": "Hyundai",
+      "model": "Grandeur",
+      "show": true
+    }
+
+    publish(ctx);
+  }
 }
 
 function respuesta(res, ctx){
