@@ -25,73 +25,78 @@ exports.publish = function (req, res, next) {
     mapInventariosToPublish.set(inventario._id, inventario);
     inventario.vehFotos.forEach((url) => {
       publicaHelper.download({
-        id: inventario._id,
-        to: to,
-        url: url.replace('https', 'http'),
-        // image: req.body.image,
-        cb: addFilesToArray
+        "res": res,
+        "id": inventario._id,
+        "to": to,
+        "url": url.replace('https', 'http'),
+        "cb": addFilesToArray
       });
     });
   }
 };
 
 const publishToRRSS = (ctx) => {
-  console.log('publishToRRSS:', {ctx});
+  var promise = new Promise(function (resolve, reject) {
 
-  getConfiguraciones({conDueno: ctx.vehDueno})
-  .then((resConf) => {
-    console.log({resConf});
-    const ctxConfig = {...ctx, ...resConf};
-    console.log({ctxConfig});
+    console.log('publishToRRSS:', {ctx});
 
-    if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
-      publicaHelper.instagram(ctxConfig)
-      .then((resIG) => {
-        console.log("result resIG:", resIG);
-        res.json({
-          success: true,
-          message: `${entityName} en Instagram realizada de forma exitosa.`,
-          result: resIG,
+    getConfiguraciones({conDueno: ctx.vehDueno})
+    .then((resConf) => {
+      console.log({resConf});
+      const ctxConfig = {...ctx, ...resConf};
+      console.log({ctxConfig});
+
+      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
+        publicaHelper.instagram(ctxConfig)
+        .then((resIG) => {
+          console.log("result resIG:", resIG);
+          resolve({
+            success: true,
+            message: `${entityName} en Instagram realizada de forma exitosa.`,
+            result: resIG,
+          });
+        })
+        .catch((errIG) => {
+          console.log("result errIG:", errIG);
+          reject({
+            success: false,
+            message: `Error inesperado al realizar ${entityName} en Instagram.`,
+            result: errIG,
+          });
         });
-      })
-      .catch((errIG) => {
-        console.log("result errIG:", errIG);
-        res.json({
-          success: false,
-          message: `Error inesperado al realizar ${entityName} en Instagram.`,
-          result: errIG,
+      }
+    
+      if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
+        publicaHelper.marketplace(ctxConfig)
+        .then((resMP) => {
+          console.log("result resMP:", resMP);
+          resolve({
+            success: true,
+            message: `${entityName} en Market Place realizada de forma exitosa.`,
+            result: resMP,
+          });
+        })
+        .catch((errMP) => {
+          console.log("result errMP:", errMP);
+          reject({
+            success: false,
+            message: `Error inesperado al realizar ${entityName} en Market Place.`,
+            result: errMP,
+          });
         });
+      }
+    })
+    .catch((errConf) => {
+      console.log({errConf});
+      reject({
+        success: false,
+        message: `Error inesperado al realizar ${entityName}.`,
+        result: errConf,
       });
-    }
-  
-    if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
-      publicaHelper.marketplace(ctxConfig)
-      .then((resMP) => {
-        console.log("result resMP:", resMP);
-        res.json({
-          success: true,
-          message: `${entityName} en Market Place realizada de forma exitosa.`,
-          result: resMP,
-        });
-      })
-      .catch((errMP) => {
-        console.log("result errMP:", errMP);
-        res.json({
-          success: false,
-          message: `Error inesperado al realizar ${entityName} en Market Place.`,
-          result: errMP,
-        });
-      });
-    }
-  })
-  .catch((errConf) => {
-    console.log({errConf});
-    res.json({
-      success: false,
-      message: `Error inesperado al realizar ${entityName}.`,
-      result: errConf,
     });
   });
+
+  return promise;
 };
 
 function getConfiguraciones(ctx) {
@@ -133,11 +138,13 @@ function addFilesToArray(ctx) {
     console.log('addFilesToArray:', {inventario});
     console.log('addFilesToArray:', {arrFotosVehiculos});
 
+    const vehPrecio = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(inventario.vehPrecio);
+
     let ctxSend = {
       "vehDueno": inventario.vehDueno,
       "to": ctx.to,
       "image": arrFotosVehiculos,
-      "caption" : inventario.vehMarca + ' ' + inventario.vehModelo + ' ' + inventario.vehAnoFabricacion,
+      "caption" : inventario.vehMarca + ' ' + inventario.vehModelo + ' ' + inventario.vehAnoFabricacion + '\r\n' + 'Tipo: ' + inventario.vehTipoVehiculo + '\r\n' + 'Color: ' + inventario.vehColor + '\r\n' + 'Combustible: ' + inventario.vehTipoEmision + '\r\n' + 'Precio: ' + vehPrecio,
       "location" : "Santo Domingo, Dominican Republic",
       "year": inventario.vehAnoFabricacion,
       "brand": inventario.vehMarca,
@@ -145,7 +152,11 @@ function addFilesToArray(ctx) {
       "show": true
     }
 
-    publishToRRSS(ctxSend);
+    publishToRRSS(ctxSend).then((resPublish) => {
+      ctx.res.json(resPublish);
+    }).catch((errPublish) => {
+      ctx.res.json(errPublish);
+    });
   }
 }
 

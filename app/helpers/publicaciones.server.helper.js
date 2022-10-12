@@ -536,6 +536,7 @@ exports.instagram = function(ctx) {
 
         const browser = await puppeteer.launch(omLaunchOptions);
         const page = await browser.newPage();
+        Log('STEP:', 1);
         // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
         const timeout = 20000;
         page.setDefaultTimeout(timeout);
@@ -552,6 +553,7 @@ exports.instagram = function(ctx) {
             throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
           }
         }
+        Log('STEP:', 5);
 
         async function scrollIntoViewIfNeeded(element, timeout) {
           await waitForConnected(element, timeout);
@@ -568,18 +570,21 @@ exports.instagram = function(ctx) {
           });
           await waitForInViewport(element, timeout);
         }
+        Log('STEP:', 6);
 
         async function waitForConnected(element, timeout) {
           await waitForFunction(async () => {
             return await element.getProperty('isConnected');
           }, timeout);
         }
+        Log('STEP:', 7);
 
         async function waitForInViewport(element, timeout) {
           await waitForFunction(async () => {
             return await element.isIntersectingViewport({threshold: 0});
           }, timeout);
         }
+        Log('STEP:', 8);
 
         async function waitForSelector(selector, frame, options) {
           if (!Array.isArray(selector)) {
@@ -608,6 +613,7 @@ exports.instagram = function(ctx) {
           }
           return element;
         }
+        Log('STEP:', 9);
 
         async function waitForElement(step, frame, timeout) {
           const count = step.count || 1;
@@ -623,6 +629,7 @@ exports.instagram = function(ctx) {
             return compFn(elements.length, count);
           }, timeout);
         }
+        Log('STEP:', 10);
 
         async function querySelectorsAll(selectors, frame) {
           for (const selector of selectors) {
@@ -633,6 +640,7 @@ exports.instagram = function(ctx) {
           }
           return [];
         }
+        Log('STEP:', 11);
 
         async function querySelectorAll(selector, frame) {
           if (!Array.isArray(selector)) {
@@ -669,6 +677,7 @@ exports.instagram = function(ctx) {
           }
           return elements;
         }
+        Log('STEP:', 12);
 
         async function waitForFunction(fn, timeout) {
           let isActive = true;
@@ -684,10 +693,14 @@ exports.instagram = function(ctx) {
           }
           throw new Error('Timed out');
         }
+        Log('STEP:', 13);
+
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1000,"height":700})
         }
+        Log('STEP:', 14);
+
         {
             const targetPage = page;
             const promises = [];
@@ -695,12 +708,16 @@ exports.instagram = function(ctx) {
             await targetPage.goto("https://www.instagram.com/");
             await Promise.all(promises);
         }
+        Log('STEP:', 15);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([['input[name="username"]']], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 108.84375, y: 18.9375} });
         }
+        Log('STEP:', 16);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([['input[name="username"]']], targetPage, { timeout, visible: true });
@@ -719,14 +736,20 @@ exports.instagram = function(ctx) {
               console.log('Entrada usuario 2');
             }
         }
+        Log('STEP:', 17);
+
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
+        Log('STEP:', 18);
+
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
+        Log('STEP:', 19);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([['input[name="password"]']], targetPage, { timeout, visible: true });
@@ -746,40 +769,47 @@ exports.instagram = function(ctx) {
               console.log('Entrada contraseña 2');
             }
         }
+        Log('STEP:', 20);
+
         {
             const targetPage = page;
             const promises = [];
             promises.push(targetPage.waitForNavigation());
-            const element = await waitForSelectors([['button[type="submit"]']], targetPage, { timeout, visible: true });
+            // const element = await waitForSelectors([['button[type="submit"]']], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([["aria/Log In","aria/[role=\"generic\"]"],["#loginForm > div > div:nth-child(3) > button > div"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 124.84375, y: 12.9375} });
             await Promise.all(promises);
             console.log('Click Botón Login');
         }
+        Log('STEP:', 21);
         {
           await page.waitForXPath("//button[contains(text(),'Not Now')]");
           let next = await page.$x("//button[contains(text(),'Not Now')]");
           await next[0].click();
         }
         if (ctx.show) {
-          {
-            await page.waitForXPath("//button[contains(text(),'Not Now')]");
-            let next = await page.$x("//button[contains(text(),'Not Now')]");
-            await next[0].click();
-          }
+          // {
+          //   await page.waitForXPath("//button[contains(text(),'Not Now')]");
+          //   let next = await page.$x("//button[contains(text(),'Not Now')]");
+          //   await next[0].click();
+          // }
         }
+        Log('STEP:', 22);
         {
-            const targetPage = page;
-            const element = await waitForSelectors([["aria/New post"],["button._abl-._abm2"]], targetPage, { timeout, visible: true });
-            await scrollIntoViewIfNeeded(element, timeout);
-            await element.click({ offset: { x: 14.5, y: 14} });
+          const targetPage = page;
+          const element = await waitForSelectors([["aria/New post"],["button._abl-._abm2"]], targetPage, { timeout, visible: true });
+          await scrollIntoViewIfNeeded(element, timeout);
+          await element.click({ offset: { x: 14.5, y: 14} });
         }
+        Log('STEP:', 23);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Select from computer"],["button._acan._acap._acas"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             // await element.click({ offset: { x: 86.25, y: 16.5} });
         }
+        Log('STEP:', 24);
         {
           const targetPage = page;
           // const filepath = ctx.image;
@@ -799,24 +829,28 @@ exports.instagram = function(ctx) {
 
           console.log("FOTO CARGADA NUEVA", ctx.image);
         }
+        Log('STEP:', 25);
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
           await next[0].click();
           await delay(1000);
         }
+        Log('STEP:', 26);
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
           await next[0].click();
           console.debug('clicking next');
         }
+        Log('STEP:', 27);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 135.5, y: 13} });
         }
+        Log('STEP:', 28);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
@@ -833,12 +867,14 @@ exports.instagram = function(ctx) {
               }, ctx.caption);
             }
         }
+        Log('STEP:', 29);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 136.5, y: 31} });
         }
+        Log('STEP:', 30);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
@@ -861,13 +897,16 @@ exports.instagram = function(ctx) {
               await delay(2000);
             }
         }
+        Log('STEP:', 31);
         await delay(3000);
+        Log('STEP:', 32);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Share"],['button[type="button"]']], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             // await element.click({ offset: { x: 19.578125, y: 12} });
         }
+        Log('STEP:', 33);
         {
           await page.waitForXPath("//button[contains(text(),'Share')]");
           let next = await page.$x("//button[contains(text(),'Share')]");
@@ -878,6 +917,7 @@ exports.instagram = function(ctx) {
         //   await delay(2000);
         // }
         // await browser.close();
+        Log('STEP:', 34);
 
         page.waitForXPath("//div[contains(text(),'Post shared')]").then((resSelector) => {
           console.log('Encontró el identificador de publicación. IG 1');
@@ -895,6 +935,14 @@ exports.instagram = function(ctx) {
   });
 
   return promise;
+}
+
+const screenshot = async (page, file) => {
+  await page.screenshot({path: file});
+}
+
+const Log = async (label, value) => {
+  // console.log(label, value);
 }
 
 function delay(time) {
@@ -915,7 +963,7 @@ exports.download = function (ctx) {
   http.get(ctx.url, (response) => {
     response.pipe(file);
     file.on('finish', () => {
-      file.close(ctx.cb({"id": ctx.id, "to": ctx.to, "file": fileName}));  // close() is async, call cb after close completes.
+      file.close(ctx.cb({"id": ctx.id, "to": ctx.to, "res": ctx.res, "file": fileName}));  // close() is async, call cb after close completes.
       // ctx.cb({"id": ctx.id, "file": fileName});
     });
   }).on('error', (err) => { // Handle errors
