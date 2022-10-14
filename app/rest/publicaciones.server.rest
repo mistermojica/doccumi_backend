@@ -1,4 +1,4 @@
-@dueno = 627efe3b8a55c158e669107b
+@dueno = 63363eaee7ec7906d66fd177
 
 ###
 POST http://localhost:8002/publicaciones/publish
@@ -12,6 +12,16 @@ content-type: application/json
   "caption" : "Hyundai Grandeur 2012",
   "location" : "Santo Domingo, Dominican Republic",
   "show": true
+}
+
+###
+POST http://localhost:8000/publicaciones/loginrrss
+content-type: application/json
+
+{
+  "dueno" : "{{dueno}}",
+  "to" : "instagram",
+  "show" : false
 }
 
 ###

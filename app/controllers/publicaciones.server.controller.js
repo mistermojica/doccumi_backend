@@ -161,6 +161,84 @@ function respuesta(res, ctx){
   });
 }
 
+const loginRRSS = (ctx) => {
+  var promise = new Promise(function (resolve, reject) {
+
+    console.log('loginRRSS:', {ctx});
+
+    getConfiguraciones({conDueno: ctx.dueno}).then((resConf) => {
+      console.log({resConf});
+      const ctxConfig = {...ctx, ...resConf};
+      console.log({ctxConfig});
+
+      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
+        publicaHelper.instagramlogin(ctxConfig)
+        .then((resIG) => {
+          console.log("result resIG:", resIG);
+          resolve({
+            success: true,
+            message: `Login en Instagram realizado de forma exitosa.`,
+            result: resIG,
+          });
+        })
+        .catch((errIG) => {
+          console.log("result errIG:", errIG);
+          reject({
+            success: false,
+            message: `Error al realizar Login en Instagram.`,
+            result: errIG,
+          });
+        });
+      }
+    
+      // if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
+      //   publicaHelper.marketplace(ctxConfig)
+      //   .then((resMP) => {
+      //     console.log("result resMP:", resMP);
+      //     resolve({
+      //       success: true,
+      //       message: `${entityName} en Market Place realizada de forma exitosa.`,
+      //       result: resMP,
+      //     });
+      //   })
+      //   .catch((errMP) => {
+      //     console.log("result errMP:", errMP);
+      //     reject({
+      //       success: false,
+      //       message: `Error inesperado al realizar ${entityName} en Market Place.`,
+      //       result: errMP,
+      //     });
+      //   });
+      // }
+    })
+    .catch((errConf) => {
+      console.log({errConf});
+      reject({
+        success: false,
+        message: `Error inesperado al realizar ${entityName}.`,
+        result: errConf,
+      });
+    });
+  });
+
+  return promise;
+};
+
+
+exports.loginrrss = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  console.log('loginrrss() || body:', req.body);
+
+  loginRRSS(req.body).then((resPublish) => {
+    res.json(resPublish);
+  }).catch((errPublish) => {
+    res.json(errPublish);
+  });
+};
+
+
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
