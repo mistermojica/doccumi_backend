@@ -104,7 +104,7 @@ exports.create = function (req, res, next) {
 };
 
 function addFilesToArray(file) {
-  console.log('addFilesToArray() || file:', file);
+  // console.log('addFilesToArray() || file:', file);
   arrFotosVehiculos.push(file);
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {
 

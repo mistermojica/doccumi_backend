@@ -124,19 +124,12 @@ function getConfiguraciones(ctx) {
 }
 
 function addFilesToArray(ctx) {
-  console.log('addFilesToArray():', {ctx});
+  // console.log('addFilesToArray():', {ctx});
   arrFotosVehiculos.push(ctx.file);
-  console.log('addFilesToArray():', {arrFotosVehiculos});
-  console.log('addFilesToArray():', {mapInventariosToPublish});
-
-  console.log(arrFotosVehiculos.length, {intFotosVehiculosLength});
 
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {
 
     const inventario = mapInventariosToPublish.get(ctx.id);
-
-    console.log('addFilesToArray:', {inventario});
-    console.log('addFilesToArray:', {arrFotosVehiculos});
 
     const vehPrecio = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(inventario.vehPrecio);
 
@@ -149,7 +142,7 @@ function addFilesToArray(ctx) {
       "year": inventario.vehAnoFabricacion,
       "brand": inventario.vehMarca,
       "model": inventario.vehModelo,
-      "show": true
+      "show": false
     }
 
     publishToRRSS(ctxSend).then((resPublish) => {
