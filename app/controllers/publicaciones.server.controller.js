@@ -35,196 +35,6 @@ exports.publish = function (req, res, next) {
   }
 };
 
-const publishToRRSS = (ctx) => {
-  var promise = new Promise(function (resolve, reject) {
-
-    console.log('publishToRRSS:', {ctx});
-
-    getConfiguraciones({conDueno: ctx.vehDueno})
-    .then((resConf) => {
-      console.log({resConf});
-      const ctxConfig = {...ctx, ...resConf};
-      console.log({ctxConfig});
-
-      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
-        publicaHelper.instagram(ctxConfig)
-        .then((resIG) => {
-          console.log("result resIG:", resIG);
-          resolve({
-            success: true,
-            message: `${entityName} en Instagram realizada de forma exitosa.`,
-            result: resIG,
-          });
-        })
-        .catch((errIG) => {
-          console.log("result errIG:", errIG);
-          reject({
-            success: false,
-            message: `Error inesperado al realizar ${entityName} en Instagram.`,
-            result: errIG,
-          });
-        });
-      }
-    
-      if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
-        publicaHelper.marketplace(ctxConfig)
-        .then((resMP) => {
-          console.log("result resMP:", resMP);
-          resolve({
-            success: true,
-            message: `${entityName} en Market Place realizada de forma exitosa.`,
-            result: resMP,
-          });
-        })
-        .catch((errMP) => {
-          console.log("result errMP:", errMP);
-          reject({
-            success: false,
-            message: `Error inesperado al realizar ${entityName} en Market Place.`,
-            result: errMP,
-          });
-        });
-      }
-    })
-    .catch((errConf) => {
-      console.log({errConf});
-      reject({
-        success: false,
-        message: `Error inesperado al realizar ${entityName}.`,
-        result: errConf,
-      });
-    });
-  });
-
-  return promise;
-};
-
-function getConfiguraciones(ctx) {
-  console.log({ctx});
-
-  var promise = new Promise(function (resolve, reject) {
-
-    db.Configuraciones
-    .findOne({conDueno: ctx.conDueno})
-    .where("conEstado")
-    .ne("borrado")
-    .lean()
-    .exec(function (err, data) {
-      if (err) {
-        console.log(__filename + " >> .getConfiguraciones: " + JSON.stringify(err));
-        reject(err);
-      } else {
-        console.log(data);
-        resolve(data);
-      }
-    });
-  });
-
-  return promise;
-}
-
-function addFilesToArray(ctx) {
-  // console.log('addFilesToArray():', {ctx});
-  arrFotosVehiculos.push(ctx.file);
-
-  if (intFotosVehiculosLength === arrFotosVehiculos.length) {
-
-    const inventario = mapInventariosToPublish.get(ctx.id);
-
-    const vehPrecio = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(inventario.vehPrecio);
-
-    let ctxSend = {
-      "vehDueno": inventario.vehDueno,
-      "to": ctx.to,
-      "image": arrFotosVehiculos,
-      "caption" : inventario.vehMarca + ' ' + inventario.vehModelo + ' ' + inventario.vehAnoFabricacion + '\r\n' + 'Tipo: ' + inventario.vehTipoVehiculo + '\r\n' + 'Color: ' + inventario.vehColor + '\r\n' + 'Combustible: ' + inventario.vehTipoEmision + '\r\n' + 'Precio: ' + vehPrecio,
-      "location" : "Santo Domingo, Dominican Republic",
-      "year": inventario.vehAnoFabricacion,
-      "brand": inventario.vehMarca,
-      "model": inventario.vehModelo,
-      "show": false
-    }
-
-    publishToRRSS(ctxSend).then((resPublish) => {
-      ctx.res.json(resPublish);
-    }).catch((errPublish) => {
-      ctx.res.json(errPublish);
-    });
-  }
-}
-
-function respuesta(res, ctx){
-  res.json({
-    status: "SUCCESS",
-    message: `${entityName} realizada exitosamente.`,
-    data: result,
-  });
-}
-
-const loginRRSS = (ctx) => {
-  var promise = new Promise(function (resolve, reject) {
-
-    console.log('loginRRSS:', {ctx});
-
-    getConfiguraciones({conDueno: ctx.dueno}).then((resConf) => {
-      console.log({resConf});
-      const ctxConfig = {...ctx, ...resConf};
-      console.log({ctxConfig});
-
-      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
-        publicaHelper.instagramlogin(ctxConfig)
-        .then((resIG) => {
-          console.log("result resIG:", resIG);
-          resolve({
-            success: true,
-            message: `Login en Instagram realizado de forma exitosa.`,
-            result: resIG,
-          });
-        })
-        .catch((errIG) => {
-          console.log("result errIG:", errIG);
-          reject({
-            success: false,
-            message: `Error al realizar Login en Instagram.`,
-            result: errIG,
-          });
-        });
-      }
-    
-      // if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
-      //   publicaHelper.marketplace(ctxConfig)
-      //   .then((resMP) => {
-      //     console.log("result resMP:", resMP);
-      //     resolve({
-      //       success: true,
-      //       message: `${entityName} en Market Place realizada de forma exitosa.`,
-      //       result: resMP,
-      //     });
-      //   })
-      //   .catch((errMP) => {
-      //     console.log("result errMP:", errMP);
-      //     reject({
-      //       success: false,
-      //       message: `Error inesperado al realizar ${entityName} en Market Place.`,
-      //       result: errMP,
-      //     });
-      //   });
-      // }
-    })
-    .catch((errConf) => {
-      console.log({errConf});
-      reject({
-        success: false,
-        message: `Error inesperado al realizar ${entityName}.`,
-        result: errConf,
-      });
-    });
-  });
-
-  return promise;
-};
-
-
 exports.loginrrss = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -237,7 +47,6 @@ exports.loginrrss = function (req, res, next) {
     res.json(errPublish);
   });
 };
-
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -474,4 +283,193 @@ exports.listpop = function (req, res, next) {
         });
       }
     });
+};
+
+const publishToRRSS = (ctx) => {
+  var promise = new Promise(function (resolve, reject) {
+
+    console.log('publishToRRSS:', {ctx});
+
+    getConfiguraciones({conDueno: ctx.vehDueno})
+    .then((resConf) => {
+      console.log({resConf});
+      const ctxConfig = {...ctx, ...resConf};
+      console.log({ctxConfig});
+
+      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
+        publicaHelper.instagram(ctxConfig)
+        .then((resIG) => {
+          console.log("result resIG:", resIG);
+          resolve({
+            success: true,
+            message: `${entityName} en Instagram realizada de forma exitosa.`,
+            result: resIG,
+          });
+        })
+        .catch((errIG) => {
+          console.log("result errIG:", errIG);
+          reject({
+            success: false,
+            message: `Error inesperado al realizar ${entityName} en Instagram.`,
+            result: errIG,
+          });
+        });
+      }
+    
+      if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
+        publicaHelper.marketplace(ctxConfig)
+        .then((resMP) => {
+          console.log("result resMP:", resMP);
+          resolve({
+            success: true,
+            message: `${entityName} en Market Place realizada de forma exitosa.`,
+            result: resMP,
+          });
+        })
+        .catch((errMP) => {
+          console.log("result errMP:", errMP);
+          reject({
+            success: false,
+            message: `Error inesperado al realizar ${entityName} en Market Place.`,
+            result: errMP,
+          });
+        });
+      }
+    })
+    .catch((errConf) => {
+      console.log({errConf});
+      reject({
+        success: false,
+        message: `Error inesperado al realizar ${entityName}.`,
+        result: errConf,
+      });
+    });
+  });
+
+  return promise;
+};
+
+function getConfiguraciones(ctx) {
+  console.log({ctx});
+
+  var promise = new Promise(function (resolve, reject) {
+
+    db.Configuraciones
+    .findOne({conDueno: ctx.conDueno})
+    .where("conEstado")
+    .ne("borrado")
+    .lean()
+    .exec(function (err, data) {
+      if (err) {
+        console.log(__filename + " >> .getConfiguraciones: " + JSON.stringify(err));
+        reject(err);
+      } else {
+        console.log(data);
+        resolve(data);
+      }
+    });
+  });
+
+  return promise;
+}
+
+function addFilesToArray(ctx) {
+  // console.log('addFilesToArray():', {ctx});
+  arrFotosVehiculos.push(ctx.file);
+
+  if (intFotosVehiculosLength === arrFotosVehiculos.length) {
+
+    const inventario = mapInventariosToPublish.get(ctx.id);
+
+    const vehPrecio = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(inventario.vehPrecio);
+
+    let ctxSend = {
+      "vehDueno": inventario.vehDueno,
+      "to": ctx.to,
+      "image": arrFotosVehiculos,
+      "caption" : inventario.vehMarca + ' ' + inventario.vehModelo + ' ' + inventario.vehAnoFabricacion + '\r\n' + 'Tipo: ' + inventario.vehTipoVehiculo + '\r\n' + 'Color: ' + inventario.vehColor + '\r\n' + 'Combustible: ' + inventario.vehTipoEmision + '\r\n' + 'Precio: ' + vehPrecio,
+      "location" : "Santo Domingo, Dominican Republic",
+      "year": inventario.vehAnoFabricacion,
+      "brand": inventario.vehMarca,
+      "model": inventario.vehModelo,
+      "show": true
+    }
+
+    publishToRRSS(ctxSend).then((resPublish) => {
+      ctx.res.json(resPublish);
+    }).catch((errPublish) => {
+      ctx.res.json(errPublish);
+    });
+  }
+}
+
+function respuesta(res, ctx){
+  res.json({
+    status: "SUCCESS",
+    message: `${entityName} realizada exitosamente.`,
+    data: result,
+  });
+}
+
+const loginRRSS = (ctx) => {
+  var promise = new Promise(function (resolve, reject) {
+
+    console.log('loginRRSS:', {ctx});
+
+    if (ctx?.to === 'instagram') {
+      if (ctx?.conIGUsuario && ctx?.conIGContrasena) {
+        publicaHelper.instagramlogin(ctx).then((resIG) => {
+          console.log("result resIG:", resIG);
+          resolve({
+            success: true,
+            message: `Login en Instagram realizado de forma exitosa.`,
+            result: resIG,
+          });
+        })
+        .catch((errIG) => {
+          console.log("result errIG:", errIG);
+          reject({
+            success: false,
+            message: `Error al realizar Login en Instagram.`,
+            result: errIG,
+          });
+        });
+      } else {
+        reject({
+          success: false,
+          message: `Error en las credenciales de Instagram.`,
+          result: {},
+        });
+      }
+    }
+
+    if (ctx?.to === 'marketplace') {
+      if (ctx?.conFBUsuario && ctx?.conFBContrasena) {
+        publicaHelper.marketplacelogin(ctx).then((resIG) => {
+          console.log("result resIG:", resIG);
+          resolve({
+            success: true,
+            message: `Login en Marketplace realizado de forma exitosa.`,
+            result: resIG,
+          });
+        })
+        .catch((errIG) => {
+          console.log("result errIG:", errIG);
+          reject({
+            success: false,
+            message: `Error al realizar Login en Marketplace.`,
+            result: errIG,
+          });
+        });
+      } else {
+        reject({
+          success: false,
+          message: `Error en las credenciales de Marketplace.`,
+          result: {},
+        });
+      }
+    }
+  });
+
+  return promise;
 };

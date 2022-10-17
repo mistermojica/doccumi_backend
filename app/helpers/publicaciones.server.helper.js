@@ -18,7 +18,7 @@ exports.marketplace = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--lang=es-ES,es']
           }
         }
 
@@ -26,6 +26,24 @@ exports.marketplace = function(ctx) {
         const page = await browser.newPage();
         const timeout = 20000;
         page.setDefaultTimeout(timeout);
+
+        await page.setExtraHTTPHeaders({
+          'Accept-Language': 'es'
+        });
+
+        // Set the language forcefully on javascript
+        // await page.evaluateOnNewDocument(() => {
+        //   Object.defineProperty(navigator, "language", {
+        //       get: function() {
+        //           return "bn-BD";
+        //       }
+        //   });
+        //   Object.defineProperty(navigator, "languages", {
+        //       get: function() {
+        //           return ["bn-BD", "bn"];
+        //       }
+        //   });
+        // });
 
         async function waitForSelectors(selectors, frame, options) {
           for (const selector of selectors) {
@@ -169,10 +187,16 @@ exports.marketplace = function(ctx) {
           }
           throw new Error('Timed out');
         }
+
+        Log('STEP:', 1);
+
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1600,"height":600})
         }
+
+        Log('STEP:', 2);
+
         {
             const targetPage = page;
             const promises = [];
@@ -180,15 +204,21 @@ exports.marketplace = function(ctx) {
             await targetPage.goto("https://www.facebook.com/login/?next=%2Fmarketplace%2F");
             await Promise.all(promises);
         }
+
+        Log('STEP:', 3);
+
         {
             const targetPage = page;
-            const element = await waitForSelectors([["aria/Email or phone number"],["#email"]], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([["aria/Correo electrónico o número de teléfono"],["#email"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 223.5, y: 38.9296875} });
         }
+
+        Log('STEP:', 4);
+
         {
             const targetPage = page;
-            const element = await waitForSelectors([["aria/Email or phone number"],["#email"]], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([["aria/Correo electrónico o número de teléfono"],["#email"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             const type = await element.evaluate(el => el.type);
             if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
@@ -202,17 +232,26 @@ exports.marketplace = function(ctx) {
               }, ctx.conFBUsuario);
             }
         }
+
+        Log('STEP:', 5);
+
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
+
+        Log('STEP:', 6);
+
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
+
+        Log('STEP:', 7);
+
         {
             const targetPage = page;
-            const element = await waitForSelectors([["aria/Password"],["#pass"]], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([["aria/Contraseña"],["#pass"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             const type = await element.evaluate(el => el.type);
             if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
@@ -226,57 +265,89 @@ exports.marketplace = function(ctx) {
               }, ctx.conFBContrasena);
             }
         }
+
+        Log('STEP:', 8);
+
         {
             const targetPage = page;
             const promises = [];
             promises.push(targetPage.waitForNavigation());
-            const element = await waitForSelectors([["aria/Log In[role=\"button\"]"],["#loginbutton"]], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([["aria/Iniciar sesión[role=\"button\"]"],["#loginbutton"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 189.8599853515625, y: 21.449676513671875} });
             await Promise.all(promises);
         }
+
+        Log('STEP:', 9);
+
         {
             const targetPage = page;
-            const element = await waitForSelectors([[".aov4n071.bi6gxh9e.dhix69tm.wkznzc2l > a[role='link']"]], targetPage, { timeout, visible: true });
+            const element = await waitForSelectors([[".x1e56ztr.x1xmf6yo.x1d52u69.xktsk01 > a[role='link']"]], targetPage, { timeout, visible: true });
+            // const element = await waitForSelectors([[".aov4n071.bi6gxh9e.dhix69tm.wkznzc2l > a[role='link']"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 62.796875, y: 8} });
         }
+
+        Log('STEP:', 10);
+
         {
-            const targetPage = page;
-            const element = await waitForSelectors([[".sonix8o1:nth-of-type(2) [role]"]], targetPage, { timeout, visible: true });
-            await scrollIntoViewIfNeeded(element, timeout);
-            await element.click({ offset: { x: 35.5, y: 29.2890625} });
+            // const targetPage = page;
+            // const element = await waitForSelectors([[".sonix8o1:nth-of-type(2) [role]"]], targetPage, { timeout, visible: true });
+            // await scrollIntoViewIfNeeded(element, timeout);
+            // await element.click({ offset: { x: 35.5, y: 29.2890625} });
+
+            await page.waitForXPath("//span[contains(text(),'Vehículo en venta')]");
+            let next = await page.$x("//span[contains(text(),'Vehículo en venta')]");
+            await next[0].click();
         }
+
+        Log('STEP:', 11);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(3) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 163, y: 32.7578125} });
         }
+
+        Log('STEP:', 12);
+
         {
           const targetPage = page;
           const element = await waitForSelectors([["aria/Auto/camioneta"],[".hv4rvrfc:nth-of-type(3) .nhd2j8a9"]], targetPage, { timeout, visible: true });
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 98, y: 10.0234375} });
         }
+
+        Log('STEP:', 13);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(8) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 125, y: 16.7890625} });
         }
+
+        Log('STEP:', 14);
+
         {
           const targetPage = page;
           const element = await waitForSelectors([["aria/".concat(ctx.year)],[".hv4rvrfc:nth-of-type(8) .nhd2j8a9"]], targetPage, { timeout, visible: true });
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 98, y: 10.0234375} });
         }
+
+        Log('STEP:', 15);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Marca[role=\"textbox\"]"],["#jsc_c_2d"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 300, y: 23.7890625} });
         }
+
+        Log('STEP:', 16);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Marca[role=\"textbox\"]"],["#jsc_c_2d"]], targetPage, { timeout, visible: true });
@@ -293,14 +364,23 @@ exports.marketplace = function(ctx) {
               }, ctx.brand);
             }
         }
+
+        Log('STEP:', 17);
+
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
+
+        Log('STEP:', 18);
+
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
+
+        Log('STEP:', 19);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Modelo[role=\"textbox\"]"],["#jsc_c_2f"]], targetPage, { timeout, visible: true });
@@ -317,14 +397,23 @@ exports.marketplace = function(ctx) {
               }, ctx.model);
             }
         }
+
+        Log('STEP:', 20);
+
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
+
+        Log('STEP:', 21);
+
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
+
+        Log('STEP:', 22);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Kilometraje[role=\"textbox\"]"],["#jsc_c_2m"]], targetPage, { timeout, visible: true });
@@ -341,12 +430,18 @@ exports.marketplace = function(ctx) {
               }, "123444");
             }
         }
+
+        Log('STEP:', 23);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Precio[role=\"textbox\"]"],["#jsc_c_2h"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 84, y: 26.8125} });
         }
+
+        Log('STEP:', 24);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Precio[role=\"textbox\"]"],["#jsc_c_2h"]], targetPage, { timeout, visible: true });
@@ -363,72 +458,108 @@ exports.marketplace = function(ctx) {
               }, "RD$ 2.342.342");
             }
         }
+
+        Log('STEP:', 25);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(15) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 170, y: 31.828125} });
         }
+
+        Log('STEP:', 26);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Hatchback"],[".hv4rvrfc:nth-of-type(15) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 98, y: 10.0234375} });
         }
+
+        Log('STEP:', 27);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/El título del vehículo no presenta inconvenientes."],["input[name='title_status']"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 16, y: 13.3515625} });
         }
+
+        Log('STEP:', 28);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(18) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 206, y: 36.859375} });
         }
+
+        Log('STEP:', 29);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Bueno"],[".hv4rvrfc:nth-of-type(18) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
+
+        Log('STEP:', 30);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(19) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 185, y: 32.859375} });
         }
+
+        Log('STEP:', 31);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Gasolina"],[".hv4rvrfc:nth-of-type(19) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
+
+        Log('STEP:', 32);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".hv4rvrfc:nth-of-type(20) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 71, y: 9.015625} });
         }
+
+        Log('STEP:', 33);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Transmisión automática"],[".hv4rvrfc:nth-of-type(20) .nhd2j8a9"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
+
+        Log('STEP:', 34);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".ieid39z1"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 119, y: 15.71875} });
         }
+
+        Log('STEP:', 35);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Descripción[role=\"textbox\"]"],[".ieid39z1"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 123, y: 33.8828125} });
         }
+
+        Log('STEP:', 36);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Descripción[role=\"textbox\"]"],[".ieid39z1"]], targetPage, { timeout, visible: true });
@@ -445,12 +576,18 @@ exports.marketplace = function(ctx) {
               }, "Esto es una prueba");
             }
         }
+
+        Log('STEP:', 37);
+
         {
             const targetPage = page;
             const element = await waitForSelectors([[".dati1w0a .aov4n071 [role]"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             // await element.click({ offset: { x: 9, y: 4.7578125} });
         }
+
+        Log('STEP:', 38);
+
         {
             const targetPage = page;
             // const filepath = ctx.image;
@@ -467,6 +604,9 @@ exports.marketplace = function(ctx) {
             await fileChooser.accept(ctx.image);
             console.log("FOTO CARGADA", ctx.image);
         }
+
+        Log('STEP:', 39);
+
         {
             const targetPage = page;
             // let element = "";
@@ -484,6 +624,9 @@ exports.marketplace = function(ctx) {
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 66.421875, y: 7} });
         }
+
+        Log('STEP:', 40);
+
         {
             await delay(5000);
 
@@ -512,6 +655,314 @@ exports.marketplace = function(ctx) {
       } 
     })();
 
+  });
+
+  return promise;
+}
+
+exports.marketplacelogin = function(ctx) {
+  var promise = new Promise(function(resolve, reject) {
+    (async () => {
+
+      let browsercatch = null;
+
+      try {
+        console.log('PROCESO marketplace INICIADO');
+        console.log('ctx:', ctx);
+
+        // ctx.identificador = ctx?.year.concat(' ').concat(ctx?.brand).concat(' ').concat(ctx?.model);
+
+        let omLaunchOptions = {};
+
+        if (ctx.show){
+          omLaunchOptions = {
+            headless: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+          }
+        }
+
+        Log('STEP:', 1);
+
+        const browser = await puppeteer.launch(omLaunchOptions);
+        browsercatch = browser;
+        const page = await browser.newPage();
+        const timeout = 20000;
+        page.setDefaultTimeout(timeout);
+
+        Log('STEP:', 2);
+
+        async function waitForSelectors(selectors, frame, options) {
+          for (const selector of selectors) {
+            try {
+              return await waitForSelector(selector, frame, options);
+            } catch (err) {
+              console.error(err);
+            }
+          }
+          throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
+        }
+
+        Log('STEP:', 3);
+
+        async function scrollIntoViewIfNeeded(element, timeout) {
+          await waitForConnected(element, timeout);
+          const isInViewport = await element.isIntersectingViewport({threshold: 0});
+          if (isInViewport) {
+            return;
+          }
+          await element.evaluate(element => {
+            element.scrollIntoView({
+              block: 'center',
+              inline: 'center',
+              behavior: 'auto',
+            });
+          });
+          await waitForInViewport(element, timeout);
+        }
+
+        Log('STEP:', 4);
+
+        async function waitForConnected(element, timeout) {
+          await waitForFunction(async () => {
+            return await element.getProperty('isConnected');
+          }, timeout);
+        }
+
+        Log('STEP:', 5);
+
+        async function waitForInViewport(element, timeout) {
+          await waitForFunction(async () => {
+            return await element.isIntersectingViewport({threshold: 0});
+          }, timeout);
+        }
+
+        Log('STEP:', 6);
+
+        async function waitForSelector(selector, frame, options) {
+          if (!Array.isArray(selector)) {
+            selector = [selector];
+          }
+          if (!selector.length) {
+            throw new Error('Empty selector provided to waitForSelector');
+          }
+          let element = null;
+          for (let i = 0; i < selector.length; i++) {
+            const part = selector[i];
+            if (element) {
+              element = await element.waitForSelector(part, options);
+            } else {
+              element = await frame.waitForSelector(part, options);
+            }
+            if (!element) {
+              throw new Error('Could not find element: ' + selector.join('>>'));
+            }
+            if (i < selector.length - 1) {
+              element = (await element.evaluateHandle(el => el.shadowRoot ? el.shadowRoot : el)).asElement();
+            }
+          }
+          if (!element) {
+            throw new Error('Could not find element: ' + selector.join('|'));
+          }
+          return element;
+        }
+
+        Log('STEP:', 7);
+
+
+        async function waitForElement(step, frame, timeout) {
+          const count = step.count || 1;
+          const operator = step.operator || '>=';
+          const comp = {
+            '==': (a, b) => a === b,
+            '>=': (a, b) => a >= b,
+            '<=': (a, b) => a <= b,
+          };
+          const compFn = comp[operator];
+          await waitForFunction(async () => {
+            const elements = await querySelectorsAll(step.selectors, frame);
+            return compFn(elements.length, count);
+          }, timeout);
+        }
+
+        Log('STEP:', 8);
+
+        async function querySelectorsAll(selectors, frame) {
+          for (const selector of selectors) {
+            const result = await querySelectorAll(selector, frame);
+            if (result.length) {
+              return result;
+            }
+          }
+          return [];
+        }
+
+        Log('STEP:', 9);
+
+        async function querySelectorAll(selector, frame) {
+          if (!Array.isArray(selector)) {
+            selector = [selector];
+          }
+          if (!selector.length) {
+            throw new Error('Empty selector provided to querySelectorAll');
+          }
+          let elements = [];
+          for (let i = 0; i < selector.length; i++) {
+            const part = selector[i];
+            if (i === 0) {
+              elements = await frame.$$(part);
+            } else {
+              const tmpElements = elements;
+              elements = [];
+              for (const el of tmpElements) {
+                elements.push(...(await el.$$(part)));
+              }
+            }
+            if (elements.length === 0) {
+              return [];
+            }
+            if (i < selector.length - 1) {
+              const tmpElements = [];
+              for (const el of elements) {
+                const newEl = (await el.evaluateHandle(el => el.shadowRoot ? el.shadowRoot : el)).asElement();
+                if (newEl) {
+                  tmpElements.push(newEl);
+                }
+              }
+              elements = tmpElements;
+            }
+          }
+          return elements;
+        }
+
+        Log('STEP:', 10);
+
+        async function waitForFunction(fn, timeout) {
+          let isActive = true;
+          setTimeout(() => {
+            isActive = false;
+          }, timeout);
+          while (isActive) {
+            const result = await fn();
+            if (result) {
+              return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          throw new Error('Timed out');
+        }
+
+        Log('STEP:', 11);
+
+        {
+            const targetPage = page;
+            await targetPage.setViewport({"width":1600,"height":600})
+        }
+
+        Log('STEP:', 12);
+
+        {
+            const targetPage = page;
+            const promises = [];
+            promises.push(targetPage.waitForNavigation());
+            await targetPage.goto("https://www.facebook.com/login/?next=%2Fmarketplace%2F");
+            await Promise.all(promises);
+        }
+
+        Log('STEP:', 13);
+
+        {
+            const targetPage = page;
+            const element = await waitForSelectors([["aria/Email or phone number"],["#email"]], targetPage, { timeout, visible: true });
+            await scrollIntoViewIfNeeded(element, timeout);
+            await element.click({ offset: { x: 223.5, y: 38.9296875} });
+        }
+
+        Log('STEP:', 14);
+
+        {
+            const targetPage = page;
+            const element = await waitForSelectors([["aria/Email or phone number"],["#email"]], targetPage, { timeout, visible: true });
+            await scrollIntoViewIfNeeded(element, timeout);
+            const type = await element.evaluate(el => el.type);
+            if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
+              await element.type(ctx.conFBUsuario);
+            } else {
+              await element.focus();
+              await element.evaluate((el, value) => {
+                el.value = value;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }, ctx.conFBUsuario);
+            }
+        }
+
+        Log('STEP:', 15);
+
+        {
+            const targetPage = page;
+            await targetPage.keyboard.down("Tab");
+        }
+
+        Log('STEP:', 16);
+
+        {
+            const targetPage = page;
+            await targetPage.keyboard.up("Tab");
+        }
+
+        Log('STEP:', 17);
+
+        {
+            const targetPage = page;
+            const element = await waitForSelectors([["aria/Password"],["#pass"]], targetPage, { timeout, visible: true });
+            await scrollIntoViewIfNeeded(element, timeout);
+            const type = await element.evaluate(el => el.type);
+            if (["textarea","select-one","text","url","tel","search","password","number","email"].includes(type)) {
+              await element.type(ctx.conFBContrasena);
+            } else {
+              await element.focus();
+              await element.evaluate((el, value) => {
+                el.value = value;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }, ctx.conFBContrasena);
+            }
+        }
+
+        Log('STEP:', 18);
+
+        {
+            const targetPage = page;
+            const promises = [];
+            promises.push(targetPage.waitForNavigation());
+            const element = await waitForSelectors([["aria/Log In[role=\"button\"]"],["#loginbutton"]], targetPage, { timeout, visible: true });
+            await scrollIntoViewIfNeeded(element, timeout);
+            await element.click({ offset: { x: 189.8599853515625, y: 21.449676513671875} });
+            await Promise.all(promises);
+        }
+
+        Log('STEP:', 19);
+
+        {
+            const targetPage = page;
+            const element = await waitForSelectors([["a[role='link']"]], targetPage, { timeout, visible: true });
+            await scrollIntoViewIfNeeded(element, timeout);
+            await element.click({ offset: { x: 62.796875, y: 8} });
+        }
+
+        Log('STEP:', 20);
+
+        {
+          console.log('Login realizado  exitosamente. FB 4');
+          browser.close();
+          resolve({success: true, message: "Login realizado exitosamente.", result: null});
+        }
+      } catch (error) {
+          browsercatch.close();
+          console.log('No encontró el identificador de login. FB 4', error);
+          reject({success: false, message: "Login no pudo ser realizado.", result: error});
+      } 
+    })();
   });
 
   return promise;
@@ -943,9 +1394,9 @@ exports.instagram = function(ctx) {
 exports.instagramlogin = function(ctx) {
   var promise = new Promise(function(resolve, reject) {
 
-    let browsercatch = null;
-
     (async () => {
+      let browsercatch = null;
+
       try {
         console.log('PROCESO instagram INICIADO');
         console.log('ctx:', ctx);
