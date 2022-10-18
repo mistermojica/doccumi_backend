@@ -20,4 +20,4 @@ const server = require('http').createServer(app);
 var port = process.env.PORT;
 server.listen(port);
 
-console.log("Backend App DOCUMI Up and Running on port: " + port + "!\r\n");
+console.log("Backend App DOCCUMI Backend Up and Running on port: " + port + "!\r\n");
