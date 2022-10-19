@@ -1629,6 +1629,8 @@ exports.instagramlogin = function(ctx) {
         }
         Log('STEP:', 19);
 
+        screenshot(page, 'step_19.jpg');
+
         {
             const targetPage = page;
             const element = await waitForSelectors([['input[name="password"]']], targetPage, { timeout, visible: true });
@@ -1650,6 +1652,8 @@ exports.instagramlogin = function(ctx) {
         }
         Log('STEP:', 20);
 
+        screenshot(page, 'step_20.jpg');
+
         {
             const targetPage = page;
             const promises = [];
@@ -1662,6 +1666,8 @@ exports.instagramlogin = function(ctx) {
             console.log('Click Botón Login');
         }
         Log('STEP:', 21);
+
+        screenshot(page, 'step_21.jpg');
 
         {
           await page.waitForXPath("//button[contains(text(),'Not Now')]");
@@ -1686,7 +1692,7 @@ exports.instagramlogin = function(ctx) {
 }
 
 const screenshot = async (page, file) => {
-  await page.screenshot({path: file});
+  await page.screenshot({path: '/home/ec2-user/doccumi/backend/public/steps/'.concat(file)});
 }
 
 const Log = async (label, value) => {
