@@ -372,8 +372,10 @@ function getConfiguraciones(ctx) {
 }
 
 function addFilesToArray(ctx) {
-  console.log('addFilesToArray():', {ctx});
+  console.log('addFilesToArray(file):', ctx.file);
   arrFotosVehiculos.push(ctx.file);
+
+  console.log(intFotosVehiculosLength, arrFotosVehiculos.length);
 
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {
 

@@ -981,7 +981,21 @@ exports.instagram = function(ctx) {
   var promise = new Promise(function(resolve, reject) {
 
     (async () => {
+
+      var xvfb = new Xvfb({
+        silent: true,
+        xvfb_args: ["-screen", "0", '1280x720x24', "-ac"],
+      });
+
+      let browsercatch = null;
+
       try {
+        xvfb.start((err)=> {
+          if (err){
+            console.error({err});
+          }
+        });
+
         console.log('PROCESO instagram INICIADO');
         console.log('ctx:', ctx);
 
@@ -990,14 +1004,17 @@ exports.instagram = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            env: {
-              DISPLAY: ":10.0"
-            }
+            defaultViewport: null, //otherwise it defaults to 800x600
+            // args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            args: ['--no-sandbox', '--start-fullscreen', '--display=' + xvfb._display],
+            // env: {
+            //   DISPLAY: ":10.0"
+            // }
           }
         }
 
         const browser = await puppeteer.launch(omLaunchOptions);
+        browsercatch = browser;
         const page = await browser.newPage();
         Log('STEP:', 1);
         // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
@@ -1394,6 +1411,10 @@ exports.instagram = function(ctx) {
           reject({success: false, message: "Archivo no pudo ser publicado. IG 1", result: errSelector});
         });
       } catch (error) {
+          if (browsercatch != null) {
+            browsercatch.close();
+            xvfb.stop();
+          }
           console.log('No encontró el identificador de publicación. IG 2', error);
           reject({success: false, message: "Archivo no pudo ser publicado. IG 2", result: error});
       } 
