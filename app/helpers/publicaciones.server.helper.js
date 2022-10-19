@@ -1018,7 +1018,7 @@ exports.instagram = function(ctx) {
         const page = await browser.newPage();
         Log('STEP:', 1);
         // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
-        const timeout = 20000;
+        const timeout = 25000;
         page.setDefaultTimeout(timeout);
 
         async function waitForSelectors(selectors, frame, options) {
@@ -1030,7 +1030,8 @@ exports.instagram = function(ctx) {
             }
           }
           if (!options.noexit){
-            throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
+            console.log('Could not find element for selectors: ' + JSON.stringify(selectors));
+            // throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
           }
         }
         Log('STEP:', 5);
