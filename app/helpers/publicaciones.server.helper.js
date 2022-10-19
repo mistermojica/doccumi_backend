@@ -3,6 +3,7 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const {resolve} = require("path");
+const Xvfb = require('xvfb');
 
 exports.marketplace = function(ctx) {
   var promise = new Promise(function(resolve, reject) {
@@ -1408,7 +1409,18 @@ exports.instagramlogin = function(ctx) {
     (async () => {
       let browsercatch = null;
 
+      var xvfb = new Xvfb({
+        silent: true,
+        xvfb_args: ["-screen", "0", '1280x720x24', "-ac"],
+      });
+
       try {
+        xvfb.start((err)=> {
+          if (err){
+            console.error({err});
+          }
+        });
+
         console.log('PROCESO instagram INICIADO');
         console.log('ctx:', ctx);
 
@@ -1417,10 +1429,12 @@ exports.instagramlogin = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            env: {
-              DISPLAY: ":10.0"
-            }
+            defaultViewport: null, //otherwise it defaults to 800x600
+            // args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            args: ['--no-sandbox', '--start-fullscreen', '--display=' + xvfb._display],
+            // env: {
+            //   DISPLAY: ":10.0"
+            // }
           }
         }
 
@@ -1689,10 +1703,12 @@ exports.instagramlogin = function(ctx) {
 
         console.log('Login realizado  exitosamente. IG 3');
         browser.close();
+        xvfb.stop();
         resolve({success: true, message: "Login realizado  exitosamente. IG 3", result: null});
       } catch (error) {
           if (browsercatch != null) {
             browsercatch.close();
+            xvfb.stop();
           }
           console.log('No encontró el identificador de login. IG 3', error);
           reject({success: false, message: "Login no pudo ser realizado. IG 3", result: error});
