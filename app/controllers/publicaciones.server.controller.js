@@ -11,12 +11,6 @@ exports.publish = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-  console.log('req.body:', req.body);
-
-  // ME QUEDE PENDIENTE DE RESOLVER LAS PUBLICACIONES DE FOTOS EN REDES SOCIALES DE
-  // ESPECIFICAMENTE DETERMINAR SI ENVIO EL INVENTARIO COMPLETO A LA FUNCION DOWNLOAD
-  // O BUSCAR UNA FORMA DE GENERAR LAS RUTAS ABSOLUTAS Y ALMACENARLAS.
-
   const inventario = req.body.inventario;
   const to = req.body.to;
 
@@ -292,48 +286,52 @@ const publishToRRSS = (ctx) => {
 
     getConfiguraciones({conDueno: ctx.vehDueno})
     .then((resConf) => {
-      console.log({resConf});
-      const ctxConfig = {...ctx, ...resConf};
-      console.log({ctxConfig});
+      if (resConf.conIGUsuario === '' || resConf.conIGContrasena === '') {
+        reject({
+          success: false,
+          message: `Para publicar tu inventario primero debes registrar las credenciales de tu cuenta de Instagram en el tab Credenciales de tu perfil.`,
+          result: {},
+        });
+      } else {
+        const ctxConfig = {...ctx, ...resConf};
 
-      if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
-        publicaHelper.instagram(ctxConfig)
-        .then((resIG) => {
-          console.log("result resIG:", resIG);
-          resolve({
-            success: true,
-            message: `${entityName} en Instagram realizada de forma exitosa.`,
-            result: resIG,
+        if (ctx.to === 'instagram' && ctxConfig.conIGUsuario && ctxConfig.conIGContrasena) {
+          publicaHelper.instagram(ctxConfig)
+          .then((resIG) => {
+            resolve({
+              success: true,
+              message: `${entityName} en Instagram realizada de forma exitosa.`,
+              result: resIG,
+            });
+          })
+          .catch((errIG) => {
+            console.log("result errIG:", errIG);
+            reject({
+              success: false,
+              message: `Error inesperado al realizar ${entityName} en Instagram.`,
+              result: errIG,
+            });
           });
-        })
-        .catch((errIG) => {
-          console.log("result errIG:", errIG);
-          reject({
-            success: false,
-            message: `Error inesperado al realizar ${entityName} en Instagram.`,
-            result: errIG,
+        }
+      
+        if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
+          publicaHelper.marketplace(ctxConfig)
+          .then((resMP) => {
+            resolve({
+              success: true,
+              message: `${entityName} en Market Place realizada de forma exitosa.`,
+              result: resMP,
+            });
+          })
+          .catch((errMP) => {
+            console.log("result errMP:", errMP);
+            reject({
+              success: false,
+              message: `Error inesperado al realizar ${entityName} en Market Place.`,
+              result: errMP,
+            });
           });
-        });
-      }
-    
-      if (ctx.to === 'marketplace' && ctxConfig.conFBUsuario && ctxConfig.conFBContrasena) {
-        publicaHelper.marketplace(ctxConfig)
-        .then((resMP) => {
-          console.log("result resMP:", resMP);
-          resolve({
-            success: true,
-            message: `${entityName} en Market Place realizada de forma exitosa.`,
-            result: resMP,
-          });
-        })
-        .catch((errMP) => {
-          console.log("result errMP:", errMP);
-          reject({
-            success: false,
-            message: `Error inesperado al realizar ${entityName} en Market Place.`,
-            result: errMP,
-          });
-        });
+        }
       }
     })
     .catch((errConf) => {
@@ -374,7 +372,7 @@ function getConfiguraciones(ctx) {
 }
 
 function addFilesToArray(ctx) {
-  // console.log('addFilesToArray():', {ctx});
+  console.log('addFilesToArray():', {ctx});
   arrFotosVehiculos.push(ctx.file);
 
   if (intFotosVehiculosLength === arrFotosVehiculos.length) {

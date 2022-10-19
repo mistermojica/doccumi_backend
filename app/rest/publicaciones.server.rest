@@ -25,6 +25,49 @@ content-type: application/json
 }
 
 ###
+POST http://localhost:8000/publicaciones/publish
+content-type: application/json
+
+{
+    "inventario": {
+        "_id": "6344e8ca1ea1f7b92dc4e37d",
+        "vehNoRegistroPlaca": "A123123",
+        "vehChasis": "CHASIS20221010ABC",
+        "vehDueno": "63363eaee7ec7906d66fd177",
+        "vehStatusVehiculo": "Activo",
+        "vehTipoEmision": "GLP",
+        "vehTipoVehiculo": "Sedán",
+        "vehAnoFabricacion": "2022",
+        "vehMarca": "Hyundai",
+        "vehModelo": "Grandeur",
+        "vehColor": "Negro",
+        "vehPrecio": 600000,
+        "vehCosto": 500000,
+        "vehFotoMatricula": [
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460400/documi/xnuf5cosqj3tqpg1me85.jpg"
+        ],
+        "vehFotos": [
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460414/documi/gxm75gfaa09qjppvhr7a.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/o7ntthluyjovlbo8t7bb.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/z4nolje9hrzohzyslfba.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/mbciwa6fvnlromco8fs5.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/kovcrlntkt5k7bs3gflt.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/leb5fvy0shis7uppjwex.jpg",
+            "https://res.cloudinary.com/omarmojica/image/upload/v1665460415/documi/fhia9zwztglauxcbynu8.jpg"
+        ],
+        "vehCamposAdicionales": [],
+        "vehEstado": "pendiente",
+        "vehFechaCreacion": "2022-10-11T03:53:46.912Z",
+        "vehFechaModificacion": "2022-10-11T03:53:46.912Z",
+        "_estado_": {
+            "_id": "62da1b6d334713c666d9e5bf",
+            "estCodigo": "pendiente"
+        }
+    },
+    "to": "instagram"
+}
+
+###
 POST http://localhost:8002/publicaciones/publish
 content-type: application/json
 
