@@ -18,7 +18,10 @@ exports.marketplace = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--lang=es-ES,es']
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--lang=es-ES,es'],
+            env: {
+              DISPLAY: ":10.0"
+            }
           }
         }
 
@@ -677,7 +680,10 @@ exports.marketplacelogin = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            env: {
+              DISPLAY: ":10.0"
+            }
           }
         }
 
@@ -983,7 +989,10 @@ exports.instagram = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            env: {
+              DISPLAY: ":10.0"
+            }
           }
         }
 
@@ -1408,7 +1417,10 @@ exports.instagramlogin = function(ctx) {
         if (ctx.show){
           omLaunchOptions = {
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            env: {
+              DISPLAY: ":10.0"
+            }
           }
         }
 
@@ -1692,7 +1704,7 @@ exports.instagramlogin = function(ctx) {
 }
 
 const screenshot = async (page, file) => {
-  await page.screenshot({path: '/home/ec2-user/doccumi/backend/public/steps/'.concat(file)});
+  await page.screenshot({path: './public/steps/'.concat(file)});
 }
 
 const Log = async (label, value) => {
