@@ -1250,6 +1250,7 @@ exports.instagram = function(ctx) {
             }
         }
         Log('STEP:', 20);
+        screenshot(page, 'step_20.jpg');
 
         {
             const targetPage = page;
@@ -1263,12 +1264,14 @@ exports.instagram = function(ctx) {
             console.log('Click Botón Login');
         }
         Log('STEP:', 21);
+        screenshot(page, 'step_21.jpg');
         {
           await page.waitForXPath("//button[contains(text(),'Not Now')]");
           let next = await page.$x("//button[contains(text(),'Not Now')]");
           await next[0].click();
         }
         Log('STEP:', 22);
+        screenshot(page, 'step_22.jpg');
 
         if (ctx.show) {
           // {
@@ -1278,6 +1281,7 @@ exports.instagram = function(ctx) {
           // }
         }
         Log('STEP:', 23);
+        screenshot(page, 'step_23.jpg');
 
         {
           const targetPage = page;
@@ -1286,6 +1290,7 @@ exports.instagram = function(ctx) {
           await element.click({ offset: { x: 14.5, y: 14} });
         }
         Log('STEP:', 24);
+        screenshot(page, 'step_24.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Select from computer"],["button._acan._acap._acas"]], targetPage, { timeout, visible: true });
@@ -1293,6 +1298,7 @@ exports.instagram = function(ctx) {
             // await element.click({ offset: { x: 86.25, y: 16.5} });
         }
         Log('STEP:', 25);
+        screenshot(page, 'step_25.jpg');
         {
           const targetPage = page;
           // const filepath = ctx.image;
@@ -1313,6 +1319,7 @@ exports.instagram = function(ctx) {
           console.log("FOTO CARGADA NUEVA", ctx.image);
         }
         Log('STEP:', 26);
+        screenshot(page, 'step_26.jpg');
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
@@ -1320,6 +1327,7 @@ exports.instagram = function(ctx) {
           await delay(1000);
         }
         Log('STEP:', 27);
+        screenshot(page, 'step_27.jpg');
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
@@ -1327,6 +1335,7 @@ exports.instagram = function(ctx) {
           console.debug('clicking next');
         }
         Log('STEP:', 28);
+        screenshot(page, 'step_28.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
@@ -1334,6 +1343,7 @@ exports.instagram = function(ctx) {
             await element.click({ offset: { x: 135.5, y: 13} });
         }
         Log('STEP:', 29);
+        screenshot(page, 'step_29.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
@@ -1351,6 +1361,7 @@ exports.instagram = function(ctx) {
             }
         }
         Log('STEP:', 30);
+        screenshot(page, 'step_30.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
@@ -1358,6 +1369,7 @@ exports.instagram = function(ctx) {
             await element.click({ offset: { x: 136.5, y: 31} });
         }
         Log('STEP:', 31);
+        screenshot(page, 'step_31.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
@@ -1381,8 +1393,10 @@ exports.instagram = function(ctx) {
             }
         }
         Log('STEP:', 32);
+        screenshot(page, 'step_32.jpg');
         await delay(3000);
         Log('STEP:', 33);
+        screenshot(page, 'step_33.jpg');
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Share"],['button[type="button"]']], targetPage, { timeout, visible: true });
@@ -1390,6 +1404,7 @@ exports.instagram = function(ctx) {
             // await element.click({ offset: { x: 19.578125, y: 12} });
         }
         Log('STEP:', 34);
+        screenshot(page, 'step_34.jpg');
         {
           await page.waitForXPath("//button[contains(text(),'Share')]");
           let next = await page.$x("//button[contains(text(),'Share')]");
@@ -1401,6 +1416,7 @@ exports.instagram = function(ctx) {
         // }
         // await browser.close();
         Log('STEP:', 35);
+        screenshot(page, 'step_35.jpg');
 
         page.waitForXPath("//div[contains(text(),'Post shared')]").then((resSelector) => {
           console.log('Encontró el identificador de publicación. IG 1');
