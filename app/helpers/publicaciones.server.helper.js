@@ -1285,7 +1285,7 @@ exports.instagram = function(ctx) {
 
         {
           const targetPage = page;
-          const element = await waitForSelectors([["aria/New post"],["button._abl-._abm2"]], targetPage, { timeout, visible: true });
+          const element = await waitForSelectors([["button._abl-._abm2"],["aria/New post"]], targetPage, { timeout, visible: true });
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 14.5, y: 14} });
         }
