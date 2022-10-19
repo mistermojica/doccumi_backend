@@ -958,7 +958,9 @@ exports.marketplacelogin = function(ctx) {
           resolve({success: true, message: "Login realizado exitosamente.", result: null});
         }
       } catch (error) {
-          browsercatch.close();
+          if (browsercatch != null) {
+            browsercatch.close();
+          }
           console.log('No encontró el identificador de login. FB 4', error);
           reject({success: false, message: "Login no pudo ser realizado.", result: error});
       } 
@@ -1671,7 +1673,9 @@ exports.instagramlogin = function(ctx) {
         browser.close();
         resolve({success: true, message: "Login realizado  exitosamente. IG 3", result: null});
       } catch (error) {
-          browsercatch.close();
+          if (browsercatch != null) {
+            browsercatch.close();
+          }
           console.log('No encontró el identificador de login. IG 3', error);
           reject({success: false, message: "Login no pudo ser realizado. IG 3", result: error});
       } 
