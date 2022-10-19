@@ -286,7 +286,7 @@ const publishToRRSS = (ctx) => {
 
     getConfiguraciones({conDueno: ctx.vehDueno})
     .then((resConf) => {
-      if (resConf.conIGUsuario === '' || resConf.conIGContrasena === '') {
+      if (resConf.conIGUsuario == '' || resConf.conIGContrasena == '') {
         reject({
           success: false,
           message: `Para publicar tu inventario primero debes registrar las credenciales de tu cuenta de Instagram en el tab Credenciales de tu perfil.`,
