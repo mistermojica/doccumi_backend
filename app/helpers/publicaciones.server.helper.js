@@ -982,7 +982,7 @@ exports.instagram = function(ctx) {
 
         if (ctx.show){
           omLaunchOptions = {
-            headless: false,
+            headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
           }
         }
@@ -1407,7 +1407,7 @@ exports.instagramlogin = function(ctx) {
 
         if (ctx.show){
           omLaunchOptions = {
-            headless: false,
+            headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
           }
         }
