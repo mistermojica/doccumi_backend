@@ -981,10 +981,10 @@ exports.instagram = function(ctx) {
         let omLaunchOptions = {};
 
         if (ctx.show){
-          // omLaunchOptions = {
-          //   headless: false,
-          //   args: ['--no-sandbox', '--disable-setuid-sandbox']
-          // }
+          omLaunchOptions = {
+            headless: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+          }
         }
 
         const browser = await puppeteer.launch(omLaunchOptions);
