@@ -1266,7 +1266,7 @@ exports.instagram = function(ctx) {
         {await Log(page, 'instagram', 'step', 21);}
 
         {
-          await page.waitForXPath("//button[contains(text(),'Not Now')]");
+          await page.waitForXPath("//button[contains(text(),'Not Now')]", {timeout});
           let next = await page.$x("//button[contains(text(),'Not Now')]");
           await next[0].click();
         }
