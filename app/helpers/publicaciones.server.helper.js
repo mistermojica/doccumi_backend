@@ -192,14 +192,14 @@ exports.marketplace = function(ctx) {
           throw new Error('Timed out');
         }
 
-        Log('STEP:', 1);
+        Log(page, 'marketplace', 'step', 1);
 
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1600,"height":600})
         }
 
-        Log('STEP:', 2);
+        Log(page, 'marketplace', 'step', 2);
 
         {
             const targetPage = page;
@@ -209,7 +209,7 @@ exports.marketplace = function(ctx) {
             await Promise.all(promises);
         }
 
-        Log('STEP:', 3);
+        Log(page, 'marketplace', 'step', 3);
 
         {
             const targetPage = page;
@@ -218,7 +218,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 223.5, y: 38.9296875} });
         }
 
-        Log('STEP:', 4);
+        Log(page, 'marketplace', 'step', 4);
 
         {
             const targetPage = page;
@@ -237,21 +237,21 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 5);
+        Log(page, 'marketplace', 'step', 5);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
 
-        Log('STEP:', 6);
+        Log(page, 'marketplace', 'step', 6);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
 
-        Log('STEP:', 7);
+        Log(page, 'marketplace', 'step', 7);
 
         {
             const targetPage = page;
@@ -270,7 +270,7 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 8);
+        Log(page, 'marketplace', 'step', 8);
 
         {
             const targetPage = page;
@@ -282,7 +282,7 @@ exports.marketplace = function(ctx) {
             await Promise.all(promises);
         }
 
-        Log('STEP:', 9);
+        Log(page, 'marketplace', 'step', 9);
 
         {
             const targetPage = page;
@@ -292,7 +292,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 62.796875, y: 8} });
         }
 
-        Log('STEP:', 10);
+        Log(page, 'marketplace', 'step', 10);
 
         {
             // const targetPage = page;
@@ -305,7 +305,7 @@ exports.marketplace = function(ctx) {
             await next[0].click();
         }
 
-        Log('STEP:', 11);
+        Log(page, 'marketplace', 'step', 11);
 
         {
             const targetPage = page;
@@ -314,7 +314,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 163, y: 32.7578125} });
         }
 
-        Log('STEP:', 12);
+        Log(page, 'marketplace', 'step', 12);
 
         {
           const targetPage = page;
@@ -323,7 +323,7 @@ exports.marketplace = function(ctx) {
           await element.click({ offset: { x: 98, y: 10.0234375} });
         }
 
-        Log('STEP:', 13);
+        Log(page, 'marketplace', 'step', 13);
 
         {
             const targetPage = page;
@@ -332,7 +332,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 125, y: 16.7890625} });
         }
 
-        Log('STEP:', 14);
+        Log(page, 'marketplace', 'step', 14);
 
         {
           const targetPage = page;
@@ -341,7 +341,7 @@ exports.marketplace = function(ctx) {
           await element.click({ offset: { x: 98, y: 10.0234375} });
         }
 
-        Log('STEP:', 15);
+        Log(page, 'marketplace', 'step', 15);
 
         {
             const targetPage = page;
@@ -350,7 +350,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 300, y: 23.7890625} });
         }
 
-        Log('STEP:', 16);
+        Log(page, 'marketplace', 'step', 16);
 
         {
             const targetPage = page;
@@ -369,21 +369,21 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 17);
+        Log(page, 'marketplace', 'step', 17);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
 
-        Log('STEP:', 18);
+        Log(page, 'marketplace', 'step', 18);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
 
-        Log('STEP:', 19);
+        Log(page, 'marketplace', 'step', 19);
 
         {
             const targetPage = page;
@@ -402,21 +402,21 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 20);
+        Log(page, 'marketplace', 'step', 20);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
 
-        Log('STEP:', 21);
+        Log(page, 'marketplace', 'step', 21);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
 
-        Log('STEP:', 22);
+        Log(page, 'marketplace', 'step', 22);
 
         {
             const targetPage = page;
@@ -435,7 +435,7 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 23);
+        Log(page, 'marketplace', 'step', 23);
 
         {
             const targetPage = page;
@@ -444,7 +444,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 84, y: 26.8125} });
         }
 
-        Log('STEP:', 24);
+        Log(page, 'marketplace', 'step', 24);
 
         {
             const targetPage = page;
@@ -463,7 +463,7 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 25);
+        Log(page, 'marketplace', 'step', 25);
 
         {
             const targetPage = page;
@@ -472,7 +472,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 170, y: 31.828125} });
         }
 
-        Log('STEP:', 26);
+        Log(page, 'marketplace', 'step', 26);
 
         {
             const targetPage = page;
@@ -481,7 +481,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 98, y: 10.0234375} });
         }
 
-        Log('STEP:', 27);
+        Log(page, 'marketplace', 'step', 27);
 
         {
             const targetPage = page;
@@ -490,7 +490,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 16, y: 13.3515625} });
         }
 
-        Log('STEP:', 28);
+        Log(page, 'marketplace', 'step', 28);
 
         {
             const targetPage = page;
@@ -499,7 +499,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 206, y: 36.859375} });
         }
 
-        Log('STEP:', 29);
+        Log(page, 'marketplace', 'step', 29);
 
         {
             const targetPage = page;
@@ -508,7 +508,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
 
-        Log('STEP:', 30);
+        Log(page, 'marketplace', 'step', 30);
 
         {
             const targetPage = page;
@@ -517,7 +517,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 185, y: 32.859375} });
         }
 
-        Log('STEP:', 31);
+        Log(page, 'marketplace', 'step', 31);
 
         {
             const targetPage = page;
@@ -526,7 +526,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
 
-        Log('STEP:', 32);
+        Log(page, 'marketplace', 'step', 32);
 
         {
             const targetPage = page;
@@ -535,7 +535,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 71, y: 9.015625} });
         }
 
-        Log('STEP:', 33);
+        Log(page, 'marketplace', 'step', 33);
 
         {
             const targetPage = page;
@@ -544,7 +544,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 115, y: 6.015625} });
         }
 
-        Log('STEP:', 34);
+        Log(page, 'marketplace', 'step', 34);
 
         {
             const targetPage = page;
@@ -553,7 +553,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 119, y: 15.71875} });
         }
 
-        Log('STEP:', 35);
+        Log(page, 'marketplace', 'step', 35);
 
         {
             const targetPage = page;
@@ -562,7 +562,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 123, y: 33.8828125} });
         }
 
-        Log('STEP:', 36);
+        Log(page, 'marketplace', 'step', 36);
 
         {
             const targetPage = page;
@@ -581,7 +581,7 @@ exports.marketplace = function(ctx) {
             }
         }
 
-        Log('STEP:', 37);
+        Log(page, 'marketplace', 'step', 37);
 
         {
             const targetPage = page;
@@ -590,7 +590,7 @@ exports.marketplace = function(ctx) {
             // await element.click({ offset: { x: 9, y: 4.7578125} });
         }
 
-        Log('STEP:', 38);
+        Log(page, 'marketplace', 'step', 38);
 
         {
             const targetPage = page;
@@ -609,7 +609,7 @@ exports.marketplace = function(ctx) {
             console.log("FOTO CARGADA", ctx.image);
         }
 
-        Log('STEP:', 39);
+        Log(page, 'marketplace', 'step', 39);
 
         {
             const targetPage = page;
@@ -629,7 +629,7 @@ exports.marketplace = function(ctx) {
             await element.click({ offset: { x: 66.421875, y: 7} });
         }
 
-        Log('STEP:', 40);
+        Log(page, 'marketplace', 'step', 40);
 
         {
             await delay(5000);
@@ -688,7 +688,7 @@ exports.marketplacelogin = function(ctx) {
           }
         }
 
-        Log('STEP:', 1);
+        Log(page, 'marketplacelogin', 'step', 1);
 
         const browser = await puppeteer.launch(omLaunchOptions);
         browsercatch = browser;
@@ -696,7 +696,7 @@ exports.marketplacelogin = function(ctx) {
         const timeout = 20000;
         page.setDefaultTimeout(timeout);
 
-        Log('STEP:', 2);
+        Log(page, 'marketplacelogin', 'step', 2);
 
         async function waitForSelectors(selectors, frame, options) {
           for (const selector of selectors) {
@@ -709,7 +709,7 @@ exports.marketplacelogin = function(ctx) {
           throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
         }
 
-        Log('STEP:', 3);
+        Log(page, 'marketplacelogin', 'step', 3);
 
         async function scrollIntoViewIfNeeded(element, timeout) {
           await waitForConnected(element, timeout);
@@ -727,7 +727,7 @@ exports.marketplacelogin = function(ctx) {
           await waitForInViewport(element, timeout);
         }
 
-        Log('STEP:', 4);
+        Log(page, 'marketplacelogin', 'step', 4);
 
         async function waitForConnected(element, timeout) {
           await waitForFunction(async () => {
@@ -735,7 +735,7 @@ exports.marketplacelogin = function(ctx) {
           }, timeout);
         }
 
-        Log('STEP:', 5);
+        Log(page, 'marketplacelogin', 'step', 5);
 
         async function waitForInViewport(element, timeout) {
           await waitForFunction(async () => {
@@ -743,7 +743,7 @@ exports.marketplacelogin = function(ctx) {
           }, timeout);
         }
 
-        Log('STEP:', 6);
+        Log(page, 'marketplacelogin', 'step', 6);
 
         async function waitForSelector(selector, frame, options) {
           if (!Array.isArray(selector)) {
@@ -773,7 +773,7 @@ exports.marketplacelogin = function(ctx) {
           return element;
         }
 
-        Log('STEP:', 7);
+        Log(page, 'marketplacelogin', 'step', 7);
 
 
         async function waitForElement(step, frame, timeout) {
@@ -791,7 +791,7 @@ exports.marketplacelogin = function(ctx) {
           }, timeout);
         }
 
-        Log('STEP:', 8);
+        Log(page, 'marketplacelogin', 'step', 8);
 
         async function querySelectorsAll(selectors, frame) {
           for (const selector of selectors) {
@@ -803,7 +803,7 @@ exports.marketplacelogin = function(ctx) {
           return [];
         }
 
-        Log('STEP:', 9);
+        Log(page, 'marketplacelogin', 'step', 9);
 
         async function querySelectorAll(selector, frame) {
           if (!Array.isArray(selector)) {
@@ -841,7 +841,7 @@ exports.marketplacelogin = function(ctx) {
           return elements;
         }
 
-        Log('STEP:', 10);
+        Log(page, 'marketplacelogin', 'step', 10);
 
         async function waitForFunction(fn, timeout) {
           let isActive = true;
@@ -858,14 +858,14 @@ exports.marketplacelogin = function(ctx) {
           throw new Error('Timed out');
         }
 
-        Log('STEP:', 11);
+        Log(page, 'marketplacelogin', 'step', 11);
 
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1600,"height":600})
         }
 
-        Log('STEP:', 12);
+        Log(page, 'marketplacelogin', 'step', 12);
 
         {
             const targetPage = page;
@@ -875,7 +875,7 @@ exports.marketplacelogin = function(ctx) {
             await Promise.all(promises);
         }
 
-        Log('STEP:', 13);
+        Log(page, 'marketplacelogin', 'step', 13);
 
         {
             const targetPage = page;
@@ -884,7 +884,7 @@ exports.marketplacelogin = function(ctx) {
             await element.click({ offset: { x: 223.5, y: 38.9296875} });
         }
 
-        Log('STEP:', 14);
+        Log(page, 'marketplacelogin', 'step', 14);
 
         {
             const targetPage = page;
@@ -903,21 +903,21 @@ exports.marketplacelogin = function(ctx) {
             }
         }
 
-        Log('STEP:', 15);
+        Log(page, 'marketplacelogin', 'step', 15);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
 
-        Log('STEP:', 16);
+        Log(page, 'marketplacelogin', 'step', 16);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
 
-        Log('STEP:', 17);
+        Log(page, 'marketplacelogin', 'step', 17);
 
         {
             const targetPage = page;
@@ -936,7 +936,7 @@ exports.marketplacelogin = function(ctx) {
             }
         }
 
-        Log('STEP:', 18);
+        Log(page, 'marketplacelogin', 'step', 18);
 
         {
             const targetPage = page;
@@ -948,7 +948,7 @@ exports.marketplacelogin = function(ctx) {
             await Promise.all(promises);
         }
 
-        Log('STEP:', 19);
+        Log(page, 'marketplacelogin', 'step', 19);
 
         {
             const targetPage = page;
@@ -957,7 +957,7 @@ exports.marketplacelogin = function(ctx) {
             await element.click({ offset: { x: 62.796875, y: 8} });
         }
 
-        Log('STEP:', 20);
+        Log(page, 'marketplacelogin', 'step', 20);
 
         {
           console.log('Login realizado  exitosamente. FB 4');
@@ -1016,7 +1016,7 @@ exports.instagram = function(ctx) {
         const browser = await puppeteer.launch(omLaunchOptions);
         browsercatch = browser;
         const page = await browser.newPage();
-        Log('STEP:', 1);
+        Log(page, 'instagram', 'step', 1);
         // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
         const timeout = 25000;
         page.setDefaultTimeout(timeout);
@@ -1034,7 +1034,7 @@ exports.instagram = function(ctx) {
             // throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
           }
         }
-        Log('STEP:', 5);
+        Log(page, 'instagram', 'step', 5);
 
         async function scrollIntoViewIfNeeded(element, timeout) {
           await waitForConnected(element, timeout);
@@ -1051,21 +1051,21 @@ exports.instagram = function(ctx) {
           });
           await waitForInViewport(element, timeout);
         }
-        Log('STEP:', 6);
+        Log(page, 'instagram', 'step', 6);
 
         async function waitForConnected(element, timeout) {
           await waitForFunction(async () => {
             return await element.getProperty('isConnected');
           }, timeout);
         }
-        Log('STEP:', 7);
+        Log(page, 'instagram', 'step', 7);
 
         async function waitForInViewport(element, timeout) {
           await waitForFunction(async () => {
             return await element.isIntersectingViewport({threshold: 0});
           }, timeout);
         }
-        Log('STEP:', 8);
+        Log(page, 'instagram', 'step', 8);
 
         async function waitForSelector(selector, frame, options) {
           if (!Array.isArray(selector)) {
@@ -1094,7 +1094,7 @@ exports.instagram = function(ctx) {
           }
           return element;
         }
-        Log('STEP:', 9);
+        Log(page, 'instagram', 'step', 9);
 
         async function waitForElement(step, frame, timeout) {
           const count = step.count || 1;
@@ -1110,7 +1110,7 @@ exports.instagram = function(ctx) {
             return compFn(elements.length, count);
           }, timeout);
         }
-        Log('STEP:', 10);
+        Log(page, 'instagram', 'step', 10);
 
         async function querySelectorsAll(selectors, frame) {
           for (const selector of selectors) {
@@ -1121,7 +1121,7 @@ exports.instagram = function(ctx) {
           }
           return [];
         }
-        Log('STEP:', 11);
+        Log(page, 'instagram', 'step', 11);
 
         async function querySelectorAll(selector, frame) {
           if (!Array.isArray(selector)) {
@@ -1158,7 +1158,7 @@ exports.instagram = function(ctx) {
           }
           return elements;
         }
-        Log('STEP:', 12);
+        Log(page, 'instagram', 'step', 12);
 
         async function waitForFunction(fn, timeout) {
           let isActive = true;
@@ -1174,13 +1174,13 @@ exports.instagram = function(ctx) {
           }
           throw new Error('Timed out');
         }
-        Log('STEP:', 13);
+        Log(page, 'instagram', 'step', 13);
 
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1000,"height":700})
         }
-        Log('STEP:', 14);
+        Log(page, 'instagram', 'step', 14);
 
         {
             const targetPage = page;
@@ -1189,7 +1189,7 @@ exports.instagram = function(ctx) {
             await targetPage.goto("https://www.instagram.com/");
             await Promise.all(promises);
         }
-        Log('STEP:', 15);
+        Log(page, 'instagram', 'step', 15);
 
         {
             const targetPage = page;
@@ -1197,7 +1197,7 @@ exports.instagram = function(ctx) {
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 108.84375, y: 18.9375} });
         }
-        Log('STEP:', 16);
+        Log(page, 'instagram', 'step', 16);
 
         {
             const targetPage = page;
@@ -1217,19 +1217,19 @@ exports.instagram = function(ctx) {
               console.log('Entrada usuario 2');
             }
         }
-        Log('STEP:', 17);
+        Log(page, 'instagram', 'step', 17);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
-        Log('STEP:', 18);
+        Log(page, 'instagram', 'step', 18);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
-        Log('STEP:', 19);
+        Log(page, 'instagram', 'step', 19);
 
         {
             const targetPage = page;
@@ -1250,8 +1250,7 @@ exports.instagram = function(ctx) {
               console.log('Entrada contraseña 2');
             }
         }
-        Log('STEP:', 20);
-        screenshot(page, 'step_20.jpg');
+        Log(page, 'instagram', 'step', 20);
 
         {
             const targetPage = page;
@@ -1264,15 +1263,14 @@ exports.instagram = function(ctx) {
             await Promise.all(promises);
             console.log('Click Botón Login');
         }
-        Log('STEP:', 21);
-        screenshot(page, 'step_21.jpg');
+        Log(page, 'instagram', 'step', 21);
+
         {
           await page.waitForXPath("//button[contains(text(),'Not Now')]");
           let next = await page.$x("//button[contains(text(),'Not Now')]");
           await next[0].click();
         }
-        Log('STEP:', 22);
-        screenshot(page, 'step_22.jpg');
+        Log(page, 'instagram', 'step', 22);
 
         if (ctx.show) {
           // {
@@ -1281,8 +1279,7 @@ exports.instagram = function(ctx) {
           //   await next[0].click();
           // }
         }
-        Log('STEP:', 23);
-        screenshot(page, 'step_23.jpg');
+        Log(page, 'instagram', 'step', 23);
 
         {
           const targetPage = page;
@@ -1290,16 +1287,14 @@ exports.instagram = function(ctx) {
           await scrollIntoViewIfNeeded(element, timeout);
           await element.click({ offset: { x: 14.5, y: 14} });
         }
-        Log('STEP:', 24);
-        screenshot(page, 'step_24.jpg');
+        Log(page, 'instagram', 'step', 24);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Select from computer"],["button._acan._acap._acas"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             // await element.click({ offset: { x: 86.25, y: 16.5} });
         }
-        Log('STEP:', 25);
-        screenshot(page, 'step_25.jpg');
+        Log(page, 'instagram', 'step', 25);
         {
           const targetPage = page;
           // const filepath = ctx.image;
@@ -1319,32 +1314,28 @@ exports.instagram = function(ctx) {
 
           console.log("FOTO CARGADA NUEVA", ctx.image);
         }
-        Log('STEP:', 26);
-        screenshot(page, 'step_26.jpg');
+        Log(page, 'instagram', 'step', 26);
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
           await next[0].click();
           await delay(1000);
         }
-        Log('STEP:', 27);
-        screenshot(page, 'step_27.jpg');
+        Log(page, 'instagram', 'step', 27);
         {
           await page.waitForXPath("//button[contains(text(),'Next')]");
           let next = await page.$x("//button[contains(text(),'Next')]");
           await next[0].click();
           console.debug('clicking next');
         }
-        Log('STEP:', 28);
-        screenshot(page, 'step_28.jpg');
+        Log(page, 'instagram', 'step', 28);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 135.5, y: 13} });
         }
-        Log('STEP:', 29);
-        screenshot(page, 'step_29.jpg');
+        Log(page, 'instagram', 'step', 29);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Write a caption..."],["#mount_0_0_P5 > div > div:nth-child(1) > div > div:nth-child(4) > div > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div.iqfcb0g7.tojvnm2t.a6sixzi8.k5wvi7nf.q3lfd5jv.pk4s997a.bipmatt0.cebpdrjk.qowsmv63.owwhemhu.dp1hu0rb.dhp61c6y.l9j0dhe7.iyyx5f41.a8s20v7p > div > div > div > div > div > div > div > div > div._ac2r._ac2s > div._ac2v > div > div > div > div:nth-child(2) > div._ab8w._ab94._ab99._ab9f._ab9m._ab9p > textarea"]], targetPage, { timeout, visible: true });
@@ -1361,16 +1352,14 @@ exports.instagram = function(ctx) {
               }, ctx.caption);
             }
         }
-        Log('STEP:', 30);
-        screenshot(page, 'step_30.jpg');
+        Log(page, 'instagram', 'step', 30);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 136.5, y: 31} });
         }
-        Log('STEP:', 31);
-        screenshot(page, 'step_31.jpg');
+        Log(page, 'instagram', 'step', 31);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Add location[role=\"textbox\"]"],['input[name="creation-location-input"]']], targetPage, { timeout, visible: true });
@@ -1393,19 +1382,16 @@ exports.instagram = function(ctx) {
               await delay(2000);
             }
         }
-        Log('STEP:', 32);
-        screenshot(page, 'step_32.jpg');
+        Log(page, 'instagram', 'step', 32);
         await delay(3000);
-        Log('STEP:', 33);
-        screenshot(page, 'step_33.jpg');
+        Log(page, 'instagram', 'step', 33);
         {
             const targetPage = page;
             const element = await waitForSelectors([["aria/Share"],['button[type="button"]']], targetPage, { timeout, visible: true });
             await scrollIntoViewIfNeeded(element, timeout);
             // await element.click({ offset: { x: 19.578125, y: 12} });
         }
-        Log('STEP:', 34);
-        screenshot(page, 'step_34.jpg');
+        Log(page, 'instagram', 'step', 34);
         {
           await page.waitForXPath("//button[contains(text(),'Share')]");
           let next = await page.$x("//button[contains(text(),'Share')]");
@@ -1416,8 +1402,7 @@ exports.instagram = function(ctx) {
         //   await delay(2000);
         // }
         // await browser.close();
-        Log('STEP:', 35);
-        screenshot(page, 'step_35.jpg');
+        Log(page, 'instagram', 'step', 35);
 
         page.waitForXPath("//div[contains(text(),'Post shared')]").then((resSelector) => {
           console.log('Encontró el identificador de publicación. IG 1');
@@ -1479,7 +1464,7 @@ exports.instagramlogin = function(ctx) {
         const browser = await puppeteer.launch(omLaunchOptions);
         browsercatch = browser;
         const page = await browser.newPage();
-        Log('STEP:', 1);
+        Log(page, 'instagramlogin', 'step', 1);
         // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36');
         const timeout = 20000;
         page.setDefaultTimeout(timeout);
@@ -1496,7 +1481,7 @@ exports.instagramlogin = function(ctx) {
             throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
           }
         }
-        Log('STEP:', 5);
+        Log(page, 'instagramlogin', 'step', 5);
 
         async function scrollIntoViewIfNeeded(element, timeout) {
           await waitForConnected(element, timeout);
@@ -1513,21 +1498,21 @@ exports.instagramlogin = function(ctx) {
           });
           await waitForInViewport(element, timeout);
         }
-        Log('STEP:', 6);
+        Log(page, 'instagramlogin', 'step', 6);
 
         async function waitForConnected(element, timeout) {
           await waitForFunction(async () => {
             return await element.getProperty('isConnected');
           }, timeout);
         }
-        Log('STEP:', 7);
+        Log(page, 'instagramlogin', 'step', 7);
 
         async function waitForInViewport(element, timeout) {
           await waitForFunction(async () => {
             return await element.isIntersectingViewport({threshold: 0});
           }, timeout);
         }
-        Log('STEP:', 8);
+        Log(page, 'instagramlogin', 'step', 8);
 
         async function waitForSelector(selector, frame, options) {
           if (!Array.isArray(selector)) {
@@ -1556,7 +1541,7 @@ exports.instagramlogin = function(ctx) {
           }
           return element;
         }
-        Log('STEP:', 9);
+        Log(page, 'instagramlogin', 'step', 9);
 
         async function waitForElement(step, frame, timeout) {
           const count = step.count || 1;
@@ -1572,7 +1557,7 @@ exports.instagramlogin = function(ctx) {
             return compFn(elements.length, count);
           }, timeout);
         }
-        Log('STEP:', 10);
+        Log(page, 'instagramlogin', 'step', 10);
 
         async function querySelectorsAll(selectors, frame) {
           for (const selector of selectors) {
@@ -1583,7 +1568,7 @@ exports.instagramlogin = function(ctx) {
           }
           return [];
         }
-        Log('STEP:', 11);
+        Log(page, 'instagramlogin', 'step', 11);
 
         async function querySelectorAll(selector, frame) {
           if (!Array.isArray(selector)) {
@@ -1620,7 +1605,7 @@ exports.instagramlogin = function(ctx) {
           }
           return elements;
         }
-        Log('STEP:', 12);
+        Log(page, 'instagramlogin', 'step', 12);
 
         async function waitForFunction(fn, timeout) {
           let isActive = true;
@@ -1636,13 +1621,13 @@ exports.instagramlogin = function(ctx) {
           }
           throw new Error('Timed out');
         }
-        Log('STEP:', 13);
+        Log(page, 'instagramlogin', 'step', 13);
 
         {
             const targetPage = page;
             await targetPage.setViewport({"width":1000,"height":700})
         }
-        Log('STEP:', 14);
+        Log(page, 'instagramlogin', 'step', 14);
 
         {
             const targetPage = page;
@@ -1651,7 +1636,7 @@ exports.instagramlogin = function(ctx) {
             await targetPage.goto("https://www.instagram.com/");
             await Promise.all(promises);
         }
-        Log('STEP:', 15);
+        Log(page, 'instagramlogin', 'step', 15);
 
         {
             const targetPage = page;
@@ -1659,7 +1644,7 @@ exports.instagramlogin = function(ctx) {
             await scrollIntoViewIfNeeded(element, timeout);
             await element.click({ offset: { x: 108.84375, y: 18.9375} });
         }
-        Log('STEP:', 16);
+        Log(page, 'instagramlogin', 'step', 16);
 
         {
             const targetPage = page;
@@ -1679,21 +1664,19 @@ exports.instagramlogin = function(ctx) {
               console.log('Entrada usuario 2');
             }
         }
-        Log('STEP:', 17);
+        Log(page, 'instagramlogin', 'step', 17);
 
         {
             const targetPage = page;
             await targetPage.keyboard.down("Tab");
         }
-        Log('STEP:', 18);
+        Log(page, 'instagramlogin', 'step', 18);
 
         {
             const targetPage = page;
             await targetPage.keyboard.up("Tab");
         }
-        Log('STEP:', 19);
-
-        screenshot(page, 'step_19.jpg');
+        Log(page, 'instagramlogin', 'step', 19);
 
         {
             const targetPage = page;
@@ -1714,9 +1697,8 @@ exports.instagramlogin = function(ctx) {
               console.log('Entrada contraseña 2');
             }
         }
-        Log('STEP:', 20);
+        Log(page, 'instagramlogin', 'step', 20);
 
-        screenshot(page, 'step_20.jpg');
 
         {
             const targetPage = page;
@@ -1729,9 +1711,7 @@ exports.instagramlogin = function(ctx) {
             await Promise.all(promises);
             console.log('Click Botón Login');
         }
-        Log('STEP:', 21);
-
-        screenshot(page, 'step_21.jpg');
+        Log(page, 'instagramlogin', 'step', 21);
 
         {
           await page.waitForXPath("//button[contains(text(),'Not Now')]");
@@ -1761,7 +1741,8 @@ const screenshot = async (page, file) => {
   await page.screenshot({path: './public/steps/'.concat(file)});
 }
 
-const Log = async (label, value) => {
+const Log = async (page, source, label, value) => {
+  screenshot(page, `${source}_${label}_${value}.jpg`);
   console.log(label, value);
 }
 
