@@ -9,17 +9,13 @@ const strMgr = require("../utils/strManager");
 const comMgr = require("../helpers/comunicaciones.server.helper");
 
 exports.login = function (req, res, next) {
-  // res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   req.body.usuario = req.body.usuario || req.body.email;
   req.body.contrasena = req.body.contrasena || req.body.password;
 
-  console.log(req.body);
-
-  db.Usuarios.findOne({
-    $or: [{ usuario: req.body.email }, { usuario: req.body.usuario }],
-  })
+  db.Usuarios.findOne({$or: [{ usuario: req.body.email }, { usuario: req.body.usuario }]})
     .where("estado")
     .ne("borrado")
     .lean()
@@ -118,8 +114,6 @@ function _generateToken(ctx) {
       empleado: "",
     };
 
-    console.log("payload:", payload);
-
     var datatoken = cdkencmgr.encryptbackoffice(payload);
 
     var tokentime = {
@@ -168,15 +162,10 @@ function _generateToken(ctx) {
 
 exports.create = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   req.body.usuario = req.body.usuario || req.body.email;
   req.body.contrasena = req.body.contrasena || req.body.password;
-
-  mlCL('req.body:', req.body);
 
   var entity = new db.Usuarios(req.body);
   entity.save(function (err) {
@@ -224,8 +213,6 @@ function createConfiguraciones(ctx) {
       conEstado: 'activo'
     };
 
-    console.log("ctxSave:", ctxSave);
-
     var entity = new db.Configuraciones(ctxSave);
     entity.save(function (err) {
       if (err) {
@@ -242,10 +229,7 @@ function createConfiguraciones(ctx) {
 
 exports.update = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.findOne({ _id: req.body._id })
     .where("estado")
@@ -296,10 +280,7 @@ exports.update = function (req, res, next) {
 
 exports.list = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.find({})
     .where("estado")
@@ -324,26 +305,13 @@ exports.list = function (req, res, next) {
 
 exports.listpop = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.find({})
     .select("-__v")
     .where("estado")
     .ne("borrado")
     .lean()
-    // populate({
-    //     path: "_tipousuario_",
-    //     select: "-__v",
-    //     match: {estado: "activo"}
-    // }).
-    // populate({
-    //     path: "_empresas_",
-    //     select: "-__v",
-    //     match: {estado: "activo"}
-    // }).
     .populate({
       path: "_estado_",
       select: "codigo nombre",
@@ -369,26 +337,13 @@ exports.listpop = function (req, res, next) {
 
 exports.findById = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.findOne({ _id: req.params.id })
     .select("-__v")
     .where("estado")
     .ne("borrado")
     .lean()
-    // populate({
-    //     path: "_tipousuario_",
-    //     select: "-__v",
-    //     match: {estado: "activo"}
-    // }).
-    // populate({
-    //     path: "_empresas_",
-    //     select: "-__v",
-    //     match: {estado: "activo"}
-    // }).
     .populate({
       path: "_estado_",
       select: "codigo nombre",
@@ -414,10 +369,7 @@ exports.findById = function (req, res, next) {
 
 exports.profile = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.findOne({_id: req.params._id})
     .select("-__v")
@@ -471,8 +423,6 @@ exports.profile = function (req, res, next) {
 };
 
 function getConfiguraciones(ctx) {
-  // console.log({ctx});
-
   var promise = new Promise(function (resolve, reject) {
 
     db.Configuraciones
@@ -480,11 +430,6 @@ function getConfiguraciones(ctx) {
     .where("conEstado")
     .ne("borrado")
     .lean()
-    // .populate({
-    //   path: "_estado_",
-    //   select: "codigo nombre",
-    //   match: { isActive: true },
-    // })
     .exec(function (err, data) {
       if (err) {
         console.log(__filename + " >> .getConfiguraciones: " + JSON.stringify(err));
@@ -501,10 +446,7 @@ function getConfiguraciones(ctx) {
 
 exports.recoverpassword = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   db.Usuarios.findOne({email: req.body.email})
   .select("nombre email")
@@ -527,8 +469,6 @@ exports.recoverpassword = function (req, res, next) {
         expires: { time: 1, type: "h" },
       };
 
-      console.log({token});
-
       const ctx = {
         to: data?.nombre.split(" ")[0] + " <" + data.email + ">",
         subject: "Restablecer tu contraseña",
@@ -549,8 +489,6 @@ exports.recoverpassword = function (req, res, next) {
 exports.resetpassword = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-  console.log("body:", req.body);
 
   jwt.verify(req.body.id, process.env.TOKEN_SECRET, (err, data) => {
     if (err) {
