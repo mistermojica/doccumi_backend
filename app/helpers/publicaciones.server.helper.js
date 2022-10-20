@@ -1273,11 +1273,11 @@ exports.instagram = function(ctx) {
         Log(page, 'instagram', 'step', 22);
 
         if (ctx.show) {
-          // {
-          //   await page.waitForXPath("//button[contains(text(),'Not Now')]");
-          //   let next = await page.$x("//button[contains(text(),'Not Now')]");
-          //   await next[0].click();
-          // }
+          {
+            await page.waitForXPath("//button[contains(text(),'Not Now')]");
+            let next = await page.$x("//button[contains(text(),'Not Now')]");
+            await next[0].click();
+          }
         }
         Log(page, 'instagram', 'step', 23);
 
@@ -1743,7 +1743,7 @@ const screenshot = async (page, file) => {
 
 const Log = async (page, source, label, value) => {
   await screenshot(page, `${source}_${label}_${value}.jpg`);
-  console.log(label, value);
+  console.log(source, label, value);
 }
 
 function delay(time) {
