@@ -341,6 +341,7 @@ exports.update_subscription = async function (req, res, next) {
       subscriptionId,
       {
         cancel_at_period_end: false,
+        billing_cycle_anchor: 'now',
         proration_behavior: "create_prorations",
         expand: ["latest_invoice.payment_intent"],
         // collection_method: "charge_automatically",
