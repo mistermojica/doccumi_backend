@@ -1742,7 +1742,7 @@ const screenshot = async (page, file) => {
 }
 
 const Log = async (page, source, label, value) => {
-  screenshot(page, `${source}_${label}_${value}.jpg`);
+  await screenshot(page, `${source}_${label}_${value}.jpg`);
   console.log(label, value);
 }
 
