@@ -78,27 +78,27 @@ exports.login = function (req, res, next) {
           } else {
             var dataObj = JSON.parse(JSON.stringify(entity));
             _generateToken(dataObj)
-              .then((tokenRes) => {
-                dataObj.token = tokenRes.result.token;
-                dataObj.rolToken = cdkencmgr.encryptapp("usuario");
-                res
-                  .status(HttpStatus.OK)
-                  .json({
-                    success: true,
-                    message: "Login realizado exitosamente.",
-                    result: dataObj,
-                  });
-              })
-              .catch((tokenErr) => {
-                console.log("tokenErr:", tokenErr);
-                res
-                  .status(HttpStatus.BAD_REQUEST)
-                  .json({
-                    success: false,
-                    message: "Error inesperado al generar el token de usuario.",
-                    result: tokenErr,
-                  });
-              });
+            .then((tokenRes) => {
+              dataObj.token = tokenRes.result.token;
+              dataObj.rolToken = cdkencmgr.encryptapp("usuario");
+              res
+                .status(HttpStatus.OK)
+                .json({
+                  success: true,
+                  message: "Login realizado exitosamente.",
+                  result: dataObj,
+                });
+            })
+            .catch((tokenErr) => {
+              console.log("tokenErr:", tokenErr);
+              res
+                .status(HttpStatus.BAD_REQUEST)
+                .json({
+                  success: false,
+                  message: "Error inesperado al generar el token de usuario.",
+                  result: tokenErr,
+                });
+            });
           }
         }
       }
@@ -178,21 +178,35 @@ exports.create = function (req, res, next) {
       });
     } else {
       createConfiguraciones({_id: entity._id}).then((resConf) => {
-        console.log({resConf});
-        res.json({
-          success: true,
-          message: `${entityName} se creó exitosamente.`,
-          result: {
-            profile: strMgr.e2o(entity),
-            settings: strMgr.e2o(resConf)
-          }
+        var dataObj = strMgr.e2o(entity);
+        _generateToken(dataObj)
+        .then((tokenRes) => {
+          dataObj.token = tokenRes.result.token;
+          dataObj.rolToken = cdkencmgr.encryptapp("usuario");
+
+          res.json({
+            success: true,
+            message: `${entityName} se creó exitosamente.`,
+            result: {
+              profile: dataObj,
+              settings: strMgr.e2o(resConf)
+            }
+          });
+        })
+        .catch((tokenErr) => {
+          console.log({tokenErr});
+          res.json({
+            success: false,
+            message: `Error en la creación de ${entityName}.`,
+            result: tokenErr
+          });
         });
       }).catch((errConf) => {
         console.log({errConf});
         res.json({
           success: false,
           message: `Error en la creación de ${entityName}.`,
-          result: errConf,
+          result: errConf
         });
       });
     }
