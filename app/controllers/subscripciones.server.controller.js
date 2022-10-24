@@ -148,6 +148,7 @@ exports.prices = async function (req, res, next) {
   const prices = await stripe.prices.list({
     // lookup_keys: ['sample_basic', 'sample_premium'],
     expand: ["data.product"],
+    active: true,
     limit: 3,
   });
 
