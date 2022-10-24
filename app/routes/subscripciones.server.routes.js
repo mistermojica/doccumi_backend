@@ -17,6 +17,7 @@ module.exports = function (app) {
   app.route("/subscripciones/create-subscription").post(subscripciones.create_subscription);
   app.route("/subscripciones/update-subscription").post(subscripciones.update_subscription);
   app.route("/subscripciones/cancel-subscription").post(subscripciones.cancel_subscription);
+  // app.route("/subscripciones/confirm-subscription").post(subscripciones.confirm_subscription);
 
   app.route("/subscripciones/create-payment-method").post(subscripciones.create_payment_method);
   app.route("/subscripciones/list-payment-methods").post(subscripciones.list_payment_methods);
