@@ -138,10 +138,7 @@ exports.create_payment_intent = async function (req, res, next) {
 
 exports.prices = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   const customerId = req.body.customerId;
 
@@ -330,6 +327,8 @@ exports.update_subscription = async function (req, res, next) {
     const priceId = req.body.priceId;
     const subscriptionId = req.body.subscriptionId;
     const customerId = req.body.customerId;
+    const subscriptionCreated = req.body.subscriptionCreated;
+
     const customer = await stripe.customers.retrieve(customerId, {});
     const paymentMethodId = customer.invoice_settings.default_payment_method;
     const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
@@ -338,26 +337,44 @@ exports.update_subscription = async function (req, res, next) {
 
     // console.log('update-subscription:', {subscription});
 
+    let ctxSubscription = {};
+    
+    if (subscriptionCreated) {
+      ctxSubscription.cancel_at_period_end = false;
+      ctxSubscription.expand = ["latest_invoice.payment_intent"];
+      ctxSubscription.payment_settings = {
+          payment_method_types: ["card"]
+      };
+      ctxSubscription.items = [
+        {
+          id: subscription.items.data[0].id,
+          price: priceId,
+          quantity: 1
+        }
+      ];
+      ctxSubscription.default_payment_method = paymentMethodId;
+    } else {
+      ctxSubscription.cancel_at_period_end = false;
+      ctxSubscription.billing_cycle_anchor = 'now';
+      ctxSubscription.proration_behavior = "create_prorations";
+      ctxSubscription.expand = ["latest_invoice.payment_intent"];
+      // txSubscription.collection_method: "charge_automatically",
+      ctxSubscription.payment_settings = {
+          payment_method_types: ["card"]
+      };
+      ctxSubscription.items = [
+        {
+          id: subscription.items.data[0].id,
+          price: priceId,
+          quantity: 1
+        }
+      ];
+      ctxSubscription.default_payment_method = paymentMethodId;
+    }
+
     const updatedSubscription = await stripe.subscriptions.update(
       subscriptionId,
-      {
-        cancel_at_period_end: false,
-        billing_cycle_anchor: 'now',
-        proration_behavior: "create_prorations",
-        expand: ["latest_invoice.payment_intent"],
-        // collection_method: "charge_automatically",
-        payment_settings: {
-          payment_method_types: ["card"],
-        },
-        items: [
-          {
-            id: subscription.items.data[0].id,
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        default_payment_method: paymentMethodId,
-      }
+      ctxSubscription
     );
 
     // console.log('subscription.latest_invoice.payment_intent:', subscription.latest_invoice.payment_intent);
