@@ -337,6 +337,13 @@ exports.update_subscription = async function (req, res, next) {
 
     // console.log('update-subscription:', {subscription});
 
+    // const paymentIntentId = subscription.latest_invoice.payment_intent.id;
+
+    // const paymentIntent = await stripe.paymentIntents.confirm(
+    //   paymentIntentId,
+    //   { payment_method: paymentMethodId }
+    // );
+
     let ctxSubscription = {};
     
     if (subscriptionCreated) {
@@ -377,6 +384,8 @@ exports.update_subscription = async function (req, res, next) {
       ctxSubscription
     );
 
+    // console.log({updatedSubscription});
+
     // console.log('subscription.latest_invoice.payment_intent:', subscription.latest_invoice.payment_intent);
     // console.log('subscription.latest_invoice.billing_reason:', subscription.latest_invoice.billing_reason);
     // console.log('paymentMethodId 111:', paymentMethodId);
@@ -385,12 +394,13 @@ exports.update_subscription = async function (req, res, next) {
       // The subscription automatically activates after successful payment
       // Set the payment method used to pay the first invoice
       // as the default payment method for that subscription
-      const paymentIntentId = subscription.latest_invoice.payment_intent.id;
 
       // Retrieve the payment intent used to pay the subscription
       // const paymentIntent = await stripe.paymentIntents.retrieve(
       //   paymentIntentId
       // );
+
+      const paymentIntentId = subscription.latest_invoice.payment_intent.id;
 
       const paymentIntent = await stripe.paymentIntents.confirm(
         paymentIntentId,
@@ -422,27 +432,42 @@ exports.update_subscription = async function (req, res, next) {
       expand: ["default_payment_method", "latest_invoice.payment_intent"],
     });
 
-    // console.log('update-subscription:', {subscriptionN});
+    console.log('update-subscription:', {subscriptionN});
 
     // console.log("update - updatedSubscription:", {updatedSubscription});
 
-    console.log("updatedSubscription.latest_invoice.payment_intent:", {
-      subscriptionId: subscriptionId,
-      clientSecret:
-        updatedSubscription.latest_invoice.payment_intent.client_secret,
-      message: "Subscripción modificada.",
-    });
+    // console.log("updatedSubscription.latest_invoice.payment_intent:", {
+    //   subscriptionId: subscriptionId,
+    //   clientSecret:
+    //     updatedSubscription.latest_invoice.payment_intent.client_secret,
+    //   message: "Subscripción modificada.",
+    // });
+
+    console.log('payment_intent:', subscriptionN?.latest_invoice?.payment_intent);
 
     res.send({
+      succeed: true,
       subscriptionId: subscriptionId,
-      clientSecret:
-        updatedSubscription.latest_invoice.payment_intent.client_secret,
-      message: "Subscripción modificada.",
+      // clientSecret:
+      //   subscriptionN?.latest_invoice?.payment_intent?.client_secret,
+      code: "",
+      message: "Subscripción modificada exitosamente.",
     });
   } catch (error) {
+    console.log({error});
+    console.log(error.message);
+    // console.log({
+    //   succeed: false,
+    //   code: error?.decline_code || error?.code,
+    //   message: online_payment_error_codes[error?.decline_code || error?.code]
+    // });
     return res
       .status(400)
-      .send({ code: "111", error: { message: error.message } });
+      .send({
+        succeed: false,
+        code: error.decline_code,
+        message: online_payment_error_codes[error?.decline_code || error?.code]
+      });
   }
 
   // try {
@@ -607,8 +632,6 @@ exports.load_stripe_init = async function (req, res, next) {
     return res.status(400).send({ error: { message: error.message } });
   }
 };
-
-
 
 exports.invoice_preview = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -805,3 +828,55 @@ const compareStatus = (a, b) => {
   }
   return 0;
 };
+
+const online_payment_error_codes = {
+  authentication_required: "La tarjeta se rechazó porque la transacción requiere autenticación.",
+  approve_with_id: "No se puede autorizar el pago.",
+  call_issuer: "La tarjeta se ha rechazado por un motivo desconocido.",
+  card_not_supported: "La tarjeta no acepta este tipo de compras.",
+  card_velocity_exceeded: "El cliente ha excedido el límite del saldo o del crédito disponible en su tarjeta.",
+  currency_not_supported: "La tarjeta no acepta la divisa especificada.",
+  do_not_honor: "La tarjeta se ha rechazado por un motivo desconocido.",
+  do_not_try_again: "La tarjeta se ha rechazado por un motivo desconocido.",
+  duplicate_transaction: "Hace muy poco se realizó otra transacción por el mismo importe con una tarjeta de crédito con los mismos datos.",
+  expired_card: "La tarjeta ha caducado.",
+  fraudulent: "El pago se ha rechazado porque Stripe sospecha que es fraudulento.",
+  generic_decline: "La tarjeta fue rechazada por un motivo desconocido o posiblemente provocada por una regla de pago bloqueada.",
+  incorrect_number: "El número de tarjeta no es correcto.",
+  incorrect_cvc: "El número de CVC no es correcto.",
+  incorrect_pin: "El PIN introducido es incorrecto. Este código de rechazo solo se aplica a los pagos efectuados con un lector de tarjetas.",
+  incorrect_zip: "El código postal no es correcto.",
+  insufficient_funds: "La tarjeta no tiene fondos suficientes para hacer la compra.",
+  invalid_account: "La tarjeta o la cuenta a la que está conectada la tarjeta no es válida.",
+  invalid_amount: "El importe del pago no es válido o excede el importe permitido.",
+  invalid_cvc: "El número de CVC no es correcto.",
+  invalid_expiry_month: "El mes de caducidad no es válido.",
+  invalid_expiry_year: "El año de caducidad no es válido.",
+  invalid_number: "El número de tarjeta no es correcto.",
+  invalid_pin: "El PIN introducido es incorrecto. Este código de rechazo solo se aplica a los pagos efectuados con un lector de tarjetas.",
+  issuer_not_available: "No se ha podido establecer contacto con el emisor de la tarjeta, así que no se ha podido autorizar el pago.",
+  lost_card: "El pago se ha rechazado porque la tarjeta figura como tarjeta perdida.",
+  merchant_blacklist: "El pago se ha rechazado porque coincide con un valor de la lista de bloqueo del usuario de Stripe.",
+  new_account_information_available: "La tarjeta o la cuenta a la que está conectada la tarjeta no es válida.",
+  no_action_taken: "La tarjeta se ha rechazado por un motivo desconocido.",
+  not_permitted: "El pago no está permitido.",
+  offline_pin_required: "La tarjeta se ha rechazado porque hace falta un PIN.",
+  online_or_offline_pin_required: "La tarjeta se ha rechazado porque hace falta un PIN.",
+  pickup_card: "El cliente no puede usar esta tarjeta para efectuar este pago. (Es posible que haya sido denunciada por pérdida o robo).",
+  pin_try_exceeded: "Se ha superado el número permitido de intentos de introducción del PIN.",
+  processing_error: "Ha ocurrido un error mientras se procesaba la tarjeta.",
+  reenter_transaction: "El emisor no ha podido procesar el pago por un motivo desconocido.",
+  restricted_card: "El cliente no puede usar esta tarjeta para efectuar este pago. (Es posible que haya sido denunciada por pérdida o robo).",
+  revocation_of_all_authorizations: "La tarjeta se ha rechazado por un motivo desconocido.",
+  revocation_of_authorization: "La tarjeta se ha rechazado por un motivo desconocido.",
+  security_violation: "La tarjeta se ha rechazado por un motivo desconocido.",
+  service_not_allowed: "La tarjeta se ha rechazado por un motivo desconocido.",
+  stolen_card: "El pago se ha rechazado porque la tarjeta figura como robada.",
+  stop_payment_order: "La tarjeta se ha rechazado por un motivo desconocido.",
+  testmode_decline: "Se utilizó el número de una tarjeta de prueba de Stripe.",
+  transaction_not_allowed: "La tarjeta se ha rechazado por un motivo desconocido.",
+  try_again_later: "La tarjeta se ha rechazado por un motivo desconocido.",
+  withdrawal_count_limit_exceeded: "El cliente ha excedido el límite del saldo o del crédito disponible en su tarjeta.",
+  card_decline_rate_limit_exceeded: "Ha excedido el número máximo de rechazos en esta tarjeta en el último período de 24 horas.",
+  payment_intent_unexpected_state: "Ha ocurrido un error inesperado al procesar el pago, por favor trate de nuevo." //You cannot confirm this PaymentIntent because it has already succeeded after being previously confirmed.
+}
