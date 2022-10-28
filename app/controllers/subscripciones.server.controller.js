@@ -8,27 +8,34 @@ const { resolve } = require("path");
 const bodyParser = require("body-parser");
 const url = require("node:url");
 const querystring = require("node:querystring");
-// Replace if using a different env file or config
+const os = require("os");
+
 const entities = new Map();
 
+const hostname = os.hostname();
+
+const STRIPE_SECRET_KEY = hostname.indexOf("local") > -1 ? process.env.DEV_STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
+const STRIPE_PUBLISHABLE_KEY = hostname.indexOf("local") > -1 ? process.env.DEV_STRIPE_PUBLISHABLE_KEY : process.env.STRIPE_PUBLISHABLE_KEY;
+const STATIC_DIR = process.env.STATIC_DIR;
+
 if (
-  !process.env.STRIPE_SECRET_KEY ||
-  !process.env.STRIPE_PUBLISHABLE_KEY ||
-  !process.env.STATIC_DIR
+  !STRIPE_SECRET_KEY ||
+  !STRIPE_PUBLISHABLE_KEY ||
+  !STATIC_DIR
 ) {
   console.log(
     "The .env file is not configured. Follow the instructions in the readme to configure the .env file. https://github.com/stripe-samples/subscription-use-cases"
   );
   console.log("");
-  process.env.STRIPE_SECRET_KEY
+  STRIPE_SECRET_KEY
     ? ""
     : console.log("Add STRIPE_SECRET_KEY to your .env file.");
 
-  process.env.STRIPE_PUBLISHABLE_KEY
+  STRIPE_PUBLISHABLE_KEY
     ? ""
     : console.log("Add STRIPE_PUBLISHABLE_KEY to your .env file.");
 
-  process.env.STATIC_DIR
+  STATIC_DIR
     ? ""
     : console.log(
         "Add STATIC_DIR to your .env file. Check .env.example in the root folder for an example"
@@ -37,7 +44,7 @@ if (
   process.exit();
 }
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
+const stripe = require("stripe")(STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
   appInfo: {
     // For sample support and debugging, not required for production:
@@ -76,15 +83,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
 //   }
 // });
 
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-  // console.log("calculateOrderAmount:", {items});
-
-  return items.amount;
-};
-
 exports.payment_response = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -102,8 +100,6 @@ exports.create_payment_intent = async function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-
-  console.log("create-payment-intent:", req.body);
 
   const { items } = req.body;
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
@@ -157,7 +153,7 @@ exports.prices = async function (req, res, next) {
   });
 
   const result = {
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    publishableKey: STRIPE_PUBLISHABLE_KEY,
     prices: prices.data,
     currentPrice: subscriptions?.data[0]?.items?.data[0]?.price
   };

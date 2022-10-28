@@ -10,28 +10,39 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const url = require("node:url");
 const querystring = require("node:querystring");
+const os = require("os");
+
 // Replace if using a different env file or config
 require("dotenv").config({ path: "./.env" });
+
 const entities = new Map();
 
+const STRIPE_SECRET_KEY = req.headers.host === 'localhost:8000' ? process.env.DEV_STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
+const STRIPE_PUBLISHABLE_KEY = req.headers.host === 'localhost:8000' ? process.env.DEV_STRIPE_PUBLISHABLE_KEY : process.env.STRIPE_PUBLISHABLE_KEY;
+const STATIC_DIR = process.env.STATIC_DIR;
+
+const hostName = os.hostname();
+
+console.log({hostName});
+
 if (
-  !process.env.STRIPE_SECRET_KEY ||
-  !process.env.STRIPE_PUBLISHABLE_KEY ||
-  !process.env.STATIC_DIR
+  !STRIPE_SECRET_KEY ||
+  !STRIPE_PUBLISHABLE_KEY ||
+  !STATIC_DIR
 ) {
   console.log(
     "The .env file is not configured. Follow the instructions in the readme to configure the .env file. https://github.com/stripe-samples/subscription-use-cases"
   );
   console.log("");
-  process.env.STRIPE_SECRET_KEY
+  STRIPE_SECRET_KEY
     ? ""
     : console.log("Add STRIPE_SECRET_KEY to your .env file.");
 
-  process.env.STRIPE_PUBLISHABLE_KEY
+  STRIPE_PUBLISHABLE_KEY
     ? ""
     : console.log("Add STRIPE_PUBLISHABLE_KEY to your .env file.");
 
-  process.env.STATIC_DIR
+  STATIC_DIR
     ? ""
     : console.log(
         "Add STATIC_DIR to your .env file. Check .env.example in the root folder for an example"
@@ -40,7 +51,7 @@ if (
   process.exit();
 }
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
+const stripe = require("stripe")(STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
   appInfo: {
     // For sample support and debugging, not required for production:
@@ -51,7 +62,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
 });
 
 // Use static to serve static assets.
-app.use(express.static(process.env.STATIC_DIR));
+app.use(express.static(STATIC_DIR));
 
 // Use cookies to simulate logged in user.
 app.use(cookieParser());
@@ -84,7 +95,7 @@ app.get("/", (req, res) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
 
-  const path = resolve(process.env.STATIC_DIR + "/register.html");
+  const path = resolve(STATIC_DIR + "/register.html");
   res.sendFile(path);
 });
 
@@ -162,7 +173,7 @@ app.get("/prices", async (req, res) => {
   });
 
   const result = {
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    publishableKey: STRIPE_PUBLISHABLE_KEY,
     prices: prices.data,
     currentPriceId: subscriptions?.data[0]?.items?.data[0]?.price?.id
   };
