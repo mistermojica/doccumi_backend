@@ -169,6 +169,8 @@ exports.config = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
+    const STRIPE_PUBLISHABLE_KEY = req.headers.host.indexOf("localhost") > -1 ? process.env.DEV_STRIPE_PUBLISHABLE_KEY : process.env.STRIPE_PUBLISHABLE_KEY;
+
     let prices = [];
     stripe.prices.list({
     // lookup_keys: ['sample_basic', 'sample_premium'],
@@ -178,7 +180,7 @@ exports.config = function(req, res, next) {
         prices = resPrices;
         console.log({resPrices});
         const result = {
-            publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+            publishableKey: STRIPE_PUBLISHABLE_KEY,
             prices: prices.data,
         };
         console.log({result});
