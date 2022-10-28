@@ -386,7 +386,7 @@ exports.update_subscription = async function (req, res, next) {
     // console.log('subscription.latest_invoice.billing_reason:', subscription.latest_invoice.billing_reason);
     // console.log('paymentMethodId 111:', paymentMethodId);
 
-    if (subscription.latest_invoice.billing_reason == "subscription_create") {
+    if (subscriptionCreated && subscription.latest_invoice.billing_reason == "subscription_create") {
       // The subscription automatically activates after successful payment
       // Set the payment method used to pay the first invoice
       // as the default payment method for that subscription
@@ -462,7 +462,8 @@ exports.update_subscription = async function (req, res, next) {
       .send({
         succeed: false,
         code: error.decline_code,
-        message: online_payment_error_codes[error?.decline_code || error?.code]
+        message: online_payment_error_codes[error?.decline_code || error?.code],
+        result: error
       });
   }
 
