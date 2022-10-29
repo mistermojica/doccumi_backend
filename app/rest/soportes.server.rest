@@ -19,7 +19,7 @@ content-type: application/json
 {
   "_id": "633ecade36c8701432ff5b72",
   "sopDueno": "63363eaee7ec7906d66fd177",
-  "sopCorreo": "mistermojica@gmail.com",
+  "sopCorreo": "mistermojica3@gmail.com",
   "sopAsunto": "NO ME FUNCIONO LA TARJETA XXX",
   "sopTipo": "Facturación",
   "sopDescripcion": "INTENTÉ pagar con mi tarjeta, pero no funcionó.",
