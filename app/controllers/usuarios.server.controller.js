@@ -185,10 +185,11 @@ exports.create = function (req, res, next) {
 
           const ctx = {
             to: "DOCCUMI <info@doccumi.com>",
+            from: `${req.body.nombre} <${req.body.email}>`,
             subject: "Nuevo Usuario",
             content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Detalle del Registro<br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Empresa: <strong>${req.body.nombre_empresa}</strong><br><br>Nombre: <strong>${req.body.nombre}</strong><br><br>Correo Electrónico: <strong>${req.body.email}</strong><br><br>Teléfono: <strong>${req.body.telefono}</strong><br><br>WhatsApp: <strong>${req.body.whatsapp}</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><br>El equipo de DOCCUMI</p>`
           }
-    
+
           comMgr.sendEmail(ctx);
 
           res.json({
@@ -491,7 +492,8 @@ exports.recoverpassword = function (req, res, next) {
       };
 
       const ctx = {
-        to: data?.nombre.split(" ")[0] + " <" + data.email + ">",
+        to: `${data?.nombre.split(" ")[0]} <${data.email}>`,
+        from: "DOCCUMI <info@doccumi.com>",
         subject: "Restablecer tu contraseña",
         content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 18px;">Hola ${data?.nombre.split(" ")[0]},<br><br>Hemos recibido una solicitud para restablecer tu contraseña.<br><br>Si no realizaste la solicitud, simplemente ignora este mensaje. De lo contrario, puedes restablecer tu contraseña.<br><br><a style="background-color: #007bff; border-color: #007bff; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 18px; padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; margin: 4px 2px; border-radius: 4px;" href="${req.headers.origin}/recover-password?id=${token.code}">Restablecer tu contraseña</a><br><br>Gracias,<br><br>El equipo de DOCCUMI</p>`
       }

@@ -37,6 +37,7 @@ exports.create = function(req, res, next) {
         else {
             const ctx = {
                 to: "DOCCUMI <info@doccumi.com>",
+                from: req.body.sopCorreo,
                 subject: "Nuevo Soporte Solicitado",
                 content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><strong>Detalle del Soporte Solicitado</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Asunto: <strong>${req.body.sopAsunto}</strong><br><br>Correo Electrónico: <strong>${req.body.sopCorreo}</strong><br><br>Tipo: <strong>${req.body.sopTipo}</strong><br><br>Descripción: <strong>${req.body.sopDescripcion}</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><br>El equipo de DOCCUMI</p>`
               }
