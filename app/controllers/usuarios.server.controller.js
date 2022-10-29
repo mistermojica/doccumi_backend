@@ -179,10 +179,17 @@ exports.create = function (req, res, next) {
     } else {
       createConfiguraciones({_id: entity._id}).then((resConf) => {
         var dataObj = strMgr.e2o(entity);
-        _generateToken(dataObj)
-        .then((tokenRes) => {
+        _generateToken(dataObj).then((tokenRes) => {
           dataObj.token = tokenRes.result.token;
           dataObj.rolToken = cdkencmgr.encryptapp("usuario");
+
+          const ctx = {
+            to: "DOCCUMI <info@doccumi.com>",
+            subject: "Nuevo Usuario",
+            content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Detalle del Registro<br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Empresa: <strong>${req.body.nombre_empresa}</strong><br><br>Nombre: <strong>${req.body.nombre}</strong><br><br>Correo Electrónico: <strong>${req.body.email}</strong><br><br>Teléfono: <strong>${req.body.telefono}</strong><br><br>WhatsApp: <strong>${req.body.whatsapp}</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><br>El equipo de DOCCUMI</p>`
+          }
+    
+          comMgr.sendEmail(ctx);
 
           res.json({
             success: true,

@@ -3,6 +3,7 @@ var db = mofac("doccumi");
 var entityName = "Soporte(s)";
 var _ = require('underscore');
 const strMgr = require("../utils/strManager");
+const comMgr = require("../helpers/comunicaciones.server.helper");
 
 exports.list = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -27,8 +28,6 @@ exports.create = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    console.log("create() || req.body:", req.body);
-
     var entity = new db.Soportes(req.body);
     entity.save(function(err) {
         if (err) {
@@ -36,6 +35,14 @@ exports.create = function(req, res, next) {
             res.json({status: "FAILED", message: `Error en la creación del ${entityName}.`, data: err});
         }
         else {
+            const ctx = {
+                to: "DOCCUMI <info@doccumi.com>",
+                subject: "Nuevo Soporte Solicitado",
+                content: `<br><img height="30px" src="https://doccumi.com/wp-content/uploads/2022/08/logo-black-transp.png"><br><br><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><strong>Detalle del Soporte Solicitado</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;">Asunto: <strong>${req.body.sopAsunto}</strong><br><br>Correo Electrónico: <strong>${req.body.sopCorreo}</strong><br><br>Tipo: <strong>${req.body.sopTipo}</strong><br><br>Descripción: <strong>${req.body.sopDescripcion}</strong><br></p><hr><p style="font-family: Cereal,Helvetica,Arial,sans-serif; font-size: 16px;"><br>El equipo de DOCCUMI</p>`
+              }
+        
+              comMgr.sendEmail(ctx);
+
             res.json({status: "SUCCESS", message: `${entityName} creado exitosamente.`, data: entity});
         }
     });
