@@ -9,15 +9,12 @@ const SES_CONFIG = {
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const sendEmail = (ctx) => {
-
     let params = {
       Source: 'DOCCUMI <info@doccumi.com>',
       Destination: {
-        ToAddresses: [
-          ctx.to
-        ],
+        ToAddresses: [ctx.to],
       },
-      ReplyToAddresses: [],
+      ReplyToAddresses: [ctx.from],
       Message: {
         Body: {
           Html: {
