@@ -9,17 +9,12 @@ const SES_CONFIG = {
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const sendEmail = (ctx) => {
-
-    console.log(ctx);
-
     let params = {
       Source: 'DOCCUMI <info@doccumi.com>',
       Destination: {
-        ToAddresses: [
-          ctx.to
-        ],
+        ToAddresses: [ctx.to],
       },
-      ReplyToAddresses: [],
+      ReplyToAddresses: [ctx.from],
       Message: {
         Body: {
           Html: {
@@ -33,6 +28,7 @@ const sendEmail = (ctx) => {
         }
       },
     };
+
     return AWS_SES.sendEmail(params).promise();
 };
 
@@ -47,6 +43,7 @@ const sendTemplateEmail = (recipientEmail) => {
       },
       TemplateData: '{\"name\':\'John Doe\'}'
     };
+
     return AWS_SES.sendTemplatedEmail(params).promise();
 };
 

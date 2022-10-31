@@ -1,24 +1,21 @@
 
 ###
-POST http://localhost:8002/usuarios/create
+POST http://localhost:8000/usuarios/create
 content-type: application/json
 
 {
-    "usuario"                : "omarmojica",
-    "contrasena"             : "Romg2413",
-    "nombre"                 : "Omar Mojica",
-    "telefono"               : "809-848-5737",
-    "whatsapp"               : "809-848-5737",
-    "email"                  : "omarmojica@gmail.com",
-    "tipo"                   : "superadmin",
-    "estado"                 : "activo",
-    "puede_admin_ofertas"    : true,
-    "puede_admin_empleados"  : true,
-    "puede_admin_sucursales" : true
+    "usuario"                : "usuariox3@gmail.com",
+    "contrasena"             : "1234567",
+    "nombre_empresa"         : "Empresa 3",
+    "nombre"                 : "Juan Perez",
+    "telefono"               : "809-848-2222",
+    "whatsapp"               : "809-848-1111",
+    "email"                  : "usuario3@gmail.com",
+    "estado"                 : "activo"
 }
 
 ###
-GET http://localhost:8002/usuarios/listpop
+GET http://localhost:8000/usuarios/listpop
 content-type: application/json
 
 ###
