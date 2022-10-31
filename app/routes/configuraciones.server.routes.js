@@ -7,4 +7,6 @@ module.exports = function(app) {
     app.route('/configuraciones/findbydueno/:dueno').get(configuraciones.findByDueno);
     app.route('/configuraciones/update').post(configuraciones.update);
     app.route('/configuraciones/config').get(configuraciones.config);
+    app.route('/configuraciones/configformularios').get(configuraciones.configformularios);
+    
 };

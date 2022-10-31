@@ -125,3 +125,8 @@ content-type: application/json
 
 {"items": [{"id": "xl-tshirt"}]}
 
+
+###
+GET http://localhost:8000/configuraciones/configformularios
+content-type: application/json
+
