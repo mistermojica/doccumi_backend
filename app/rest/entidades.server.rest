@@ -1,0 +1,260 @@
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "mascota",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://example.com/mascota/foto1.jpg",
+        "https://example.com/mascota/foto2.jpg",
+        "https://example.com/mascota/foto3.jpg"
+    ],
+    "entAtributos": {
+        "masNombre": "Max",
+        "masEspecie": "Perro",
+        "masRaza": "Labrador Retriever",
+        "masEdad": 3,
+        "masColor": "Dorado",
+        "masTamanio": "Grande",
+        "masVacunas": true,
+        "masDescripcion": "Perro juguetón y amigable en busca de un hogar amoroso."
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "evento",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://example.com/evento/imagen1.jpg",
+        "https://example.com/evento/imagen2.jpg",
+        "https://example.com/evento/imagen3.jpg"
+    ],
+    "entAtributos": {
+        "eveNombre": "Concierto de Rock",
+        "eveFecha": "2023-06-15",
+        "eveLugar": "Estadio Principal",
+        "eveDescripcion": "Concierto en vivo de bandas de rock reconocidas",
+        "eveArtistas": ["Banda 1", "Banda 2", "Banda 3"],
+        "evePrecioEntrada": 25.99,
+        "eveCupoMaximo": 1000,
+        "eveDuracionHoras": 4
+    }
+}
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "electrodomestico",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://example.com/electrodomestico/imagen1.jpg",
+        "https://example.com/electrodomestico/imagen2.jpg"
+    ],
+    "entAtributos": {
+        "eleTipo": "Lavadora",
+        "eleMarca": "Samsung",
+        "eleModelo": "WF8702RSV",
+        "eleColor": "Blanco",
+        "eleCapacidad": "10 kg",
+        "eleConsumoEnergetico": "Clase A+",
+        "elePrecio": 399.99,
+        "eleStock": 5
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "libro",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://example.com/libro/portada.jpg"
+    ],
+    "entAtributos": {
+        "libTitulo": "La Sombra del Viento",
+        "libAutor": "Carlos Ruiz Zafón",
+        "libISBN": "9788408163386",
+        "libEditorial": "Planeta",
+        "libGenero": "Ficción",
+        "libAnioPublicacion": 2001,
+        "libSinopsis": "En la Barcelona de 1945, un joven llamado Daniel Sempere visita el Cementerio de los Libros Olvidados y descubre un libro maldito que cambiará su vida para siempre.",
+        "libPrecio": 25.99,
+        "libStock": 10
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "viaje",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://example.com/destino/foto1.jpg",
+        "https://example.com/destino/foto2.jpg",
+        "https://example.com/destino/foto3.jpg"
+    ],
+    "entAtributos": {
+        "desPais": "España",
+        "desCiudad": "Barcelona",
+        "desDescripcion": "Explora la hermosa ciudad de Barcelona",
+        "desDuracion": 7,
+        "desPrecio": 1500,
+        "desFechaInicio": "2023-08-15",
+        "desFechaFin": "2023-08-22",
+        "desActividades": ["Visita a la Sagrada Familia", "Paseo por Las Ramblas", "Tour en bicicleta por la ciudad"],
+        "desNombre": "Hotel Barcelona",
+        "desDireccion": "Calle Principal 123",
+        "desCategoria": "4 estrellas",
+        "desServicios": ["Piscina", "Gimnasio", "Restaurante"],
+        "desContactoNombre": "Juan Pérez",
+        "desContactoTelefono": "+34 123 456 789",
+        "desContactoEmail": "info@hotelbarcelona.com"
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "joya",
+    "entEstado": "venta",
+    "entFotos": [
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/joya1.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/joya2.jpg"
+    ],
+    "entAtributos": {
+        "joyTipo": "anillo",
+        "joyMaterial": "oro",
+        "joyPiedraPrincipal": "diamante",
+        "joyColor": "amarillo",
+        "joyPeso": 5.2,
+        "joyPrecio": 1500
+    }
+}
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "paciente",
+    "entEstado": "activo",
+    "entFotos": [
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/paciente1.jpg"
+    ],
+    "entAtributos": {
+        "pacNombre": "Juan Pérez",
+        "pacEdad": 35,
+        "pacGenero": "Masculino",
+        "pacFechaNacimiento": "1987-05-15",
+        "pacDireccion": "Calle Principal 456",
+        "pacTelefono": "123456789",
+        "pacCorreo": "juan.perez@example.com",
+        "pacEnfermedades": ["Hipertensión", "Diabetes"],
+        "pacAlergias": ["Polen", "Penicilina"]
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno": "627efe3b8a55c158e669107b",
+    "entTipo": "inmueble",
+    "entEstado": "venta",
+    "entFotos": [
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/foto1.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/foto2.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/foto3.jpg"
+    ],
+    "entAtributos": {
+        "inmTipo": "casa",
+        "inmDireccion": "Calle Principal 123",
+        "inmCiudad": "Ciudad de Ejemplo",
+        "inmEstado": "Nuevo",
+        "inmHabitaciones": 4,
+        "inmBanios": 2,
+        "inmArea": 200,
+        "inmPrecio": 300000,
+        "inmDescripcion": "Amplia casa en excelente ubicación",
+        "inmServicios": ["agua", "luz", "gas"],
+        "inmExtras": ["jardín", "piscina"]
+    }
+}
+
+
+###
+POST http://localhost:8000/entidades/create
+content-type: application/json
+
+{
+    "entDueno"  : "627efe3b8a55c158e669107b",
+    "entTipo"   : "vehiculo",
+    "entEstado" : "venta",
+    "entFotos"  : [
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/aqokulhnw49gq0xmwsmo.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/xqf0ulvht6tmfzgcqlnd.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463003/documi/kljk1gfnviq3gzyy6imr.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/e4ntf2mwixmd0fs9xwyr.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/uknjclzumkzf9smvyg44.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463004/documi/tcwd7xqftmsaiwxlsaep.jpg",
+        "https://res.cloudinary.com/omarmojica/image/upload/v1658463005/documi/nvaw8t19qamhtct34qcg.jpg"
+    ],
+    "entAtributos"            : {
+        "vehNoRegistroPlaca": "G111222",
+        "vehChasis": "ASDKFALSDFLAKSDJF",
+        "vehStatusVehiculo": "Activo",
+        "vehTipoEmision": "Gasoil",
+        "vehTipoVehiculo": "Coupe",
+        "vehAnoFabricacion": "2020",
+        "vehMarca": "Honda",
+        "vehModelo": "Corolla",
+        "vehColor": "Blanco",
+        "vehPrecio": 22333,
+        "vehCosto": 32323,
+        "vehFotoMatricula": [
+            "https://res.cloudinary.com/omarmojica/image/upload/v1658462726/documi/rsdt6aw2dktzi0abwp0i.jpg"
+        ],
+        "vehTamanoMetros": "14",
+        "vehTipoAsientos": "Vinil",
+        "vehTamanoLlantas": "265x17xR12"
+    }
+}
+
+###
+GET http://localhost:8000/entidades/list
+content-type: application/json
+
+###
+GET http://localhost:8000/entidades/dashboard/627efe3b8a55c158e669107b
+content-type: application/json
+
+###
+GET http://localhost:8000/entidades/find/646d0e72c8fc0a35a0c6aae6
+content-type: application/json
