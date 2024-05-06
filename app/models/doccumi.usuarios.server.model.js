@@ -1,7 +1,7 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-var UsuarioSchema = new Schema({
+let UsuarioSchema = new Schema({
     usuario                 : {type: String, index: true},
     contrasena              : {type: String, index: true},
     nombre                  : {type: String, index: true},
@@ -13,6 +13,11 @@ var UsuarioSchema = new Schema({
     logo                    : {type: String},
     tipo                    : {type: String, index: true},
     nombre_empresa          : {type: String},
+    tipo_empresa            : {type: String},
+    nombre_cliente          : {type: String},
+    nombre_cliente_plural   : {type: String},
+    nombre_entidad          : {type: String},
+    nombre_entidad_plural   : {type: String},
     estado                  : {type: String, default: "activo", index: true},
     puede_admin_ofertas     : {type: Boolean, default: false, index: true},
     puede_admin_empleados   : {type: Boolean, default: false, index: true},
