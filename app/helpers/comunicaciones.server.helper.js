@@ -9,6 +9,7 @@ const SES_CONFIG = {
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const sendEmail = (ctx) => {
+    //console.log({ctx});
     let params = {
       Source: 'DOCCUMI <info@doccumi.com>',
       Destination: {
