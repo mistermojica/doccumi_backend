@@ -136,31 +136,46 @@ exports.prices = async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-  const customerId = req.body.customerId;
+  try {
+  
+    const customerId = req.body.customerId;
 
-  const prices = await stripe.prices.list({
-    // lookup_keys: ['sample_basic', 'sample_premium'],
-    expand: ["data.product"],
-    active: true,
-    limit: 3,
-  });
+    const prices = await stripe.prices.list({
+      // lookup_keys: ['sample_basic', 'sample_premium'],
+      expand: ["data.product"],
+      active: true,
+      limit: 3,
+    });
 
-  entities.set("prices", prices);
+    entities.set("prices", prices);
 
-  const subscriptions = await stripe.subscriptions.list({
-    customer: customerId,
-    status: "active",
-  });
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "active",
+    });
 
-  const result = {
-    publishableKey: STRIPE_PUBLISHABLE_KEY,
-    prices: prices.data,
-    currentPrice: subscriptions?.data[0]?.items?.data[0]?.price
-  };
+    const result = {
+      publishableKey: STRIPE_PUBLISHABLE_KEY,
+      prices: prices.data,
+      currentPrice: subscriptions?.data[0]?.items?.data[0]?.price
+    };
 
-  console.log('currentPrice:', subscriptions?.data);
+    console.log('currentPrice:', subscriptions?.data);
 
-  res.send(result);
+    res.send(result);
+  } catch (error) {
+    // console.error('Error:', error);
+
+    const result = {
+      publishableKey: STRIPE_PUBLISHABLE_KEY,
+      prices: [],
+      currentPrice: {},
+      message: "Este usuario se encuentra en el ambiente de producción, pero no en el ambiente de desarrollo."
+    };
+
+    console.log({result});
+    res.send(result);
+  }
 };
 
 exports.create_customer = async function (req, res, next) {

@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk');
 
 const SES_CONFIG = {
-    accessKeyId: 'AKIA5GCFNQ5FEVV6NO7M',
-    secretAccessKey: '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',
+    accessKeyId: '',
+    secretAccessKey: '',
     region: 'us-east-1',
 };
 

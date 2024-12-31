@@ -5,11 +5,11 @@ require('dotenv').config();
 // process.env.NODE_ENV = process.env.NODE_ENV || 'production'; //production //development
 
 //require('./config/bootstrap');
-var mongoose      = require('./config/mongoose');
-var db 			  = mongoose();
+var mongoose    = require('./config/mongoose');
+var db 			    = mongoose();
 var express 	  = require('./config/express');
-var app           = express();
-var bodyParser    = require("body-parser");
+var app         = express();
+var bodyParser  = require("body-parser");
 var morgan 		  = require('morgan');
 var fs 		      = require('fs');
 // const { encryptsha, decrypt, encrypt } = require('./app/utils/encryptionManager');
